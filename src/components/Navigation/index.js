@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { signOut } from '../Firebase/firebase.js'
  
 import * as ROUTES from '../../constants/routes';
  
@@ -20,6 +21,11 @@ const Navigation = () => (
       </li>
       <li>
         <Link to={ROUTES.ADMIN}>Admin</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.SIGN_IN}>
+          <span onClick={signOut}>Sign Out</span>
+        </Link>
       </li>
     </ul>
   </div>

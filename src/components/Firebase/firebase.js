@@ -1,4 +1,6 @@
-import app from 'firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -11,10 +13,18 @@ const config = {
     measurementId: process.env.REACT_APP_MEASUREMENT_ID
   };
 
-  class Firebase {
-    constructor() {
-      app.initializeApp(config);
-    }
+  firebase.initializeApp(config);
+
+  export const signOut = () => {
+    firebase.auth().signOut();
   }
-   
-  export default Firebase;
+  /* example of how to use the SignOut function
+
+  <button onClick={signOut}>
+    Logout
+  </button>
+  */
+
+export const db = firebase.firestore();
+export const auth = firebase.auth();
+export const googleSignIn = firebase.auth.GoogleAuthProvider.PROVIDER_ID;
