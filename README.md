@@ -21,3 +21,19 @@ To run the app:
 
 In your browser, navigate to:
 - `localhost:3000`
+
+
+## Your First Commit
+
+Browse through the first few sections of this tutorial that the repo is based on
+(no coding required, get familiarized)
+- [Complete Firebase Authentication React Tutorial](https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial)
+
+Learning React Hooks
+(get familiarized)
+- [Hooks FAQ](https://reactjs.org/docs/hooks-faq.html)
+- [Hooks at a Glance](https://reactjs.org/docs/hooks-overview.html)
+
+Open a branch, then push one visual change (ex. button, text, divider, etc.) to any page
+(coding required)
+- Name the branch using the format `<first_name-vis1>` (ex. `nikhil-vis1`)
