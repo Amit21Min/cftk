@@ -8,16 +8,24 @@ import PanelBanner from '../PanelBanner';
 
 
 const RoutesPanel = () => {
-  const [routes, setRoutes] = useState(0);
+  const [routes, setRoutes] = useState({test: 1});
+  const [routeMetrics, setRouteMetrics] = useState({
+    total_assigned: "0",
+    ready_to_be_assigned: "1",
+    donations_this_year: "$300",
+    delta_from_last_canning: "N/A"
+  });
+
   let screen;
 
   if(routes){
-    screen = <div>
-                <RouteMetrics/>
+    screen = <div class="panel-screen">
+                <RouteMetrics metrics={routeMetrics}/>
+                <br/>
                 <RoutesTable/>
              </div>;
   } else {
-    screen = <div>
+    screen = <div class="panel-screen">
                 <ZeroResource name="routes" msg="Create routes to assign volunteers"/>
              </div>;
   }

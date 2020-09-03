@@ -7,7 +7,7 @@
 }
 
 #sidebar-menu{
-  flex-basis: 20%;
+  flex-basis: 12%;
   padding: 0.2em;
 }
 
@@ -28,6 +28,11 @@
 }
 
 #sidebar-panel{
-  flex-basis: 80%;
+  flex-basis: 88%;
   padding: 0.2em;
+}
+
+.panel-screen{
+  width: 92%;
+
 }
