@@ -1,0 +1,35 @@
+#sidebar{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+#sidebar-menu{
+  flex-basis: 20%;
+  border:1px solid blue;
+  padding: 0.2em;
+}
+
+#sidebar-header-container{
+
+}
+
+#sidebar-user-portrait{
+
+}
+
+#sidebar-user-name{
+
+}
+
+#sidebar-adaptation{
+
+}
+
+#sidebar-panel{
+  border:1px solid yellow;
+  flex-basis: 80%;
+  padding: 0.2em;
+}
