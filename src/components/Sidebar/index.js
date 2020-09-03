@@ -10,6 +10,8 @@ import DashboardPanel from '../DashboardPanel';
 import RoutesPanel from '../RoutesPanel';
 import VolunteersPanel from '../VolunteersPanel';
 
+import NewRoutePanel from '../NewRoutePanel';
+
 import * as ROUTES from '../../constants/routes';
 
 import './index.css';
@@ -45,6 +47,7 @@ const Sidebar = () => (
         <Route exact path={ROUTES.ADMIN_DASHBOARD}  component={DashboardPanel} />
         <Route exact path={ROUTES.ADMIN_ROUTES}     component={RoutesPanel} />
         <Route exact path={ROUTES.ADMIN_VOLUNTEERS} component={VolunteersPanel} />
+        <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
       </Switch>
     </div>
 
