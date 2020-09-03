@@ -1,8 +1,10 @@
 import React from 'react';
 
+import PanelBanner from '../PanelBanner';
+
 const DashboardPanel = () => (
   <div>
-    <h1>Dashboard</h1>
+    <PanelBanner title="Dashboard"/>
   </div>
 );
 

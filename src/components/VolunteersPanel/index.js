@@ -1,8 +1,10 @@
 import React from 'react';
 
+import PanelBanner from '../PanelBanner';
+
 const VolunteersPanel = () => (
   <div>
-    <h1>Volunteers</h1>
+    <PanelBanner title="Volunteers"/>
   </div>
 );
 
