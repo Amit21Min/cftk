@@ -1,4 +1,15 @@
+.title {
+    margin-bottom:2%;
+    margin-left:2%;
+}
+
+.search {
+    margin-bottom:2%;
+    margin-left:5%;
+}
+
 .google_map{
+    margin-top:1%;
     width:55%;
     margin-left:2%;
     margin-right:2%;
@@ -13,4 +24,10 @@
 }
 .clearfix{
     clear:both
+}
+
+.label {
+    font-size:.65em;
+    font-weight:normal;
+    margin-left:2.2%;
 }
