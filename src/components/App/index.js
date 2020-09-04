@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Route,
 } from 'react-router-dom';
- 
+import 'bulma/css/bulma.css';
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
 import SignInPage from '../SignIn';
@@ -12,8 +12,11 @@ import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import ViewHousePropertiesPage from '../ViewHouseProperties'
  
+
+import Sidebar from '../Sidebar';
+
 import * as ROUTES from '../../constants/routes';
- 
+
 const App = () => (
   <Router>
     <div>
@@ -27,7 +30,12 @@ const App = () => (
       <Route path={ROUTES.ADMIN} component={AdminPage} />
       <Route path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHousePropertiesPage} />
     </div>
+
+    <Sidebar/>
+
   </Router>
+
+
 );
- 
+
 export default App;
