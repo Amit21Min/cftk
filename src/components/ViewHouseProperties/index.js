@@ -9,8 +9,9 @@ const ViewHouseProperties = () => (
             width="450"
             height="450"
             //frameborder="0" style="border:0"
-            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBW0YGFoGCr0qKjZYJOq9zMNfcaZVHtFaQ
-            &q=Space+Needle,Seattle+WA" allowfullscreen>
+            //need to figure out src
+            src="" allowfullscreen
+            >
         </iframe>
         </div>
         <div className="notes">
