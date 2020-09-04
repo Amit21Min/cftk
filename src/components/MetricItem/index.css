@@ -1,0 +1,12 @@
+.metric-item{
+  padding: 0.4em;
+}
+
+h4.metric-item-metric{
+  font-weight: bold;
+  width: 100%;
+}
+
+span.metric-item-label{
+
+}
