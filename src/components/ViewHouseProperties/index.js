@@ -14,9 +14,13 @@ const ViewHouseProperties = () => (
        </iframe>
         </div>
         <div className="notes">
-            <p>
-                Notes
-            </p>
+            <strong> Amount collected from last canning:</strong>
+            <h6>$0</h6>
+            <strong>Solicitation:</strong>
+            <h6>Not allowed</h6>
+            <strong>Wants to learn more about CFTK:</strong>
+            <h6>No</h6>
+            <strong>Volunteer comments:</strong>
         </div>
         <div class="clearfix"></div>
     </div>

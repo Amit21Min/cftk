@@ -10,7 +10,7 @@
 
 .google_map{
     margin-top:1%;
-    width:55%;
+    width:50%;
     margin-left:2%;
     margin-right:2%;
     float: left;
@@ -19,8 +19,8 @@
    width:75%;
 }
 .notes {
-    width:12%;
-    display:inline-block
+    width:30%;
+    float:left;
 }
 .clearfix{
     clear:both
@@ -30,4 +30,8 @@
     font-size:.65em;
     font-weight:normal;
     margin-left:2.2%;
+}
+
+.category {
+    font-weight:bold;
 }
