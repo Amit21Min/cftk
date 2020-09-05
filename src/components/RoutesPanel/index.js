@@ -17,7 +17,7 @@ const RoutesPanel = () => {
   });
 
   const route_data_fields = ["Street", "Months Since Last Assigned", "Assignment Status", "Donations From Last Canning", "Average Donation Per House", "Percentage Wants to Learn More", "Percentage Allows Soliciting"];
-  const routes_data = [{settings: [], data: ["Wohler Court", "6", "Not Assigned", "$300", "$100", "31%", "25%"]}];
+  const routes_data = [{settings: [], data: ["Wohler Court", "6", "Not Assigned", "$300", "$100", "31%", "25%"]},{settings: [], data: ["Easy Street", "6", "Not Assigned", "$1000", "$100", "29%", "22%"]},];
 
   let screen;
 
