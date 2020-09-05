@@ -16,13 +16,16 @@ const RoutesPanel = () => {
     delta_from_last_canning: "N/A"
   });
 
+  const route_data_fields = ["Street", "Months Since Last Assigned", "Assignment Status", "Donations From Last Canning", "Average Donation Per House", "Percentage Wants to Learn More", "Percentage Allows Soliciting"];
+  const routes_data = [{settings: [], data: ["Wohler Court", "6", "Not Assigned", "$300", "$100", "31%", "25%"]}];
+
   let screen;
 
   if(routes){
     screen = <div class="panel-screen">
                 <RouteMetrics metrics={routeMetrics}/>
                 <br/>
-                <RoutesTable/>
+                <RoutesTable data={routes_data} fields={route_data_fields}/>
              </div>;
   } else {
     screen = <div class="panel-screen">
