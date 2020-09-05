@@ -35,3 +35,7 @@
 .category {
     font-weight:bold;
 }
+
+.comment{
+    display: flex;
+}

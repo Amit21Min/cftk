@@ -21,6 +21,13 @@ const ViewHouseProperties = () => (
             <strong>Wants to learn more about CFTK:</strong>
             <h6>No</h6>
             <strong>Volunteer comments:</strong>
+            <div class="comment">
+                <img src="https://t4.ftcdn.net/jpg/00/64/67/63/240_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" alt="default" height="50" width="50" ></img>
+                <div>
+                    <h6>no one was home</h6>
+                    <small>Anna Vu 09/12/2020</small>
+                </div>
+            </div>
         </div>
         <div class="clearfix"></div>
     </div>
