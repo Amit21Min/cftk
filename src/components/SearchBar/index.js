@@ -9,9 +9,9 @@ const SearchBar = (props) => {
   };
 
   return(
-    <div class="search-bar">
+    <div className="search-bar">
       <input type="text" class="search-bar-input" placeholder="Search..." onChange={updateQuery}/>
-      <div class="icon-container"/>
+      <div className="icon-container"/>
     </div>
   );
 };

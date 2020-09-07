@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import RouteMetrics from '../RouteMetrics';
 import ZeroResource from '../ZeroResource';
 import RoutesTable from '../RoutesTable';
 import PanelBanner from '../PanelBanner';
+import { db } from '../Firebase/firebase';
 
 
 
 const RoutesPanel = () => {
-  const [routes, setRoutes] = useState({test: 1});
+  const [routes, setRoutes] = useState(null);
   const [routeMetrics, setRouteMetrics] = useState({
     total_assigned: "0",
     ready_to_be_assigned: "1",
@@ -16,16 +17,24 @@ const RoutesPanel = () => {
     delta_from_last_canning: "N/A"
   });
 
-  let screen;
+  useEffect(() => {
+    db.collection('Routes').onSnapshot(snapshot => {
+      const allRoutes = snapshot.docs.map((route) => ({
+        ...route.data()
+      }));
+      setRoutes(allRoutes);
+    });
+  }, []);
 
+  let screen;
   if(routes){
-    screen = <div class="panel-screen">
+    screen = <div className="panel-screen">
                 <RouteMetrics metrics={routeMetrics}/>
                 <br/>
-                <RoutesTable/>
+                <RoutesTable routes={routes}/>
              </div>;
   } else {
-    screen = <div class="panel-screen">
+    screen = <div className="panel-screen">
                 <ZeroResource name="routes" msg="Create routes to assign volunteers"/>
              </div>;
   }
