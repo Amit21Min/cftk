@@ -2,10 +2,12 @@ import React, {useState} from 'react';
 
 import RouteMetrics from '../RouteMetrics';
 import ZeroResource from '../ZeroResource';
-import RoutesTable from '../RoutesTable';
+import SearchBar from '../SearchBar';
+import AddButton from '../AddButton';
+import ResourceIndexTable from '../ResourceIndexTable';
 import PanelBanner from '../PanelBanner';
 
-
+import * as ROUTES from '../../constants/routes';
 
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState({test: 1});
@@ -15,6 +17,8 @@ const RoutesPanel = () => {
     donations_this_year: "$300",
     delta_from_last_canning: "N/A"
   });
+  const [queryState, setQueryState] = useState({sort: false, queryString: ""});
+  const [selectedResources, setSelectedResources] = useState({});
 
   const route_data_fields = ["Street", "Months Since Last Assigned", "Assignment Status", "Donations From Last Canning", "Average Donation Per House", "Percentage Wants to Learn More", "Percentage Allows Soliciting"];
   const routes_data = [
@@ -22,13 +26,38 @@ const RoutesPanel = () => {
             {settings: [], data: ["Easy Street", "6", "Not Assigned", "$1000", "$100", "29%", "22%"]}
         ];
 
+  const searchRoutes = (query_string) => {
+    let new_query = Object.assign({}, queryState, {queryString: query_string});
+    setQueryState(new_query);
+    console.log(queryState);
+  }
+
+  const sortRoutes = (column_string) => {
+    let new_query = Object.assign({}, queryState, {sort: column_string});
+    setQueryState(new_query);
+    console.log(queryState);
+  }
+
+  const selectRoute = (route, bool) => {
+    let new_selected_resources = Object.assign({}, selectedResources, {route: bool});
+    setSelectedResources(new_selected_resources);
+  }
+
+  const newRoute = () => {
+    console.log("Creating a new route!");
+  }
+
   let screen;
 
   if(routes){
     screen = <div class="panel-screen">
                 <RouteMetrics metrics={routeMetrics}/>
                 <br/>
-                <RoutesTable data={routes_data} fields={route_data_fields}/>
+                <div style={{width: "100%", display: "flex", 'flex-direction': "row", 'justify-content': "space-between"}}>
+                  <SearchBar queryCallback={searchRoutes}/>
+                  <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
+                </div>
+                <ResourceIndexTable items={routes_data} columns={route_data_fields} selectItemCallback={selectRoute} selectColumnCallback={sortRoutes}/>
              </div>;
   } else {
     screen = <div class="panel-screen">
