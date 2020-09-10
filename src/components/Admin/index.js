@@ -9,6 +9,9 @@ const App = () => (
     <li>
       <Link to={ROUTES.VIEW_HOUSE_PROPS}>View House Properties</Link>
     </li>
+    <li>
+      <Link to={ROUTES.ADMIN_ROUTES_DEL}>Delete Dialogs</Link>
+    </li>
   </div>
 );
  
