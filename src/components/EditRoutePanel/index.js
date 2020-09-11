@@ -97,16 +97,16 @@ return(
                         </div>
                     </div>
                     <h1>Street Name</h1>
-                    <div>
-                        {streetNames.map(street => (
-                            <button class="button is-info is-rounded" key={street}>{street}</button>
-                        ))}
-                    </div>
                     <div className="field is-grouped">
                         <div className="control">
                             <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange = {(e) => updateInput(e, setCurrStreet)}/>
                         </div>
                         <button className="button" onClick = {updateStreetList}>ADD</button>
+                    </div>
+                    <div>
+                        {streetNames.map(street => (
+                            <button class="button is-info is-rounded" key={street}>{street}</button>
+                        ))}
                     </div>
                     <h1 class="subtitle"> Previous Canning Data</h1>
                     <div className="field">
@@ -121,16 +121,16 @@ return(
                         </div>
                     </div>
                     <h1> Volunteer notes</h1>
-                    <div>
-                        {volNotes.map (note => (
-                            <button class="button is-rounded" key={note}>{note}</button>
-                        ))}
-                    </div>
                     <div className="field is-grouped">
                         <div className="control">
                             <input className="input" type="text" placeholder="Note" value={currNote} onChange = {(e) => updateInput(e, setCurrNote)} />
                         </div>
                         <button class="button" onClick = {updateNoteList}>ADD</button>
+                    </div>
+                    <div>
+                        {volNotes.map (note => (
+                            <button class="button is-rounded" key={note}>{note}</button>
+                        ))}
                     </div>
                 </form>
             </div>
