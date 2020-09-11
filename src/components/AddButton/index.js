@@ -9,13 +9,13 @@ const AddButton = (props) => {
   // to be returned. If props.route is undefined, then just return a normal button.
   if (props.route) {
     return(
-      <Link class="button-circle blue" onClick={props.clickCallback} to={props.route}>
+      <Link className="button-circle blue" onClick={props.clickCallback} to={props.route}>
         +
       </Link>
     )
   } else {
     return(
-      <button class="button-circle blue" onClick={props.clickCallback} to={props.route}>
+      <button className="button-circle blue" onClick={props.clickCallback} to={props.route}>
         +
       </button>
     )   
