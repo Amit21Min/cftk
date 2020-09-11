@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import * as ROUTES from '../../constants/routes';
+import { Link } from 'react-router-dom';
 
 const EditRoutePanel = () => {
 
@@ -48,7 +50,9 @@ const EditRoutePanel = () => {
 
     const handleDateBlur = e => {
         // Changes input back to text if it is empty so placeholder text can still be shown
-        if (canningDate === '' || canningDate === 'mm/d//yy') e.currentTarget.type = 'text';
+        if (canningDate === '' || canningDate === 'mm/d//yy') {
+            e.currentTarget.type = 'text';
+        }
     }
 
     const saveForm = e => {
@@ -71,6 +75,7 @@ const EditRoutePanel = () => {
             created: new Date()
         })
     }
+
     var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
@@ -88,45 +93,44 @@ return(
                 <form>
                     <div className="field">
                         <div className="control">
-                            <input className="input" type="tecxt" placeholder="Name(Required)" value={routeName}/>
+                            <input className="input" type="tecxt" placeholder="Name(Required)" value={routeName} onChange = {(e) => updateInput(e, setRouteName)} />
                         </div>
                     </div>
                     <h1>Street Name</h1>
                     <div>
                         {streetNames.map(street => (
-                            <button className="button" key={street}>{street}</button>
-                        ))}
-                    </div>
-                    <div className="field-is-grouped">
-                        <div className="control">
-                            <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet}/>
-                        </div>
-                        <button className="button is-circle" >+</button>
-                    </div>
-                    <h1> Last Canning Data</h1>
-                    <div className="field">
-                        <div className="control">
-                            <input className="input" type="text" placeholder="Date (Optional)" value={canningDate} />
-                        </div>
-                        <label className="label">MM/DD/YY</label>
-                    </div>
-                    <div className="field">
-                        <div className="control">
-                            <input className="input" type="number" placeholder="Donations (Optional)" value={numDonated} />
-                        </div>
-                        <label className="label">MM/DD/YY</label>
-                    </div>
-                    <h1> Volunteer notes</h1>
-                    <div>
-                        {volNotes.map (note => (
-                            <button className="button" key={note}>{note}</button>
+                            <button class="button is-info is-rounded" key={street}>{street}</button>
                         ))}
                     </div>
                     <div className="field is-grouped">
                         <div className="control">
-                            <input className="input" type="text" placeholder="Note" value={currNote} />
+                            <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange = {(e) => updateInput(e, setCurrStreet)}/>
                         </div>
-                        <button className="button" >+</button>
+                        <button className="button" onClick = {updateStreetList}>ADD</button>
+                    </div>
+                    <h1 class="subtitle"> Previous Canning Data</h1>
+                    <div className="field">
+                        <div className="control">
+                            <input className="input" type="text" placeholder="Date (Optional)" onFocus={handleDateFocus} onBlur={handleDateBlur} value={canningDate} onChange = {(e) => updateInput(e, setCanningDate)}/>
+                        </div>
+                        <label className="label">MM/DD/YY</label>
+                    </div>
+                    <div className="field">
+                        <div className="control">
+                            <input className="input" type="number" placeholder="Donations (Optional)" value={numDonated} onChange = {(e) => updateInput(e, setNumDonated)} />
+                        </div>
+                    </div>
+                    <h1> Volunteer notes</h1>
+                    <div>
+                        {volNotes.map (note => (
+                            <button class="button is-rounded" key={note}>{note}</button>
+                        ))}
+                    </div>
+                    <div className="field is-grouped">
+                        <div className="control">
+                            <input className="input" type="text" placeholder="Note" value={currNote} onChange = {(e) => updateInput(e, setCurrNote)} />
+                        </div>
+                        <button class="button" onClick = {updateNoteList}>ADD</button>
                     </div>
                 </form>
             </div>
@@ -142,7 +146,18 @@ return(
                 </div>
             </div>
         </div>
-        <input className="button" type="submit"/>
+        <div class="level">
+            <nav class="level">
+                <div class='level-right'>
+                    <div class="field is-grouped">
+                        <button class="button is-primary" onClick={saveForm}>SAVE</button>
+                        <button class="button is-link is-light">
+                            <Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
     </div>
     );
 };
