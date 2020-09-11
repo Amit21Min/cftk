@@ -1,7 +1,7 @@
-<<<<<<< HEAD:src/components/Edit Route/index.js
 import React, { useState } from 'react';
 
 const EditRoutePanel = () => {
+
     const [routeName, setRouteName] = useState('');
     const [currStreet, setCurrStreet] = useState('');
     const [streetNames, setStreetNames] = useState([]);
@@ -10,6 +10,67 @@ const EditRoutePanel = () => {
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
 
+    const updateInput = (e, setter) => {
+        setter(e.target.value);
+        console.log(e.target.value);
+    }
+
+    const updateStreetList = e => {
+        e.preventDefault();
+        if (streetNames.includes(currStreet)) {
+            alert ("Please don't repeat a street name");
+            return;
+        } else if (currStreet === '') {
+            alert ("Please enter a street name");
+            return;
+        }
+        setStreetNames([...streetNames, currStreet]);
+        setCurrStreet('');
+    }
+
+    const updateNoteList = e => {
+        e.preventDefault();
+        if (volNotes.includes(currNote)) {
+            alert ("Please don't repeat an existing note");
+            return;
+        } else if (currNote === '') {
+            alert ("Please enter some text");
+            return;
+        }
+        setVolNotes([...volNotes, currNote]);
+        setCurrNote('');
+    }
+
+    const handleDateFocus = e => {
+        // When clicking on input, switches input type to date. Allows for placeholder text
+        e.currentTarget.type = 'date';
+    }
+
+    const handleDateBlur = e => {
+        // Changes input back to text if it is empty so placeholder text can still be shown
+        if (canningDate === '' || canningDate === 'mm/d//yy') e.currentTarget.type = 'text';
+    }
+
+    const saveForm = e => {
+        // Executes when save button is clicked.
+        // Alerts and doesn't save if required inputs are not filled (Placeholder)
+        if (routeName === '') {
+            alert('Please enter a route name');
+            return;
+        } else if (streetNames.length === 0 && currStreet  === '') {
+            alert('Please enter/add a street name');
+            return;
+        }  
+
+        console.log({
+            name: routeName,
+            streets: streetNames,
+            date: canningDate,
+            donations: numDonated,
+            notes: volNotes,
+            created: new Date()
+        })
+    }
     var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
@@ -83,52 +144,6 @@ return(
         </div>
         <input className="button" type="submit"/>
     </div>
-);
+    );
 };
 export default EditRoutePanel;
-=======
-import React from 'react';
-import AddButton from '../AddButton';
-
-const App = () =>  {
-
-    const addNote = () => {
-        alert("insert functionality to add note");
-      }
-
-    return(
-    <div>
-        <h1> Edit Route</h1>
-        <form>
-            <li>
-                <label>
-                    Street:
-                    <input type="text" street="street" />
-                </label>
-            </li>
-            <li>
-                <label>
-                    Date of Last Canning:
-                    <input type="text" canning_date="canning_date" />
-                </label>
-            </li>
-            <li>
-                <label>
-                    Donations since Jan 1 of this year(optional):
-                    <input type="text" canning_date="canning_date" />
-                </label>
-            </li>
-            
-            <li>
-                <button>Save</button>
-                <button>Cancel</button>
-            </li>
-        </form>
-
-        <h2> Volunteer Notes</h2>
-        {/* <NotesButton/> */}
-        <AddButton clickCallback={addNote}/>
-    </div>
-)};
-export default App;
->>>>>>> b1d26ec9f58b3f927d04dcf6789518c902cc3749:src/components/EditRoute/index.js
