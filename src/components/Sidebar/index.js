@@ -12,7 +12,7 @@ import VolunteersPanel from '../VolunteersPanel';
 
 import NewRoutePanel from '../NewRoutePanel';
 
-import EditRoute from '../Edit Route';
+import EditRoute from '../EditRoute';
 
 import * as ROUTES from '../../constants/routes';
 

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 
 import SearchBar from '../SearchBar';
 import AddButton from '../AddButton';
+import * as ROUTES from '../../constants/routes';
 
 const RoutesTable = (props) => {
   const [queryState, setQueryState] = useState(null);
@@ -17,9 +18,9 @@ const RoutesTable = (props) => {
 
   return(
     <div>
-      <div style={{width: "100%", display: "flex", 'flex-direction': "row", 'justify-content': "space-between"}}>
+      <div style={{width: "100%", display: "flex", 'flexDirection': "row", 'justifyContent': "space-between"}}>
         <SearchBar queryCallback={searchCallback}/>
-        <AddButton clickCallback={newRoute}/>
+        <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
       </div>
       <p>Table!</p>
     </div>
