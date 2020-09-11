@@ -3,7 +3,7 @@ import React from 'react';
 const ResourceIndexTableHeader = (props) => {
 
   let column_headers = props.columns.map((column, i) => (
-    <th key={i} onClick={props.selectColumnCallback}>{column}</th>
+    <th key={i} onClick={props.selectColumnCallback.bind(this, column)}>{column}</th>
   ));
 
   return (

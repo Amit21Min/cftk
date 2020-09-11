@@ -10,7 +10,10 @@ import PanelBanner from '../PanelBanner';
 import * as ROUTES from '../../constants/routes';
 
 const RoutesPanel = () => {
-  const [routes, setRoutes] = useState({test: 1});
+  const [routes, setRoutes] = useState([
+    {settings: [], data: { id: 1, returned: ["Wohler Court", "6", "Not Assigned", "$300", "$100", "31%", "25%"]}},
+    {settings: [], data: { id: 2, returned: ["Easy Street", "6", "Not Assigned", "$1000", "$100", "29%", "22%"]}}
+  ]);
   const [routeMetrics, setRouteMetrics] = useState({
     total_assigned: "0",
     ready_to_be_assigned: "1",
@@ -18,13 +21,13 @@ const RoutesPanel = () => {
     delta_from_last_canning: "N/A"
   });
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
-  const [selectedResources, setSelectedResources] = useState({});
+  const [selectedResources, setSelectedResources] = useState({
+    1: false,
+    2: true
+  });
 
-  const route_data_fields = ["Street", "Months Since Last Assigned", "Assignment Status", "Donations From Last Canning", "Average Donation Per House", "Percentage Wants to Learn More", "Percentage Allows Soliciting"];
-  const routes_data = [
-            {settings: [], data: ["Wohler Court", "6", "Not Assigned", "$300", "$100", "31%", "25%"]},
-            {settings: [], data: ["Easy Street", "6", "Not Assigned", "$1000", "$100", "29%", "22%"]}
-        ];
+  const route_data_fields = ["", "Street", "Months Since Last Assigned", "Assignment Status", "Donations From Last Canning", "Average Donation Per House", "Percentage Wants to Learn More", "Percentage Allows Soliciting"];
+
 
   const searchRoutes = (query_string) => {
     let new_query = Object.assign({}, queryState, {queryString: query_string});
@@ -32,15 +35,23 @@ const RoutesPanel = () => {
     console.log(queryState);
   }
 
+  // Uses the string of a column title to alter the routes query
   const sortRoutes = (column_string) => {
     let new_query = Object.assign({}, queryState, {sort: column_string});
     setQueryState(new_query);
     console.log(queryState);
   }
 
-  const selectRoute = (route, bool) => {
-    let new_selected_resources = Object.assign({}, selectedResources, {route: bool});
+  const handleRouteSelect = (route) => {
+    console.log(route)
+    let new_selected_resources = Object.assign({}, selectedResources);
+    new_selected_resources[route] = true;
     setSelectedResources(new_selected_resources);
+    console.log(selectedResources);
+  }
+
+  const deselectRoute = (route) => {
+
   }
 
   const newRoute = () => {
@@ -57,7 +68,12 @@ const RoutesPanel = () => {
                   <SearchBar queryCallback={searchRoutes}/>
                   <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
                 </div>
-                <ResourceIndexTable items={routes_data} columns={route_data_fields} selectItemCallback={selectRoute} selectColumnCallback={sortRoutes}/>
+                <ResourceIndexTable
+                    items={routes}
+                    columns={route_data_fields}
+                    selectItemCallback={selectRoute}
+                    selectColumnCallback={sortRoutes}
+                />
              </div>;
   } else {
     screen = <div class="panel-screen">
