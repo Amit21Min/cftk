@@ -45,7 +45,7 @@ const RoutesPanel = () => {
       <PanelBanner title="Routes"/>
       {screen}
       <ul>
-        <button class="button is-link is-light"><Link to={ROUTES.EDIT_ROUTE}>Edit Route</Link></button>
+        <button class="button is-link is-light"><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></button>
       </ul>
     </div>
   );

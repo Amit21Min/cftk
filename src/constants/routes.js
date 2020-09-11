@@ -13,6 +13,6 @@ export const ADMIN_ROUTES_NEW = ADMIN_ROUTES+'/new';
 export const ADMIN_VOLUNTEERS = ADMIN+'/volunteers';
 
 // Edit route
-export const EDIT_ROUTE = ADMIN_ROUTES+'/edit';
+export const ADMIN_ROUTES_EDIT = ADMIN_ROUTES+'/edit';
 // Delete route
 export const ADMIN_ROUTES_DEL = ADMIN+'/delete'

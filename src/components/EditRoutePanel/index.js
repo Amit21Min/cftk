@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
+import SearchBar from  '../SearchBar';
 
 const EditRoutePanel = () => {
 

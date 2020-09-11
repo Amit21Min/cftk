@@ -13,7 +13,7 @@ import VolunteersPanel from '../VolunteersPanel';
 import NewRoutePanel from '../NewRoutePanel';
 import DeleteDialogs from '../DeleteDialogs';
 
-import EditRoute from '../EditRoute';
+import EditRoutePanel from '../EditRoutePanel';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -52,7 +52,7 @@ const Sidebar = () => (
         <Route exact path={ROUTES.ADMIN_VOLUNTEERS} component={VolunteersPanel} />
         <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
         <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
-        <Route path={ROUTES.EDIT_ROUTE} component={EditRoute} />
+        <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
       </Switch>
     </div>
 
