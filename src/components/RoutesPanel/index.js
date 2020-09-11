@@ -6,7 +6,8 @@ import RoutesTable from '../RoutesTable';
 import PanelBanner from '../PanelBanner';
 import { db } from '../Firebase/firebase';
 
-
+import { Link } from 'react-router-dom';
+import * as ROUTES from '../../constants/routes';
 
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
@@ -43,6 +44,9 @@ const RoutesPanel = () => {
     <div>
       <PanelBanner title="Routes"/>
       {screen}
+      <ul>
+        <li><Link to={ROUTES.EDIT_ROUTE}>Edit Route</Link></li>
+      </ul>
     </div>
   );
 };

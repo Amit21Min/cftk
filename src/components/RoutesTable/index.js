@@ -43,8 +43,6 @@ const RoutesTable = (props) => {
             </tr>
           )}
           </tbody>
-          {/* <p key="name">{route.name}</p>
-          <p key="donation"> ${route.canningData.totalDonations}</p> */}
         </table>
       </div>
     </div>

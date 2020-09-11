@@ -1,0 +1,41 @@
+.title {
+    margin-bottom:2%;
+    margin-left:2%;
+}
+
+.search {
+    margin-bottom:2%;
+    margin-left:5%;
+}
+
+.google_map{
+    margin-top:1%;
+    width:50%;
+    margin-left:2%;
+    margin-right:2%;
+    float: left;
+}
+.google_map iframe{
+   width:75%;
+}
+.notes {
+    width:30%;
+    float:left;
+}
+.clearfix{
+    clear:both
+}
+
+.label {
+    font-size:.65em;
+    font-weight:normal;
+    margin-left:2.2%;
+}
+
+.category {
+    font-weight:bold;
+}
+
+.comment{
+    display: flex;
+}
