@@ -23,14 +23,30 @@ const RoutesTable = (props) => {
         <SearchBar queryCallback={searchCallback} />
         <AddButton clickCallback={newRoute} />
       </div>
-      <p>Table!</p>
       <div className="route-table">
-        {routes.map((route) =>
-        <>
-          <p key="name">{route.name}</p>
-          <p key="donation"> ${route.canningData.totalDonations}</p>
-        </>
-      )}</div>
+        <table class="table" key="table">
+          <thead>
+            <tr>
+              <th><abbr title="name">Name</abbr></th>
+              <th><abbr title="amount-collected">Previous Canning Donations</abbr></th>
+              <th><abbr title="last-canned">Last Canning Date</abbr></th>
+              <th><abbr title="assignment-status">Assignment Status</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+          {routes.map((route) =>
+            <tr key={route.name}>
+              <th>{route.name}</th>
+              <th>${route.canningData.totalDonations}</th>
+              <th>{route.canningData.lastCanned.toDate().toString()}</th>
+              <th>{route.assignmentStatus.toString()}</th>
+            </tr>
+          )}
+          </tbody>
+          {/* <p key="name">{route.name}</p>
+          <p key="donation"> ${route.canningData.totalDonations}</p> */}
+        </table>
+      </div>
     </div>
   );
 };

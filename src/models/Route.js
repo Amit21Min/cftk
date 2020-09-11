@@ -28,5 +28,9 @@ const Route = {
         revisionHistory: {
             type: Array
         }
+    },
+    assignmentStatus: {
+        type: Boolean,
+        required: true
     }
 }
