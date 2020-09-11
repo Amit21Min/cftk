@@ -1,4 +1,3 @@
-<<<<<<< HEAD:src/components/Edit Route/index.js
 import React, { useState } from 'react';
 
 const EditRoutePanel = () => {
@@ -147,5 +146,4 @@ return(
     </div>
     );
 };
-
 export default EditRoutePanel;
