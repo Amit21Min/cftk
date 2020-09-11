@@ -146,19 +146,13 @@ return(
                 </div>
             </div>
         </div>
-        <div class="level">
-            <nav class="level">
-                <div class='level-right'>
-                    <div class="field is-grouped">
-                        <button class="button is-primary" onClick={saveForm}>SAVE</button>
-                        <button class="button is-link is-light">
-                            <Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link>
-                        </button>
-                    </div>
-                </div>
-            </nav>
+            <div class="field is-grouped">
+                <button class="button is-primary" onClick={saveForm}>SAVE</button>
+                <button class="button is-link is-light">
+                    <Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link>
+                </button>
+            </div>
         </div>
-    </div>
     );
 };
 export default EditRoutePanel;
