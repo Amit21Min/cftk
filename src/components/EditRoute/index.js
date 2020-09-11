@@ -1,8 +1,13 @@
 import React from 'react';
 import AddButton from '../AddButton';
-import NotesButton from '../NotesButton';
 
-const App = () => (
+const App = () =>  {
+
+    const addNote = () => {
+        alert("insert functionality to add note");
+      }
+
+    return(
     <div>
         <h1> Edit Route</h1>
         <form>
@@ -32,7 +37,8 @@ const App = () => (
         </form>
 
         <h2> Volunteer Notes</h2>
-        <NotesButton/>
+        {/* <NotesButton/> */}
+        <AddButton clickCallback={addNote}/>
     </div>
-);
+)};
 export default App;
