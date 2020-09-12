@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { TextField, FormControl, FormGroup, Chip, Button } from '@material-ui/core';
+
 
 const NewRoutePanel = () => {
 
@@ -149,59 +151,114 @@ const NewRoutePanel = () => {
 
 
   return (
+    // <div>
+    //   <h1 className="title">New Route</h1>
+    //   <div className="columns">
+    //     <div className="column">
+    //       <form>
+    //         <div className="field">
+    //           <div className="control">
+    //             <input className="input" type="text" placeholder="Name (Required)" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
+    //           </div>
+    //         </div>
+    //         <h1>Street Name</h1>
+    //         <div className="field is-grouped">
+    //           <div className="control">
+    //             <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e) }} />
+    //           </div>
+    //           {/* Pushes current street to list, then clears input */}
+    //           <button className="button" onClick={addToStreetList}>Add</button>
+    //         </div>
+    //         <div>
+    //           {/* List to render street names, starts empty */}
+    //           {streetNames.map(street => (
+    //             // Holds street names in buttons, temporarily in buttons. Will figure out details later
+    //             <button className="button" key={street} onClick={(e) => removeFromStreetList(e, street)}>{street}</button>
+    //           ))}
+    //         </div>
+    //         <h1>Last Canning Data</h1>
+    //         <div className="field">
+    //           <div className="control">
+    //             <input className="input" type="text" placeholder="Date (optional)" onFocus={handleDateFocus} onBlur={handleDateBlur} value={canningDate} onChange={(e) => updateInput(e, setCanningDate)} />
+    //           </div>
+    //           <label className="label">MM/DD/YY</label>
+    //         </div>
+    //         <div className="field">
+    //           <div className="control">
+    //             <input className="input" type="number" placeholder="Donations (optional)" value={numDonated} onChange={(e) => updateInput(e, setNumDonated)} />
+    //           </div>
+    //         </div>
+    //         <h1>Volunteer Notes</h1>
+    //         <div className="field is-grouped">
+    //           <div className="control">
+    //             {/* Pushes current note to list, then clears input */}
+    //             <input className="input" type="text" placeholder="Note" value={currNote} onChange={(e) => updateInput(e, setCurrNote)} />
+    //           </div>
+    //           <button className="button" onClick={addToNoteList}>Add</button>
+    //         </div>
+    //         <div>
+    //           {/* List to render volunteer notes, starts empty */}
+    //           {volNotes.map(note => (
+    //             // Holds street names in buttons, onClick functionality to be dealt with later
+    //             <button className="button" key={note} onClick={(e) => removeFromNoteList(e, note)}>{note}</button>
+    //           ))}
+    //         </div>
+    //       </form>
+    //     </div>
+    //     <div className="column">
+    //       {/* Placeholder google map */}
+    //       <div>
+    //         <iframe title="viewRoute"
+    //           width="600"
+    //           height="450"
+    //           frameBorder="0" styles="border:0"
+    //           src={mapURL}
+    //           allowFullScreen>
+    //         </iframe>
+    //       </div>
+    //     </div>
+    //   </div>
+    //   {/* Figuring out submit button, might put into form */}
+    //   <input className="button" type="submit" onClick={saveForm} value="Save"></input>
+    // </div>
     <div>
       <h1 className="title">New Route</h1>
       <div className="columns">
         <div className="column">
-          <form>
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" placeholder="Name (Required)" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
+          <FormControl>
+            <FormGroup>
+              <TextField label="Name" variant="filled" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
+              <div className="new-route-grouped-input">
+                <TextField label="Streets" variant="filled" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e) }} />
+                <Button color="primary" disabled={currStreet.length === 0} onClick={addToStreetList}>Add</Button>
               </div>
-            </div>
-            <h1>Street Name</h1>
-            <div>
-              {/* List to render street names, starts empty */}
-              {streetNames.map(street => (
-                // Holds street names in buttons, temporarily in buttons. Will figure out details later
-                <button className="button" key={street} onClick={(e) => removeFromStreetList(e, street)}>{street}</button>
-              ))}
-            </div>
-            <div className="field is-grouped">
-              <div className="control">
-                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e) }} />
+              <div>
+                {
+                  streetNames.map(street => (
+                    <Chip color="default" key={street} label={street} onDelete={(e) => removeFromStreetList(e, street)} />
+                  ))
+                }
               </div>
-              {/* Pushes current street to list, then clears input */}
-              <button className="button" onClick={addToStreetList}>Add</button>
-            </div>
-            <h1>Last Canning Data</h1>
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" placeholder="Date (optional)" onFocus={handleDateFocus} onBlur={handleDateBlur} value={canningDate} onChange={(e) => updateInput(e, setCanningDate)} />
+            </FormGroup>
+          </FormControl>
+          <h1 className="title">Previous Canning Data</h1>
+          <FormControl>
+            <FormGroup>
+              <TextField label="Date" variant="filled" value={canningDate} onChange={(e) => { updateInput(e, setCanningDate) }} onFocus={handleDateFocus} onBlur={handleDateBlur} />
+              <TextField label="$ Donations" variant="filled" type="number" value={numDonated} onChange={(e) => { updateInput(e, setNumDonated) }} />
+              <div className="new-route-grouped-input">
+                <TextField label="Volunteer notes" variant="filled" value={currNote} onChange={(e) => { updateInput(e, setCurrNote) }} />
+                <Button color="primary" disabled={currNote.length === 0} onClick={addToNoteList}>Add</Button>
               </div>
-              <label className="label">MM/DD/YY</label>
-            </div>
-            <div className="field">
-              <div className="control">
-                <input className="input" type="number" placeholder="Donations (optional)" value={numDonated} onChange={(e) => updateInput(e, setNumDonated)} />
+              <div>
+                {
+                  volNotes.map(note => (
+                    <Chip color="default" key={note} label={note} onDelete={(e) => removeFromNoteList(e, note)} />
+                  ))
+                }
               </div>
-            </div>
-            <h1>Volunteer Notes</h1>
-            <div>
-              {/* List to render volunteer notes, starts empty */}
-              {volNotes.map(note => (
-                // Holds street names in buttons, onClick functionality to be dealt with later
-                <button className="button" key={note} onClick={(e) => removeFromNoteList(e, note)}>{note}</button>
-              ))}
-            </div>
-            <div className="field is-grouped">
-              <div className="control">
-                {/* Pushes current note to list, then clears input */}
-                <input className="input" type="text" placeholder="Note" value={currNote} onChange={(e) => updateInput(e, setCurrNote)} />
-              </div>
-              <button className="button" onClick={addToNoteList}>Add</button>
-            </div>
-          </form>
+            </FormGroup>
+          </FormControl>
         </div>
         <div className="column">
           {/* Placeholder google map */}
@@ -219,6 +276,7 @@ const NewRoutePanel = () => {
       {/* Figuring out submit button, might put into form */}
       <input className="button" type="submit" onClick={saveForm} value="Save"></input>
     </div>
+
 
   );
 };
