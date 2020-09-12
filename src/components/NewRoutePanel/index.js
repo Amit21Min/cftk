@@ -118,7 +118,7 @@ const NewRoutePanel = () => {
 
   function searchMap(e) {
     // generates and sets a new map url for map
-    if (e.target.value.length > 0){
+    if (e.target.value.length > 0) {
       let query = parseQuery(e.target.value)
       setMapURL(query);
     } else if (streetNames.length > 0) {
@@ -169,7 +169,7 @@ const NewRoutePanel = () => {
             </div>
             <div className="field is-grouped">
               <div className="control">
-                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => {updateInput(e, setCurrStreet); searchMap(e)}} />
+                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e) }} />
               </div>
               {/* Pushes current street to list, then clears input */}
               <button className="button" onClick={addToStreetList}>Add</button>
