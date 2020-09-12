@@ -11,6 +11,9 @@ import { db } from '../Firebase/firebase';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 
+import "./index.css";
+
+
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
 
