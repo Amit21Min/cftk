@@ -3,6 +3,8 @@ import React, {useState, useEffect} from 'react';
 import ResourceIndexItem from '../ResourceIndexItem';
 import ResourceIndexTableHeader from '../ResourceIndexTableHeader';
 
+import ZeroResource from '../ZeroResource';
+
 import "./index.css";
 
 
@@ -12,7 +14,6 @@ import "./index.css";
 
 // ex: props.items = [{settings: [], data: ["Wohler Court", "6", "Not Assigned", "$300", "$100", "31%", "25%"]}]
 const ResourceIndexTable = (props) => {
-
   const selectItem = (item) => {
     props.selectItemCallback(item);
   }
@@ -21,13 +22,33 @@ const ResourceIndexTable = (props) => {
     props.selectColumnCallback(column);
   }
 
-  let resource_items = props.items.map((item) => (
-      <ResourceIndexItem data={item.data} settings={item.settings} selectItemCallback={selectItem} />
-  ));
+  const getColumns = () => (
+    props.columns
+  );
+
+  let all_selected = true;
+  let resource_items = [];
+
+  for(let i = 0; i < props.items.length; i++){
+    let item = props.items[i];
+    resource_items.push(<ResourceIndexItem
+                            key={item.name ? item.name : i}
+                            data={item}
+                            getColumns={getColumns}
+                            selected={item.name ? props.selectedItems[item.name] : false}
+                            selectItemCallback={selectItem}/>);
+
+    if(!props.selectedItems[item.name] || props.selectedItems[item.name] == false){
+      all_selected = false;
+    }
+  }
+
+
+
 
   return(
-    <table class="table">
-      <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn}/>
+    <table className="table">
+      <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn} allSelected={all_selected}/>
       <tbody>
         {resource_items}
       </tbody>
