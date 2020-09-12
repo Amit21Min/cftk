@@ -139,8 +139,8 @@ const NewRoutePanel = () => {
       waypoints += `${street.replace(' ', '+')}|`
     })
     setMapURL(`https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_MAPS_API_KEY}
-    &origin=${defaultQuery}
-    &destination=${defaultQuery}
+    &origin=${defaultOrigin}
+    &destination=${defaultOrigin}
     &waypoints=${waypoints.substring(0, waypoints.length - 1)}`);
   }
 
