@@ -7,7 +7,7 @@ const ResourceIndexTableHeader = (props) => {
     let column_header;
     switch(key){
       case 'selectbox':
-        column_header = <th key={key} onClick={props.selectColumnCallback.bind(this, key)}>
+        column_header = <th key={key}>
           <input type="checkbox" name="all-selectbox" checked={props.allSelected} onChange={props.selectColumnCallback.bind(this, {type: "select-all", option: !props.allSelected})}/>
         </th>;
         break;

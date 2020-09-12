@@ -35,7 +35,7 @@ const ResourceIndexTable = (props) => {
                             key={item.name ? item.name : i}
                             data={item}
                             getColumns={getColumns}
-                            selected={item.name ? props.selectedItems[item.name] : false}
+                            selected={ props.allSelected ? true : (item.name ? props.selectedItems[item.name] : false)}
                             selectItemCallback={selectItem}/>);
 
     if(!props.selectedItems[item.name] || props.selectedItems[item.name] == false){
@@ -48,7 +48,7 @@ const ResourceIndexTable = (props) => {
 
   return(
     <table className="table">
-      <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn} allSelected={all_selected}/>
+      <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn} allSelected={props.allSelected}/>
       <tbody>
         {resource_items}
       </tbody>

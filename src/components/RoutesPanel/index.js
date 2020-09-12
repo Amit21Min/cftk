@@ -16,7 +16,8 @@ import "./index.css";
 
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
-
+  const [selectedResources, setSelectedResources] = useState({});
+  const [selectedAllResources, setSelectedAllResources] = useState(false);
   const [routeMetrics, setRouteMetrics] = useState({
     total_assigned: "0",
     ready_to_be_assigned: "1",
@@ -24,7 +25,7 @@ const RoutesPanel = () => {
     delta_from_last_canning: "N/A"
   });
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
-  const [selectedResources, setSelectedResources] = useState({});
+
 
 // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
   const [routeColumnNames, setRouteColumnNames] = useState({selectbox: "",
@@ -44,19 +45,6 @@ const RoutesPanel = () => {
     console.log(queryState);
   }
 
-  const selectRoute = (route_key, option) => {
-    let new_selected_resources = Object.assign({}, selectedResources);
-    new_selected_resources[route_key] = option;
-    setSelectedResources(new_selected_resources);
-  }
-
-  const selectAllRoutes = (option) => {
-    let new_selected_resources = Object.assign({}, selectedResources)
-    Object.keys(new_selected_resources).forEach(r => new_selected_resources[r] = option);
-    setSelectedResources(new_selected_resources);
-    console.log(selectedResources);
-  }
-
   // handles click events on ResourceIndexTableHeaders
   const selectColumnHandler = (column_message) => {
       switch(column_message.type){
@@ -68,17 +56,21 @@ const RoutesPanel = () => {
       }
   }
 
+  const selectRoute = (route_key, option) => {
+    let new_selected_resources = Object.assign({}, selectedResources);
+    new_selected_resources[route_key] = option;
+    setSelectedResources(new_selected_resources);
+  }
+
+  const selectAllRoutes = (option) => {
+    setSelectedAllResources(option);
+  }
+
   // Uses the string of a column title to alter the routes query
   const sortRoutes = (column_string) => {
     let new_query = Object.assign({}, queryState, {sort: column_string});
     setQueryState(new_query);
     console.log(queryState);
-  }
-
-  const handleRouteSelect = (route_key) => {
-    let new_selected_resources = Object.assign({}, selectedResources);
-    new_selected_resources[route_key] = true;
-    setSelectedResources(new_selected_resources);
   }
 
   // Takes routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
@@ -115,7 +107,6 @@ const RoutesPanel = () => {
           });
         }
       }
-    console.log(tabled_routes);
     return tabled_routes;
   }
 
@@ -132,6 +123,8 @@ const RoutesPanel = () => {
     });
   }, []);
 
+
+
   let screen;
   if(routes){
     screen = <div className="panel-screen">
@@ -145,6 +138,7 @@ const RoutesPanel = () => {
                     items={tableTransform(routes)}
                     columns={routeColumnNames}
                     selectedItems={selectedResources}
+                    allSelected={selectedAllResources}
                     selectItemCallback={selectRoute}
                     selectColumnCallback={selectColumnHandler}
                 />
