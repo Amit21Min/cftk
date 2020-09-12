@@ -8,6 +8,7 @@ const NewRoutePanel = () => {
   // TODO 4: Deal with donation amount not necessarily being a number value
   // TODO 5: Figure out required functionality
 
+
   // variables used in the state
   const [routeName, setRouteName] = useState('');
   const [currStreet, setCurrStreet] = useState('');
@@ -17,13 +18,21 @@ const NewRoutePanel = () => {
   const [currNote, setCurrNote] = useState('');
   const [volNotes, setVolNotes] = useState([]);
 
-  const updateInput = (e, setter) => {
+
+  const defaultQuery = 'University+of+North+Carolina+Chapel+Hill';
+  const defaultOrigin = 'University+of+North+Carolina+Chapel+Hill';
+  const [mapURL, setMapURL] = useState(parseQuery(defaultQuery));
+
+
+
+
+  function updateInput(e, setter) {
     // Executes the passed in setter, allows for additional functionality afterwards as well
     setter(e.target.value)
     console.log(e.target.value)
   }
 
-  const updateStreetList = e => {
+  function addToStreetList(e) {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
@@ -37,9 +46,21 @@ const NewRoutePanel = () => {
 
     setStreetNames([...streetNames, currStreet]);
     setCurrStreet('');
+    mapRoute([...streetNames, currStreet]);
   }
 
-  const updateNoteList = e => {
+  function removeFromStreetList(e, toRemove) {
+    e.preventDefault();
+    let newStreets = streetNames.filter(name => name !== toRemove);
+    setStreetNames(newStreets);
+    if (newStreets.length > 0) {
+      mapRoute(newStreets);
+    } else {
+      setMapURL(parseQuery(defaultQuery))
+    }
+  }
+
+  function addToNoteList(e) {
     // Adds note to list as long as the note is not already included or the input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
@@ -55,23 +76,22 @@ const NewRoutePanel = () => {
     setCurrNote('');
   }
 
-  const handleDateFocus = e => {
+  function removeFromNoteList(e, toRemove) {
+    e.preventDefault();
+    setVolNotes(volNotes.filter(note => note !== toRemove));
+  }
+
+  function handleDateFocus(e) {
     // When clicking on input, switches input type to date. Allows for placeholder text
     e.currentTarget.type = 'date';
   }
 
-  const handleDateBlur = e => {
+  function handleDateBlur(e) {
     // Changes input back to text if it is empty so placeholder text can still be shown
     if (canningDate === '' || canningDate === 'mm/dd/yy') e.currentTarget.type = 'text';
   }
 
-  const getHouse = (street, houseNumber) => {
-    // Returns link for google maps iframe
-    var address = `${houseNumber}+${street}`;
-    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
-  }
-
-  const saveForm = e => {
+  function saveForm() {
     // Executes when save button is clicked.
     // Alerts and doesn't save if required inputs are not filled (Placeholder)
     if (routeName === '') {
@@ -89,14 +109,44 @@ const NewRoutePanel = () => {
       date: canningDate,
       donations: numDonated,
       notes: volNotes,
-      created: new Date()
+      created: new Date().toString()
     })
   }
 
-  // Google map implementation is a placeholder from ViewHouseProperties
-  let street = "Hillsborough+Street";
-  let houseNumber = "425";
-  let source = getHouse(street, houseNumber);
+
+
+
+  function searchMap(e) {
+    // generates and sets a new map url for map
+    if (e.target.value.length > 0){
+      let query = parseQuery(e.target.value)
+      setMapURL(query);
+    } else if (streetNames.length > 0) {
+      mapRoute(streetNames);
+    } else {
+      setMapURL(parseQuery(defaultQuery))
+    }
+  }
+
+  function parseQuery(query) {
+    query.replace(' ', '+');
+    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${query}`;
+  }
+
+  function mapRoute(streets) {
+    let waypoints = '';
+    streets.forEach(street => {
+      waypoints += `${street.replace(' ', '+')}|`
+    })
+    setMapURL(`https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_MAPS_API_KEY}
+    &origin=${defaultQuery}
+    &destination=${defaultQuery}
+    &waypoints=${waypoints.substring(0, waypoints.length - 1)}`);
+  }
+
+
+
+
 
   return (
     <div>
@@ -113,16 +163,16 @@ const NewRoutePanel = () => {
             <div>
               {/* List to render street names, starts empty */}
               {streetNames.map(street => (
-                // Holds street names in buttons, onClick functionality to be dealt with later
-                <button className="button" key={street}>{street}</button>
+                // Holds street names in buttons, temporarily in buttons. Will figure out details later
+                <button className="button" key={street} onClick={(e) => removeFromStreetList(e, street)}>{street}</button>
               ))}
             </div>
             <div className="field is-grouped">
               <div className="control">
-                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => updateInput(e, setCurrStreet)} />
+                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => {updateInput(e, setCurrStreet); searchMap(e)}} />
               </div>
               {/* Pushes current street to list, then clears input */}
-              <button className="button" onClick={updateStreetList}>Add</button>
+              <button className="button" onClick={addToStreetList}>Add</button>
             </div>
             <h1>Last Canning Data</h1>
             <div className="field">
@@ -141,7 +191,7 @@ const NewRoutePanel = () => {
               {/* List to render volunteer notes, starts empty */}
               {volNotes.map(note => (
                 // Holds street names in buttons, onClick functionality to be dealt with later
-                <button className="button" key={note}>{note}</button>
+                <button className="button" key={note} onClick={(e) => removeFromNoteList(e, note)}>{note}</button>
               ))}
             </div>
             <div className="field is-grouped">
@@ -149,7 +199,7 @@ const NewRoutePanel = () => {
                 {/* Pushes current note to list, then clears input */}
                 <input className="input" type="text" placeholder="Note" value={currNote} onChange={(e) => updateInput(e, setCurrNote)} />
               </div>
-              <button className="button" onClick={updateNoteList}>Add</button>
+              <button className="button" onClick={addToNoteList}>Add</button>
             </div>
           </form>
         </div>
@@ -160,7 +210,7 @@ const NewRoutePanel = () => {
               width="600"
               height="450"
               frameBorder="0" styles="border:0"
-              src={source}
+              src={mapURL}
               allowFullScreen>
             </iframe>
           </div>
