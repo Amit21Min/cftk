@@ -16,8 +16,9 @@ const ResourceIndexTableHeader = (props) => {
                         </th>;
         break;
       default:
+        //on Click, a column header will send its self to perform an action, like sorting --> 
         column_header = <th key={key}
-                          onClick={props.selectColumnCallback.bind(this, {column_message: key})}> // on Click, a column header will send its self to perform an action, like sorting 
+                          onClick={props.selectColumnCallback.bind(this, {column_message: key})}>
                           {value}
                         </th>;
     }
