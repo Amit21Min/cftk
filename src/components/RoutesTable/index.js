@@ -25,7 +25,7 @@ const RoutesTable = (props) => {
         <AddButton clickCallback={newRoute}  route={ROUTES.ADMIN_ROUTES_NEW}/>
       </div>
       <div className="route-table">
-        <table class="table" key="table">
+        <table className="table" key="table">
           <thead>
             <tr>
               <th><abbr title="name">Name</abbr></th>
@@ -38,7 +38,7 @@ const RoutesTable = (props) => {
           {routes.map((route) =>
             <tr key={route.name}>
               <th>{route.name}</th>
-              <th>${route.canningData.totalDonations}</th>
+              <th>{route.canningData.totalDonations}</th>
               <th>{route.canningData.lastCanned.toDate().toString()}</th>
               <th>{route.assignmentStatus.toString()}</th>
             </tr>

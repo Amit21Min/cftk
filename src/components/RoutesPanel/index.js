@@ -19,7 +19,7 @@ const RoutesPanel = () => {
   });
 
   useEffect(() => {
-    db.collection('Routes').onSnapshot(snapshot => {
+    db.collection('tempRoutes').onSnapshot(snapshot => {
       const allRoutes = snapshot.docs.map((route) => ({
         ...route.data()
       }));
