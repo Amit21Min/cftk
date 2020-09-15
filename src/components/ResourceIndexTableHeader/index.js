@@ -13,7 +13,8 @@ const ResourceIndexTableHeader = (props) => {
                             onChange={props.selectColumnCallback.bind(this, {type: "select-all", option: !props.allSelected})}/>
                         </th>;
         break;
-      case 'overflow-item':
+      case 'overflow':
+        column_header = <th key={column.field} onClick={props.selectColumnCallback.bind(this, {type: "overflow-all"})}>...</th>
         break;
       case 'drop-down-parent':
       case 'text':

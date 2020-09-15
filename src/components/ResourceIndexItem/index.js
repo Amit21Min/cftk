@@ -22,6 +22,7 @@ const ResourceIndexItem = (props) => {
           break;
         case 'overflow-menu':
           // Needs to be established
+          cell = <td key={column.field}>{props.data[column.field] || "..."}</td>;
           break;
         case 'drop-down-parent':
         case 'text':

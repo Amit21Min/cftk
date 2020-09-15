@@ -42,7 +42,8 @@ const RoutesPanel = () => {
     {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
     {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
     {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
-    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"}
+    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
+    {field: "overflow",              type: "overflow",         html_text: ""}
   ]);
 
 
@@ -60,6 +61,9 @@ const RoutesPanel = () => {
       switch(column_message.type){
         case "select-all":
           selectAllRoutes(column_message.option);
+          break;
+        case "overflow-all":
+          console.log("show the overflow menu for many items");
           break;
         default:
           sortRoutes(column_message.query_string);
@@ -116,7 +120,8 @@ const RoutesPanel = () => {
             amount_collected: total_donations,
             household_avg: null,
             outreach_pct: null,
-            soliciting_pct: null
+            soliciting_pct: null,
+            overflow: "..."
           });
         }
       }
@@ -136,9 +141,8 @@ const RoutesPanel = () => {
     });
   }, []);
 
-
-
   let screen;
+
   if(routes){
     screen = <div className="panel-screen">
                 <RouteMetrics metrics={routeMetrics}/>
