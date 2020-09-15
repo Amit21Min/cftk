@@ -16,18 +16,25 @@ import "./index.css";
 
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
-  const [selectedResources, setSelectedResources] = useState({});
-  const [selectedAllResources, setSelectedAllResources] = useState(false);
   const [routeMetrics, setRouteMetrics] = useState({
     total_assigned: "0",
     ready_to_be_assigned: "1",
     donations_this_year: "$300",
     delta_from_last_canning: "N/A"
   });
+
+  // These state objects are used to keep track of which items within the ResourceIndexTable are selected (in order to perform bulk delete/update operations)
+  const [selectedResources, setSelectedResources] = useState({});
+    // This is an override toggle- when true, will signal that all items within the generated table are to be treated as selected.
+  const [selectedAllResources, setSelectedAllResources] = useState(false);
+
+
+  // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
 
 
-// Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
+  // This is used by a ResourceIndexTable to define the column names of an html table, as well as to fit the data from each row into the appropriate column.
+  // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
   const [routeColumnNames, setRouteColumnNames] = useState({selectbox: "",
                     name: "Name",
                     assignment_status: "Assignment Status",
@@ -38,14 +45,15 @@ const RoutesPanel = () => {
                     soliciting_pct: "Allows Soliciting"
                   });
 
-
+  // A function which sends a GET request to firebase for a filtered result set of Routes. This function is used by a searchBar.
   const searchRoutes = (query_string) => {
     let new_query = Object.assign({}, queryState, {queryString: query_string});
     setQueryState(new_query);
     console.log(queryState);
   }
 
-  // handles click events on ResourceIndexTableHeaders
+  // Is passed to ResourceIndexTable, which passes it to, and handles click events for, ResourceIndexTableHeaders.
+  // Expects a .type within the arg object to tell it what operation to perform.
   const selectColumnHandler = (column_message) => {
       switch(column_message.type){
         case "select-all":
@@ -56,12 +64,15 @@ const RoutesPanel = () => {
       }
   }
 
+  // This function is passed to a ResourceIndexTable, which will then pass it to the table's child ResourceIndexItems. When an item's row in the html table is selected,
+  // its ID will be added to the state object for selected resources
   const selectRoute = (route_key, option) => {
     let new_selected_resources = Object.assign({}, selectedResources);
     new_selected_resources[route_key] = option;
     setSelectedResources(new_selected_resources);
   }
 
+  // Does the same as selectRoute, but applies to the selectAllResources state object instead
   const selectAllRoutes = (option) => {
     setSelectedAllResources(option);
   }
@@ -74,7 +85,6 @@ const RoutesPanel = () => {
   }
 
   // Takes routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
-  //  In general, provides info for keys of routeColumnNames
   const tableTransform = (routes) => {
     let tabled_routes = [];
     for(let i = 0; i < routes.length; i++){
@@ -84,6 +94,7 @@ const RoutesPanel = () => {
       if(routes[i].name){
         if(routes[i].canningData){
           if(routes[i].canningData.lastCanned){
+            // Example calculation for months_since_assigned
             let now = new Date();
             let last_assigned = new Date(routes[i].canningData.lastCanned.toDate());
             let years_since_assigned = now.getFullYear() - last_assigned.getFullYear();
@@ -135,7 +146,7 @@ const RoutesPanel = () => {
                   <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
                 </div>
                 <ResourceIndexTable
-                    items={tableTransform(routes)}
+                    items={tableTransform(routes)} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
                     columns={routeColumnNames}
                     selectedItems={selectedResources}
                     allSelected={selectedAllResources}
