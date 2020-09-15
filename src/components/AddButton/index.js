@@ -18,7 +18,7 @@ const AddButton = (props) => {
       <button className="button-circle blue" onClick={props.clickCallback} to={props.route}>
         +
       </button>
-    )   
+    )
   }
 
 };
