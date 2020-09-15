@@ -35,15 +35,17 @@ const RoutesPanel = () => {
 
   // This is used by a ResourceIndexTable to define the column names of an html table, as well as to fit the data from each row into the appropriate column.
   // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
-  const [routeColumnNames, setRouteColumnNames] = useState({selectbox: "",
-                    name: "Name",
-                    assignment_status: "Assignment Status",
-                    months_since_assigned: "Months Since Last Assigned",
-                    amount_collected: "Previous Canning Donations",
-                    household_avg: "Average Donation per Household",
-                    outreach_pct: "Wants to Learn More",
-                    soliciting_pct: "Allows Soliciting"
-                  });
+  const [routeColumnNames, setRouteColumnNames] = useState([
+    {field: "selectbox",             type: "selectbox",        html_text: ""},
+    {field: "name",                  type: "drop-down-parent", html_text: "Name"},
+    {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
+    {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
+    {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
+    {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
+    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"}
+  ]);
+
+
 
   // A function which sends a GET request to firebase for a filtered result set of Routes. This function is used by a searchBar.
   const searchRoutes = (query_string) => {
