@@ -19,8 +19,11 @@ const OverflowMenu = (props) => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
-    // callback ? callback() : console.log("no callback");
+  const handleClose = (event, callback) => {
+    // If there is a callback available, fire it. Arguments for the callback must be bound before/while being passed in as props to this component
+    if(callback){
+      callback();
+    };
     if(anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
@@ -51,8 +54,8 @@ const OverflowMenu = (props) => {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow">
-                    {props.items.map((item) => (
-                      <MenuItem key={item.text} onClick={handleClose}>{item.text}</MenuItem>
+                    {props.items.map((item, index) => (
+                      <MenuItem key={index} onClick={(event) => handleClose(event, item.action)}>{item.text}</MenuItem>
                     ))}
                   </MenuList>
                 </ClickAwayListener>
