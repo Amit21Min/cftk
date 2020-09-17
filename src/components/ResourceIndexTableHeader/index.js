@@ -1,4 +1,5 @@
 import React from 'react';
+import OverflowMenu from '../OverflowMenu';
 
 // Populates and handles actions for the column headers of a ResourceIndexTable
 const ResourceIndexTableHeader = (props) => {
@@ -13,8 +14,12 @@ const ResourceIndexTableHeader = (props) => {
                             onChange={props.selectColumnCallback.bind(this, {type: "select-all", option: !props.allSelected})}/>
                         </th>;
         break;
-      case 'overflow':
-        column_header = <th key={column.field} onClick={props.selectColumnCallback.bind(this, {type: "overflow-all"})}>...</th>
+      case 'overflow-menu':
+        column_header = <th key={column.field}>
+                          <OverflowMenu key={column.field}
+                                        items={column.overflow_items} //requires that the props.data[column.field] returns an object with a defined overflow_items key
+                          />
+                       </th>
         break;
       case 'drop-down-parent':
       case 'text':

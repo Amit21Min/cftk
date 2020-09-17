@@ -32,6 +32,31 @@ const RoutesPanel = () => {
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
 
+  // ===========================================================================
+  //                        Overflow Action Methods
+  // ===========================================================================
+  const editRouteAction  = (route_id) => {
+    console.log("editing route id: " + route_id);
+  }
+  const assignRouteAction = () => {
+    console.log("assigning route");
+  }
+  const housePropertiesAction = () => {
+    console.log("house properties");
+  }
+  const revisionHistoryAction = () => {
+    console.log("revision history");
+  }
+  const deleteRouteAction = (route_id) => {
+    console.log("deleting route id: " + route_id);
+  }
+  // These ones are used by the overflow in the column header
+  const assignAllAction = () => {
+    console.log("Assigning all routes");
+  }
+  const deleteAllAction = () => {
+    console.log("Deleting all routes");
+  }
 
   // This is used by a ResourceIndexTable to define the column names of an html table, as well as to fit the data from each row into the appropriate column.
   // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
@@ -43,7 +68,11 @@ const RoutesPanel = () => {
     {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
     {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
     {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
-    {field: "overflow",              type: "overflow-menu",    html_text: ""}
+    {field: "overflow",              type: "overflow-menu",    overflow_items: [
+                                                                {text: "Assign All", action: assignAllAction}, // because this field has type "overflow-menu" it requires an overflow_items list, which will be provided to an OverflowMenu component
+                                                                {text: "Delete All", action: deleteAllAction}
+                                                               ]
+    }
   ]);
 
 
@@ -61,9 +90,6 @@ const RoutesPanel = () => {
       switch(column_message.type){
         case "select-all":
           selectAllRoutes(column_message.option);
-          break;
-        case "overflow-all":
-          console.log("show the overflow menu for many items");
           break;
         default:
           sortRoutes(column_message.query_string);
@@ -88,25 +114,6 @@ const RoutesPanel = () => {
     let new_query = Object.assign({}, queryState, {sort: column_string});
     setQueryState(new_query);
     console.log(queryState);
-  }
-
-  // ===========================================================================
-  //                        Overflow Action Methods
-  // ===========================================================================
-  const editRouteAction  = (route_id) => {
-    console.log("editing route id: " + route_id);
-  }
-  const assignRouteAction = () => {
-    console.log("assigning route");
-  }
-  const housePropertiesAction = () => {
-    console.log("house properties");
-  }
-  const revisionHistoryAction = () => {
-    console.log("revision history");
-  }
-  const deleteRouteAction = (route_id) => {
-    console.log("deleting route id: " + route_id);
   }
 
   // Takes routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
