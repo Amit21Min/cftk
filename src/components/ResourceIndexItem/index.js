@@ -1,4 +1,5 @@
 import React from 'react';
+import OverflowMenu from '../OverflowMenu';
 
 import "./index.css";
 
@@ -22,7 +23,11 @@ const ResourceIndexItem = (props) => {
           break;
         case 'overflow-menu':
           // Needs to be established
-          cell = <td key={column.field}>{props.data[column.field] || "..."}</td>;
+          cell = <td key={column.field}>
+                  <OverflowMenu key={column.field}
+                                items={props.data[column.field].overflow_items} //requires that the props.data[column.field] returns an object with a defined overflow_items key
+                  />
+                 </td>;
           break;
         case 'drop-down-parent':
         case 'text':

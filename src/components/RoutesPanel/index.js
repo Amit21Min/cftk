@@ -43,7 +43,7 @@ const RoutesPanel = () => {
     {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
     {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
     {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
-    {field: "overflow",              type: "overflow",         html_text: ""}
+    {field: "overflow",              type: "overflow-menu",    html_text: ""}
   ]);
 
 
@@ -90,6 +90,25 @@ const RoutesPanel = () => {
     console.log(queryState);
   }
 
+  // ===========================================================================
+  //                        Overflow Action Methods
+  // ===========================================================================
+  const editRouteAction  = (route_id) => {
+    console.log("editing route id: " + route_id);
+  }
+  const assignRouteAction = () => {
+    console.log("assigning route");
+  }
+  const housePropertiesAction = () => {
+    console.log("house properties");
+  }
+  const revisionHistoryAction = () => {
+    console.log("revision history");
+  }
+  const deleteRouteAction = (route_id) => {
+    console.log("deleting route id: " + route_id);
+  }
+
   // Takes routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
   const tableTransform = (routes) => {
     let tabled_routes = [];
@@ -121,7 +140,12 @@ const RoutesPanel = () => {
             household_avg: null,
             outreach_pct: null,
             soliciting_pct: null,
-            overflow: "..."
+            overflow: {overflow_items: [{text: "Edit", action: () => editRouteAction(routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                        {text: "Assign", action: assignRouteAction},
+                                        {text: "House Properties", action: housePropertiesAction},
+                                        {text: "Revision History", action: revisionHistoryAction},
+                                        {text: "Delete", action: () => deleteRouteAction(routes[i].name)}
+                                       ]}
           });
         }
       }
