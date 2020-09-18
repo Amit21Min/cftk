@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './style.css'
 import SearchBar from '../SearchBar'
+import {db} from '../Firebase/firebase';
 
 // FOR CREATE/UPDATE ROUTES PAGE - build a list of origin+destinations to display a route on google maps
 // EXAMPLE FUNCTION CALL - var source = getRoute(["Franklin+St", "Hillsborough+St", "Bolinwood+Dr", "N+Boundary+St"]);
@@ -28,6 +29,64 @@ function getHouse(street, houseNumber) {
 }
 
 const ViewHouseProperties = () => {
+
+    const [house, setHouse] = useState({
+        street: "Hillsborough Street",
+        house_number: "425",
+    });
+    
+    const [data, setData] = useState({
+        lastDonation: null,
+        solicitationAllowed: null,
+        learnMore: null,
+        comments: [{
+            comment: null,
+            date: null,
+            group: null
+        }]
+    });
+
+    useEffect(() => {
+        db.collection("House").doc("model").get().then(doc => {
+            const data = doc.data();
+            console.log(data);
+            let all_comments = [];
+            for(let i = 0; i < data.visits.length; i++){
+                all_comments.push({
+                    comment: data.visits[i].comment,
+                    date: data.visits[i].date.toDate().toDateString(),
+                    group: data.visits[i].group
+                });
+            }
+            setData({
+                lastDonation: data.visits[data.visits.length-1].donationAmount,
+                solicitationAllowed: data.visits[data.visits.length-1].solicitationAllowed,
+                learnMore: data.visits[data.visits.length-1].learnMore,
+                comments: all_comments
+            });
+        })
+    });
+
+    const solicitationAllowedText = () => {
+        return data.solicitationAllowed ? "Allowed" : "Not Allowed";
+    }
+
+    const learnMoreText = () => {
+        return data.learnMore ? "Yes" : "No";
+    }
+
+    const getComment = (index) => {
+        return data.comments[0].comment;
+    }
+
+    const getGroup = (index) => {
+        return data.comments[0].group;
+    }
+
+    const getDate = (index) => {
+        return data.comments[0].date;
+    }
+
     // TODO - get street number + House number from input boxes and pass/store here dynamically
     var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
     var houseNumber = "425"; // get from input box, dynamically update and re-render
@@ -49,16 +108,16 @@ const ViewHouseProperties = () => {
         </div>
         <div className="notes">
             <strong>Donations from last canning:</strong>
-            <h6>$0</h6>
+            <h6>${data.lastDonation}</h6>
             <strong>Solicitation:</strong>
-            <h6>Not allowed</h6>
+            <h6>{solicitationAllowedText()}</h6>
             <strong>Wants to learn more about CFTK:</strong>
-            <h6>No</h6>
+            <h6>{learnMoreText()}</h6>
             <strong>Volunteer comments:</strong>
             <div class="comment">
                 <div>
-                    <h6>no one was home</h6>
-                    <small>Group 7 | 09/12/2020</small>
+                    <h6>{getComment(0)}</h6>
+                    <small>Group {getGroup(0)} | {getDate(0)}</small>
                 </div>
             </div>
         </div>
