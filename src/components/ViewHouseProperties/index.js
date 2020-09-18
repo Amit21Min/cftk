@@ -35,20 +35,20 @@ const ViewHouseProperties = () => {
 
     return(
     <div>
-        <h2 className="title">View House Properties</h2>
+        <h2 className="title">Hillsborough Street House Properties</h2>
         <SearchBar prompt="Search house number"/>
         <label className="label">Or select a house on the map</label>
         <div className="google_map">
-        <iframe title="viewHouse"
-            width="600"
-            height="450"
-            frameBorder="0" styles="border:0"
-            src={source}
-            allowFullScreen>
-        </iframe>
+            <iframe title="viewHouse"
+                width="600"
+                height="450"
+                frameBorder="0" styles="border:0"
+                src={source}
+                allowFullScreen>
+            </iframe>
         </div>
         <div className="notes">
-            <strong> Amount collected from last canning:</strong>
+            <strong>Donations from last canning:</strong>
             <h6>$0</h6>
             <strong>Solicitation:</strong>
             <h6>Not allowed</h6>
@@ -56,10 +56,9 @@ const ViewHouseProperties = () => {
             <h6>No</h6>
             <strong>Volunteer comments:</strong>
             <div class="comment">
-                <img src="https://t4.ftcdn.net/jpg/00/64/67/63/240_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" alt="default" height="50" width="50" ></img>
                 <div>
                     <h6>no one was home</h6>
-                    <small>Anna Vu 09/12/2020</small>
+                    <small>Group 7 | 09/12/2020</small>
                 </div>
             </div>
         </div>
