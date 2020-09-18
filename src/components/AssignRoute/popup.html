@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+    <button onclick="pop()">Click</button>
+
+
+
+    <div class="zhezhao" id='popup'>
+
+
+
+        <div class="tankuang">
+
+            <!--
+				<div id="header">
+					<span>我是弹窗</span>
+					<div id="header-right" onclick="hidder()">x</div>
+                </div>-->
+
+            <h3 class="title">Assign {street name}</h3>
+            <form>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Group Name" name="username" autofocus />
+
+                    </div>
+                    <p class="help">Using volunteer database</p>
+                </div>
+
+                <div class="field">
+                    <div class="control" id="input">
+                        <input class="input" type="text" placeholder="password12345" id="linkinput" />
+                    </div>
+                    <button class="button is-info" onclick="copy()">COPY</button>
+                    <p class="help">Using a link that anyone can access</p>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="1234567890" name="tel" />
+                    </div>
+                    <p class="help">Using phone numbers</p>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="email" placeholder="example@example.com" name="email" />
+                    </div>
+                    <p class="help">Using emails</p>
+                </div>
+
+                <div class="bottom">
+                    <div class="control">
+                        <button class="button is-info is-inverted" onclick="hidder()">CANCEL</button>
+                        <button class="button is-info" onclick="assign()">ASSIGN</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        document.getElementById('popup').style.display = "none";
+        function pop() {
+            document.getElementById('popup').style.display = "";
+        }
+        function hidder() {
+            document.getElementById('popup').style.display = "none";
+        }
+        function assign() {
+            alert("Street name has been assigned to group #");
+        }
+        function copy() {
+            /* Get the text field */
+            var copyText = document.getElementById("linkinput");
+
+            /* Select the text field */
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            /* Copy the text inside the text field */
+            document.execCommand("copy");
+
+            /* Alert the copied text */
+            alert("Link has been copied to your clipboard");
+        }
+    </script>
+</body>
+
+</html>
