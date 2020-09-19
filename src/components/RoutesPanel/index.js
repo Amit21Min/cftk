@@ -32,18 +32,50 @@ const RoutesPanel = () => {
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
 
+  // ===========================================================================
+  //                        Overflow Action Methods
+  // ===========================================================================
+  const editRouteAction  = (route_id) => {
+    console.log("editing route id: " + route_id);
+  }
+  const assignRouteAction = () => {
+    console.log("assigning route");
+  }
+  const housePropertiesAction = () => {
+    console.log("house properties");
+  }
+  const revisionHistoryAction = () => {
+    console.log("revision history");
+  }
+  const deleteRouteAction = (route_id) => {
+    console.log("deleting route id: " + route_id);
+  }
+  // These ones are used by the overflow in the column header
+  const assignAllAction = () => {
+    console.log("Assigning all routes");
+  }
+  const deleteAllAction = () => {
+    console.log("Deleting all routes");
+  }
 
   // This is used by a ResourceIndexTable to define the column names of an html table, as well as to fit the data from each row into the appropriate column.
   // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
-  const [routeColumnNames, setRouteColumnNames] = useState({selectbox: "",
-                    name: "Name",
-                    assignment_status: "Assignment Status",
-                    months_since_assigned: "Months Since Last Assigned",
-                    amount_collected: "Previous Canning Donations",
-                    household_avg: "Average Donation per Household",
-                    outreach_pct: "Wants to Learn More",
-                    soliciting_pct: "Allows Soliciting"
-                  });
+  const [routeColumnNames, setRouteColumnNames] = useState([
+    {field: "selectbox",             type: "selectbox",        html_text: ""},
+    {field: "name",                  type: "drop-down-parent", html_text: "Name"},
+    {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
+    {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
+    {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
+    {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
+    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
+    {field: "overflow",              type: "overflow-menu",    overflow_items: [
+                                                                {text: "Assign All", action: assignAllAction}, // because this field has type "overflow-menu" it requires an overflow_items list, which will be provided to an OverflowMenu component
+                                                                {text: "Delete All", action: deleteAllAction}
+                                                               ]
+    }
+  ]);
+
+
 
   // A function which sends a GET request to firebase for a filtered result set of Routes. This function is used by a searchBar.
   const searchRoutes = (query_string) => {
@@ -114,7 +146,13 @@ const RoutesPanel = () => {
             amount_collected: total_donations,
             household_avg: null,
             outreach_pct: null,
-            soliciting_pct: null
+            soliciting_pct: null,
+            overflow: {overflow_items: [{text: "Edit", action: () => editRouteAction(routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                        {text: "Assign", action: assignRouteAction},
+                                        {text: "House Properties", action: housePropertiesAction},
+                                        {text: "Revision History", action: revisionHistoryAction},
+                                        {text: "Delete", action: () => deleteRouteAction(routes[i].name)}
+                                       ]}
           });
         }
       }
@@ -134,9 +172,8 @@ const RoutesPanel = () => {
     });
   }, []);
 
-
-
   let screen;
+
   if(routes){
     screen = <div className="panel-screen">
                 <RouteMetrics metrics={routeMetrics}/>
