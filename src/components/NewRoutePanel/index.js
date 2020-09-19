@@ -117,6 +117,7 @@ const NewRoutePanel = () => {
 
 
 
+  // Map Sandbox
 
   function searchMap(e) {
     // generates and sets a new map url for map
@@ -229,7 +230,7 @@ const NewRoutePanel = () => {
             <FormGroup>
               <TextField label="Name" variant="filled" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
               <div className="new-route-grouped-input">
-                <TextField label="Streets" variant="filled" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e) }} />
+                <TextField label="Streets" variant="filled" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e); }} />
                 <Button color="primary" disabled={currStreet.length === 0} onClick={addToStreetList}>Add</Button>
               </div>
               <div>
