@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-//import db from '../Firebase/firebase.js';
+// import db from '../Firebase/firebase.js';
 import {storeRouteData} from '../RouteModels/routes';
 const NewRoutePanel = () => {
 
@@ -87,8 +87,10 @@ const NewRoutePanel = () => {
 
     storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
     
-
   }
+
+  
+
 
   // Google map implementation is a placeholder from ViewHouseProperties
   let street = "Hillsborough+Street";
