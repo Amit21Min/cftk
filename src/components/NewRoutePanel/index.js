@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import routeData from '../RouteModels/model1.js'
-import db from '../Firebase/firebase.js'
-
+//import db from '../Firebase/firebase.js';
+import {storeRouteData} from '../RouteModels/routes';
 const NewRoutePanel = () => {
 
   // TODO 1: Implement donation, route, and house metrics
@@ -40,6 +39,8 @@ const NewRoutePanel = () => {
     setStreetNames([...streetNames, currStreet]);
     setCurrStreet('');
   }
+
+  
 
   const updateNoteList = e => {
     // Adds note to list as long as the note is not already included or the input is not empty
@@ -84,35 +85,9 @@ const NewRoutePanel = () => {
       return;
     }
 
-    // Currently only logs form information to console
-  
-    const routeData={
-      name: routeName,
-      street: streetNames,
-      assignmentStatus: false,
-      monthLastAssigned: 0,
-      prevDonation: numDonated,
-      avgDonation: 0.0,
-      learnMore: 0.0,
-      soliciting: 0.0,
-      uid: new Date().getTime()
-    }
-  
-    // adding data here
-    db.collection("Routes")
-      .doc(routeData.uid.toString())
-      .set(routeData);
+    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
+    
 
-    /*
-    console.log({
-      name: routeName,
-      streets: streetNames,
-      date: canningDate,
-      donations: numDonated,
-      notes: volNotes,
-      created: new Date()
-    })
-    */
   }
 
   // Google map implementation is a placeholder from ViewHouseProperties
@@ -196,3 +171,4 @@ const NewRoutePanel = () => {
 };
 
 export default NewRoutePanel;
+
