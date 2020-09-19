@@ -10,7 +10,7 @@ const SearchBar = (props) => {
 
   return(
     <div className="search-bar">
-      <input type="text" class="search-bar-input" placeholder="Search..." onChange={updateQuery}/>
+      <input type="text" className="search-bar-input" placeholder="Search..." onChange={updateQuery}/>
       <div className="icon-container"/>
     </div>
   );
