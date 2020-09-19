@@ -147,10 +147,6 @@ const NewRoutePanel = () => {
     &waypoints=${waypoints.substring(0, waypoints.length - 1)}`);
   }
 
-
-
-
-
   return (
     <div>
       <h1 className="title">New Route</h1>
