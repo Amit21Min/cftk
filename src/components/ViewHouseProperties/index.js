@@ -98,16 +98,6 @@ const ViewHouseProperties = () => {
         <SearchBar prompt="Search house number"/>
         <label className="label">Or select a house on the map</label>
         <div className="google_map">
-<<<<<<< HEAD
-        {/* <iframe title="viewHouse"
-            width="600"
-            height="450"
-            frameBorder="0" styles="border:0"
-            src={source}
-            allowFullScreen>
-        </iframe> */}
-            <MapContainer/>
-=======
             <iframe title="viewHouse"
                 width="600"
                 height="450"
@@ -115,7 +105,6 @@ const ViewHouseProperties = () => {
                 src={source}
                 allowFullScreen>
             </iframe>
->>>>>>> master
         </div>
         <div className="notes">
             <strong>Donations from last canning:</strong>
