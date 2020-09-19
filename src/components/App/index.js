@@ -10,6 +10,9 @@ import SignInPage from '../SignIn';
 import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
+import EditRoute from '../EditRoute'
+import ViewHousePropertiesPage from '../ViewHouseProperties'
+ 
 
 import Sidebar from '../Sidebar';
 
@@ -26,6 +29,7 @@ const App = () => (
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.ADMIN} component={AdminPage} />
+      <Route path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHousePropertiesPage} />
     </div>
 
     <Sidebar/>

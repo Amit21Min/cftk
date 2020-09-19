@@ -19,12 +19,20 @@ const config = {
   export const signOut = () => {
     firebase.auth().signOut();
   }
+
+  export const db = firebase.firestore();
+
+  // creating new collections
+  // if the collection already exists, it will just move on
+  const routes = db.collection('Routes');
+  const users = db.collection('User');
   /* example of how to use the SignOut function
   <button onClick={signOut}>
     Logout
   </button>
   */
 
+<<<<<<< HEAD
 export const db = firebase.firestore();
 
 // creating new collections
@@ -52,6 +60,8 @@ const dataSet= routes.doc('Example').set(routeData);
 const dataUserSet = users.doc('Example').set(userData);
 
 
+=======
+>>>>>>> master
 export default db;
 export const auth = firebase.auth();
 export const googleSignIn = firebase.auth.GoogleAuthProvider.PROVIDER_ID;
