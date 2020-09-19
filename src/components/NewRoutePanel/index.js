@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+//import db from '../Firebase/firebase.js';
+import {storeRouteData} from '../RouteModels/routes';
 const NewRoutePanel = () => {
 
   // TODO 1: Implement donation, route, and house metrics
@@ -38,6 +39,8 @@ const NewRoutePanel = () => {
     setStreetNames([...streetNames, currStreet]);
     setCurrStreet('');
   }
+
+  
 
   const updateNoteList = e => {
     // Adds note to list as long as the note is not already included or the input is not empty
@@ -82,15 +85,9 @@ const NewRoutePanel = () => {
       return;
     }
 
-    // Currently only logs form information to console
-    console.log({
-      name: routeName,
-      streets: streetNames,
-      date: canningDate,
-      donations: numDonated,
-      notes: volNotes,
-      created: new Date()
-    })
+    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
+    
+
   }
 
   // Google map implementation is a placeholder from ViewHouseProperties

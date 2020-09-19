@@ -1,0 +1,61 @@
+{
+    "uid": 0,
+    "name": [],
+    "streets": [
+        {   "nameStreet":{},
+            "houses": [
+                {
+                    "address":{},
+                    "visitDate": [
+                        {
+                            "date":"mm/dd/yyyy",
+                            "donationAmt": 0,
+                            "solicitation": "True",
+                            "learnMore": "True",
+                            "volunteerComments":"comments"
+                        }
+                    ] 
+                },
+                {
+                    "address":"102",
+                    "visitDate": [
+                        {
+                            "date":"mm/dd/yyyy",
+                            "donationAmt": 0,
+                            "solicitation": "True",
+                            "learnMore": "True",
+                            "volunteerComments":"comments"
+                        }
+                    ] 
+                }
+
+            ]
+            
+        },
+        {   "nameStreet":"street2",
+            "houses": [
+                {
+                    "address":"101",
+                    "visitDate": [
+                        {
+                            "date":"mm/dd/yyyy",
+                            "donationAmt": 0,
+                            "solicitation": "True",
+                            "learnMore": "True",
+                            "volunteerComments":"comments"
+                        }
+                    ] 
+                }
+
+            ]
+            
+        }
+        
+    ],
+    "assignmentStatus": "True",
+    "assignmentDates": "mm/dd/yyyy",
+    "%interest": 0,
+    "%solicitation": 0,
+    "city": "chapel hill",
+    "totalRaised": 0
+}
