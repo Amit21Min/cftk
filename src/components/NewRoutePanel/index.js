@@ -68,8 +68,25 @@ const NewRoutePanel = () => {
   const getHouse = (street, houseNumber) => {
     // Returns link for google maps iframe
     var address = `${houseNumber}+${street}`;
-    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
+    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}&q=112+Campbell+Ln`;
   }
+
+  const getRoute = (streetArray) => {
+    // streetArray needs to be an array of streets, ex. ["Franklin+St", "Hillsborough+St", "Bolinwood+Dr", "N+Boundary+St"]
+    var maps_API = process.env.REACT_APP_MAPS_API_KEY
+    var routeString = "&origin=" + streetArray[0]
+    routeString += "&destination=" + streetArray[streetArray.length - 1]
+    routeString += "&waypoints="
+    for (var i = 1; i < streetArray.length - 1; i++) {
+        routeString += streetArray[i];
+        if (i < streetArray.length - 2) {
+            routeString += "|"
+        }
+    }
+    // example routeString = &origin=Franklin+St&destination=N+Boundary+St&waypoints=Hillsborough+St|Bolinwood+Dr
+    return `https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_MAPS_API_KEY}${routeString}&mode=walking`;
+}
+
 
   const saveForm = e => {
     // Executes when save button is clicked.
@@ -94,9 +111,11 @@ const NewRoutePanel = () => {
   }
 
   // Google map implementation is a placeholder from ViewHouseProperties
-  let street = "Hillsborough+Street";
-  let houseNumber = "425";
+  let street = "Campbell+Ln";
+  let houseNumber = "108";
   let source = getHouse(street, houseNumber);
+  let streets = ["Rose+Ln", "N+Boundary+St", "Campbell+Ln", "N+Boundary+St"]
+  // let source = getRoute(streets);
 
   return (
     <div>

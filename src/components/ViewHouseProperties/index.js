@@ -1,6 +1,7 @@
 import React from 'react';
 import './style.css'
 import SearchBar from '../SearchBar'
+import MapContainer from '../Map'
 
 // FOR CREATE/UPDATE ROUTES PAGE - build a list of origin+destinations to display a route on google maps
 // EXAMPLE FUNCTION CALL - var source = getRoute(["Franklin+St", "Hillsborough+St", "Bolinwood+Dr", "N+Boundary+St"]);
@@ -39,13 +40,14 @@ const ViewHouseProperties = () => {
         <SearchBar prompt="Search house number"/>
         <label className="label">Or select a house on the map</label>
         <div className="google_map">
-        <iframe title="viewHouse"
+        {/* <iframe title="viewHouse"
             width="600"
             height="450"
             frameBorder="0" styles="border:0"
             src={source}
             allowFullScreen>
-        </iframe>
+        </iframe> */}
+            <MapContainer/>
         </div>
         <div className="notes">
             <strong> Amount collected from last canning:</strong>
