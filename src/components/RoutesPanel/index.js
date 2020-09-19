@@ -202,6 +202,9 @@ const RoutesPanel = () => {
       <PanelBanner title="Routes"/>
       {screen}
       <ul>
+        <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li>
+      </ul>
+      <ul>
         <li><Link to={ROUTES.EDIT_ROUTE}>Edit Route</Link></li>
       </ul>
     </div>
