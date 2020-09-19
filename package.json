@@ -13,12 +13,8 @@
     "react-dom": "^16.13.1",
     "react-firebaseui": "^4.1.0",
     "react-router-dom": "^5.2.0",
-<<<<<<< HEAD
-    "react-scripts": "^3.4.3"
-=======
     "react-scripts": "^3.4.3",
     "react-search-field": "^1.1.0"
->>>>>>> master
   },
   "scripts": {
     "start": "react-scripts start",

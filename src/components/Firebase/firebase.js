@@ -32,36 +32,7 @@ const config = {
   </button>
   */
 
-<<<<<<< HEAD
-export const db = firebase.firestore();
 
-// creating new collections
-// if the collection already exists, it will just move on
-const routes = db.collection('Routes');
-const users = db.collection('User');
-
-// example of route data
-const routeData ={
-  routeName: 'Example Route 1',
-  street: "1000 Example Dr., City",
-  donationTotal: 0.0,
-
-  volunteerNotes: ""
-}
-
-const userData = {
-  firstName: "Jane",
-  lastName: "Doe",
-  routes: [routeData]
-}
-
-// adding the documents to the collections
-const dataSet= routes.doc('Example').set(routeData);
-const dataUserSet = users.doc('Example').set(userData);
-
-
-=======
->>>>>>> master
 export default db;
 export const auth = firebase.auth();
 export const googleSignIn = firebase.auth.GoogleAuthProvider.PROVIDER_ID;
