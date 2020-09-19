@@ -1,6 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import IconButton from '@material-ui/core/IconButton';
