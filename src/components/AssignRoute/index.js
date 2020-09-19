@@ -1,69 +1,177 @@
 import React from "react";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import Chip from '@material-ui/core/Chip';
+import Grid from '@material-ui/core/Grid';
 
 const AssignRoute = () => {
+    const [phoneData, setPhoneData] = React.useState([]);
+    const [emailData, setEmailData] = React.useState([]);
 
-    let copy = function() {
-        /* Get the text field */
-        var copyText = document.getElementById("linkinput");
+    //copy link
+    const copy = () => {
+        document.getElementById('link').select();
+        document.execCommand('copy');
+        //e.target.focus(); //highlight selected text
+        //this.setState({ copySuccess: 'Copied!' });
+    };
 
-        /* Select the text field */
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+    const addPhone = () => {
+        let textfield = document.getElementById('phone');
+        let p = textfield.value;
+        if (p === "") { //TODO: validations
+            return;
+        } else if (phoneData.includes(p)) {
+            return;
+        } else if (p < 1000000000 || p > 9999999999) { //!Number.isInteger(p) not working?
+            return;
+        }
+        setPhoneData([...phoneData, p]); //?setPhoneData([phoneData.push(p)]);
+        //alert(phoneData);
+        textfield.value = "";
+    };
 
-        /* Copy the text inside the text field */
-        document.execCommand("copy");
+    const deletePhone = (data) => () => {
+        setPhoneData((phoneData) => phoneData.filter((d) => d !== data));
+    }
 
-        /* Alert the copied text */
-        alert("Link has been copied to your clipboard");
+    const addEmail = () => {
+        let textfield = document.getElementById('email');
+        let p = textfield.value;
+        if (p === "") {
+            return;
+        } else if (emailData.includes(p)) {
+            return;
+        } else if (!p.includes("@")) {//TODO: check email format
+            return;
+        }
+        setEmailData([...emailData, p]); //?setPhoneData([phoneData.push(p)]);
+        textfield.value = "";
+    };
+
+    const deleteEmail = (data) => () => {
+        setEmailData((emailData) => emailData.filter((d) => d !== data));
+    }
+
+    //submit
+    const assign = () => {
+        let input = {
+            group: document.getElementById('group').value,
+            link: document.getElementById('link').value,
+            phone_numbers: phoneData,
+            emails: emailData
+        }
+        console.log(input);
     }
 
     return (
-        <div class="tankuang">
-
-            <h3 class="title">Assign street name</h3>
-            <form>
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="text" placeholder="Group Name" name="username" autofocus />
-
-                    </div>
-                    <p class="help">Using volunteer database</p>
-                </div>
-
-                <div class="field">
-                    <div class="control" id="input">
-                        <input class="input" type="text" placeholder="password12345" id="linkinput" />
-                    </div>
-                    <button class="button is-info" onclick="copy()">COPY</button>
-                    <p class="help">Using a link that anyone can access</p>
-                </div>
-
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="text" placeholder="1234567890" name="tel" />
-                    </div>
-                    <p class="help">Using phone numbers</p>
-                </div>
-
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="email" placeholder="example@example.com" name="email" />
-                    </div>
-                    <p class="help">Using emails</p>
-                </div>
-
-                <div class="bottom">
-                    <div class="control">
-                        <button class="button is-info is-inverted" onclick="hidder()">CANCEL</button>
-                        <button class="button is-info" onclick="assign()">ASSIGN</button>
-                    </div>
-                </div>
-
-            </form>
-        </div>
+        <Box maxWidth="600px">
+            <Typography variant="h4" gutterBottom>Assign Route</Typography>
+            <TextField
+                id="group"
+                label="Group Name"
+                helperText="Using volunteer database"
+                fullWidth
+                variant="filled"
+                size='small'
+                autoFocus
+            />
+            <br /><br />
+            <div>
+                <TextField
+                    id="link"
+                    label="Link"
+                    defaultValue="www.cftkcanning.com/routes/example"
+                    helperText="Using a link that anyone can access"
+                    variant="filled"
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    size='small'
+                    style={{ width: '85%' }}
+                />
+                <Button color="primary" size="large" onClick={copy}>COPY</Button>
+            </div>
+            <br />
+            <div>
+                <TextField
+                    id="phone"
+                    label="Phone Number"
+                    placeholder="1234567890"
+                    helperText="Using phone numbers"
+                    variant="filled"
+                    size='small'
+                />
+                <Button color="primary" size="large" onClick={addPhone}>ADD</Button>
+                <Box>
+                    {phoneData.map((data) => {
+                        return (
+                            <Chip
+                                label={data}
+                                onDelete={deletePhone(data)}
+                                //className={classes.chip}
+                                color="primary"
+                                style={{ margin: 2 }}
+                            />
+                        );
+                    })}
+                </Box>
+            </div>
+            <br />
+            <div>
+                <TextField
+                    id="email"
+                    label="Email"
+                    placeholder="example@example.com"
+                    helperText="Using emails"
+                    variant="filled"
+                    size='small'
+                    style={{ width: '85%' }}
+                />
+                <Button color="primary" size="large" onClick={addEmail}>ADD</Button>
+                <Box>
+                    {emailData.map((data) => {
+                        return (
+                            <Chip
+                                label={data}
+                                onDelete={deleteEmail(data)}
+                                color="primary"
+                                style={{ margin: 2 }}
+                            />
+                        );
+                    })}
+                </Box>
+            </div>
+            <br />
+            <Grid container justify="flex-end">
+                <Button variant="outlined" style={{ margin: 5 }}>CANCEL</Button>
+                <Button variant="contained" color="primary" style={{ margin: 5 }} onClick={assign}>ASSIGN</Button>
+            </Grid>
+        </Box>
 
     );
 
 };
 
 export default AssignRoute;
+
+
+
+
+
+/* text field format
+    <TextField
+    id="filled-full-width"
+    label="Group Name"
+    //style={{ margin: 8 }}
+    //placeholder="www.cftkcanning.com/routes/linksenddrive"
+    helperText="Using volunteer database"
+    fullWidth
+    //margin="normal"
+    // InputLabelProps={{
+    //     shrink: true,
+    // }}
+    variant="filled"
+/> */
