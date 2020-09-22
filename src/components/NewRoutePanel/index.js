@@ -201,7 +201,7 @@ const NewRoutePanel = () => {
         </div>
       </div>
       {/* Figuring out submit button, might put into form */}
-      <input className="button" type="submit" onClick={saveForm} value="Save"></input>
+      <Button type="submit" color="primary" onClick={saveForm}>Save</Button>
     </div>
 
 
