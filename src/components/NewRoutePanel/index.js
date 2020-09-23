@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { storeRouteData } from '../RouteModels/routes';
 import { Grid, TextField, InputAdornment } from '@material-ui/core';
 import GroupedTextField from '../GroupedTextField';
+import ChipList from '../ChipList';
 
 const NewRoutePanel = () => {
 
@@ -44,7 +45,10 @@ const NewRoutePanel = () => {
     setCurrStreet('');
   }
 
+  const removeStreet = street => {
 
+    setStreetNames(streetNames.filter(name => name !== street))
+  }
 
   const updateNoteList = e => {
     // Adds note to list as long as the note is not already included or the input is not empty
@@ -60,6 +64,11 @@ const NewRoutePanel = () => {
 
     setVolNotes([...volNotes, currNote]);
     setCurrNote('');
+  }
+
+  const removeNote = note => {
+
+    setVolNotes(volNotes.filter(text => text !== note))
   }
 
   const handleDateFocus = e => {
@@ -118,6 +127,7 @@ const NewRoutePanel = () => {
               <GroupedTextField label="Streets*" buttonLabel="Save" buttonColor="primary"
                 fieldValue={currStreet} onFieldChange={setCurrStreet} onButtonClick={updateStreetList}
               />
+              {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
             </Grid>
             <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
             <Grid item xs={6}>
@@ -136,6 +146,7 @@ const NewRoutePanel = () => {
               <GroupedTextField label="Volunteer Notes" buttonLabel="Save" buttonColor="primary"
                 fieldValue={currNote} onFieldChange={setCurrNote} onButtonClick={updateNoteList}
               />
+              {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
             </Grid>
           </Grid>
         </Grid>
