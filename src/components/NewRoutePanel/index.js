@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeRouteData } from '../RouteModels/routes';
-import { Typography, Grid, TextField } from '@material-ui/core';
+import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
 
@@ -40,7 +40,7 @@ const NewRoutePanel = () => {
   }
 
   const removeStreet = street => {
-
+    // Removes specified street
     setStreetNames(streetNames.filter(name => name !== street))
   }
 
@@ -61,7 +61,7 @@ const NewRoutePanel = () => {
   }
 
   const removeNote = note => {
-
+    // Removes the specified volunteer note
     setVolNotes(volNotes.filter(text => text !== note))
   }
 
@@ -87,13 +87,18 @@ const NewRoutePanel = () => {
     if (routeName === '') {
       alert('Please enter a route name');
       return;
-    } else if (streetNames.length === 0 && currStreet === '') {
+    } else if (streetNames.length === 0) {
       alert('Please enter/add a street name');
       return;
     }
 
     storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
 
+  }
+
+  const saveDisabled = _ => {
+    if (routeName.length + townCity.length + streetNames.length === 0) return true;
+    else return false;
   }
 
   // Google map implementation is a placeholder from ViewHouseProperties
@@ -144,15 +149,18 @@ const NewRoutePanel = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xl={6}>
+        <Grid item xs={6}>
           <iframe title="viewRoute"
-            width="600"
-            height="450"
+            width="700"
+            height="375"
             frameBorder="0" styles="border:0"
             src={source}
             allowFullScreen>
           </iframe>
         </Grid>
+        <Grid item xs={10}/>
+        <Grid item xs={1}><Button style={{ height: "100%", width: "100%" }}>Cancel</Button></Grid>
+        <Grid item xs={1}><Button style={{ height: "100%", width: "100%" }} variant="contained" color="primary" onClick={saveForm} disabled={false}>Save</Button></Grid>
       </Grid>
     </div>
 

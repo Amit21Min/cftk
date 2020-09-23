@@ -5,7 +5,7 @@ import { Grid, TextField, Button } from '@material-ui/core';
 const GroupedTextField = (props) => {
 
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={3}>
       <Grid item xs={10}>
         <TextField
           fullWidth variant="filled"
