@@ -17,6 +17,7 @@ const GroupedTextField = (props) => {
       <Grid item xs={2}>
         <Button fullWidth style={{ height: "100%", width: "100%" }} variant="contained" color={props.buttonColor}
           onClick={props.onButtonClick}
+          disabled={props.fieldValue.length === 0}
         >
           {props.buttonLabel}
         </Button>

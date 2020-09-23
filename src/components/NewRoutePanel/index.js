@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeRouteData } from '../RouteModels/routes';
-import { Grid, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, Grid, TextField } from '@material-ui/core';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
 
@@ -22,12 +22,6 @@ const NewRoutePanel = () => {
   const [numDonated, setNumDonated] = useState('');
   const [currNote, setCurrNote] = useState('');
   const [volNotes, setVolNotes] = useState([]);
-
-  const updateInput = (e, setter) => {
-    // Executes the passed in setter, allows for additional functionality afterwards as well
-    setter(e.target.value)
-    console.log(e.target.value)
-  }
 
   const updateStreetList = e => {
     // Adds street to list as long as street not already included or input is not empty
@@ -110,7 +104,7 @@ const NewRoutePanel = () => {
   return (
     <div>
       <Grid container spacing={3}>
-        <Grid item xs={12}><h1>Create New Route</h1></Grid>
+        <Grid item xs={12}><Typography style={{fontSize:32, fontWeight:"bold"}}>New Route</Typography></Grid>
         <Grid item xs={6}>
           <Grid container spacing={3}>
             <Grid item xs={6}>
@@ -124,7 +118,7 @@ const NewRoutePanel = () => {
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
-              <GroupedTextField label="Streets*" buttonLabel="Save" buttonColor="primary"
+              <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary"
                 fieldValue={currStreet} onFieldChange={setCurrStreet} onButtonClick={updateStreetList}
               />
               {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
@@ -134,7 +128,7 @@ const NewRoutePanel = () => {
               <TextField fullWidth variant="filled"
                 value={canningDate} onChange={(e) => setCanningDate(e.target.value)}
                 onBlur={handleDateBlur} onFocus={handleDateFocus}
-                label="Date" />
+                label="Date" helperText="MM/DD/YY" />
             </Grid>
             <Grid item xs={6}>
               <TextField fullWidth variant="filled"
@@ -143,7 +137,7 @@ const NewRoutePanel = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <GroupedTextField label="Volunteer Notes" buttonLabel="Save" buttonColor="primary"
+              <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
                 fieldValue={currNote} onFieldChange={setCurrNote} onButtonClick={updateNoteList}
               />
               {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
