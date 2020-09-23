@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 // import db from '../Firebase/firebase.js';
-import {storeRouteData} from '../RouteModels/routes';
+import { storeRouteData } from '../RouteModels/routes';
+import { Grid, TextField, InputAdornment } from '@material-ui/core';
+import GroupedTextField from '../GroupedTextField';
+
 const NewRoutePanel = () => {
 
   // TODO 1: Implement donation, route, and house metrics
   // TODO 2: Implement revision history and modified by
   // TODO 3: Deal with google map implementation
   // TODO 4: Deal with donation amount not necessarily being a number value
-  // TODO 5: Figure out required functionality
+  // TODO 5: Figure out required functionalityInput
 
   // variables used in the state
   const [routeName, setRouteName] = useState('');
+  const [townCity, setTownCity] = useState('');
   const [currStreet, setCurrStreet] = useState('');
   const [streetNames, setStreetNames] = useState([]);
   const [canningDate, setCanningDate] = useState('');
@@ -40,7 +44,7 @@ const NewRoutePanel = () => {
     setCurrStreet('');
   }
 
-  
+
 
   const updateNoteList = e => {
     // Adds note to list as long as the note is not already included or the input is not empty
@@ -86,11 +90,8 @@ const NewRoutePanel = () => {
     }
 
     storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
-    
+
   }
-
-  
-
 
   // Google map implementation is a placeholder from ViewHouseProperties
   let street = "Hillsborough+Street";
@@ -99,74 +100,55 @@ const NewRoutePanel = () => {
 
   return (
     <div>
-      <h1 className="title">New Route</h1>
-      <div className="columns">
-        <div className="column">
-          <form>
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" placeholder="Name (Required)" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
-              </div>
-            </div>
-            <h1>Street Name</h1>
-            <div>
-              {/* List to render street names, starts empty */}
-              {streetNames.map(street => (
-                // Holds street names in buttons, onClick functionality to be dealt with later
-                <button className="button" key={street}>{street}</button>
-              ))}
-            </div>
-            <div className="field is-grouped">
-              <div className="control">
-                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => updateInput(e, setCurrStreet)} />
-              </div>
-              {/* Pushes current street to list, then clears input */}
-              <button className="button" onClick={updateStreetList}>Add</button>
-            </div>
-            <h1>Last Canning Data</h1>
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" placeholder="Date (optional)" onFocus={handleDateFocus} onBlur={handleDateBlur} value={canningDate} onChange={(e) => updateInput(e, setCanningDate)} />
-              </div>
-              <label className="label">MM/DD/YY</label>
-            </div>
-            <div className="field">
-              <div className="control">
-                <input className="input" type="number" placeholder="Donations (optional)" value={numDonated} onChange={(e) => updateInput(e, setNumDonated)} />
-              </div>
-            </div>
-            <h1>Volunteer Notes</h1>
-            <div>
-              {/* List to render volunteer notes, starts empty */}
-              {volNotes.map(note => (
-                // Holds street names in buttons, onClick functionality to be dealt with later
-                <button className="button" key={note}>{note}</button>
-              ))}
-            </div>
-            <div className="field is-grouped">
-              <div className="control">
-                {/* Pushes current note to list, then clears input */}
-                <input className="input" type="text" placeholder="Note" value={currNote} onChange={(e) => updateInput(e, setCurrNote)} />
-              </div>
-              <button className="button" onClick={updateNoteList}>Add</button>
-            </div>
-          </form>
-        </div>
-        <div className="column">
-          {/* Placeholder google map */}
-          <div>
-            <iframe title="viewRoute"
-              width="600"
-              height="450"
-              frameBorder="0" styles="border:0"
-              src={source}
-              allowFullScreen>
-            </iframe>
-          </div>
-        </div>
-      </div>
-      {/* Figuring out submit button, might put into form */}
-      <input className="button" type="submit" onClick={saveForm} value="Save"></input>
+      <Grid container spacing={3}>
+        <Grid item xs={12}><h1>Create New Route</h1></Grid>
+        <Grid item xs={6}>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled"
+                value={routeName} onChange={(e) => setRouteName(e.target.value)}
+                label="Name*" />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled"
+                value={townCity} onChange={(e) => setTownCity(e.target.value)}
+                label="Town/City*" />
+            </Grid>
+            <Grid item xs={12}>
+              <GroupedTextField label="Streets*" buttonLabel="Save" buttonColor="primary"
+                fieldValue={currStreet} onFieldChange={setCurrStreet} onButtonClick={updateStreetList}
+              />
+            </Grid>
+            <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled"
+                value={canningDate} onChange={(e) => setCanningDate(e.target.value)}
+                onBlur={handleDateBlur} onFocus={handleDateFocus}
+                label="Date" />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled"
+                value={numDonated} onChange={(e) => setNumDonated(e.target.value)}
+                label="$ Donations"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <GroupedTextField label="Volunteer Notes" buttonLabel="Save" buttonColor="primary"
+                fieldValue={currNote} onFieldChange={setCurrNote} onButtonClick={updateNoteList}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xl={6}>
+          <iframe title="viewRoute"
+            width="600"
+            height="450"
+            frameBorder="0" styles="border:0"
+            src={source}
+            allowFullScreen>
+          </iframe>
+        </Grid>
+      </Grid>
     </div>
 
   );
