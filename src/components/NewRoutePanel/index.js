@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import {storeRouteData} from '../RouteModels/routes';
-const NewRoutePanel = () => {
+import { Map } from '../Map';
 
+const NewRoutePanel = () => {
   // TODO 1: Implement donation, route, and house metrics
   // TODO 2: Implement revision history and modified by
   // TODO 3: Deal with google map implementation
@@ -174,13 +175,17 @@ const NewRoutePanel = () => {
         <div className="column">
           {/* Placeholder google map */}
           <div>
-            <iframe title="viewRoute"
+            <Map
+              address={["104 Campbell Ln", "108 Campbell Ln", "112 Campbell Ln", "117 Campbell Ln", "113 Campbell Ln"]}
+              cityState = "Chapel Hill, NC"
+            />
+            {/* <iframe title="viewRoute"
               width="600"
               height="450"
               frameBorder="0" styles="border:0"
               src={source}
               allowFullScreen>
-            </iframe>
+            </iframe>  */}
           </div>
         </div>
       </div>
