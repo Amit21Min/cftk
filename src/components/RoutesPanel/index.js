@@ -156,6 +156,7 @@ const RoutesPanel = () => {
           });
         }
       }
+      console.log(routes);
     return tabled_routes;
   }
 

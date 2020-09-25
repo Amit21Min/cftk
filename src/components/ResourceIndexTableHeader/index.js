@@ -1,4 +1,8 @@
 import React from 'react';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
+import Checkbox from '@material-ui/core/Checkbox';
 import OverflowMenu from '../OverflowMenu';
 
 // Populates and handles actions for the column headers of a ResourceIndexTable

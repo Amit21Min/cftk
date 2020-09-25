@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 
 import ResourceIndexItem from '../ResourceIndexItem';
 import ResourceIndexTableHeader from '../ResourceIndexTableHeader';
+import Table from '@material-ui/core/Table';
+
 
 import ZeroResource from '../ZeroResource';
 
@@ -45,12 +47,9 @@ const ResourceIndexTable = (props) => {
   );
 
   return(
-    <table className="table">
+    <Table checkboxSelection {...resource_items}>
       <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn} allSelected={props.allSelected}/>
-      <tbody>
-        {resource_items}
-      </tbody>
-    </table>
+    </Table>
   );
 }
 
