@@ -171,8 +171,8 @@ const EditRoutePanel = () => {
                                 value={numDonated} onChange = {(e) => setNumDonated(e.target.value)}
                                 label="Donations(Optional)"/>
                         </Grid>
-                        <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Volunteer Notes</Typography></Grid>
-                        <Grid>
+                        
+                        <Grid item xs={12}>
                             <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
                             fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
                             />
