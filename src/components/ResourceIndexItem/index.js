@@ -21,7 +21,7 @@ const ResourceIndexItem = (props) => {
                   <Checkbox
                      name={props.data.name+"-selectbox"}
                      checked={props.selected}
-                     onChange={(event) => props.selectItemCallback(event, props.data.name)} // when checked, will trigger the function passed in props.selected, usually with the end result of adding this item's firebase primary key
+                     onChange={(event, key) => props.selectItemCallback(event, props.data.name)} // when checked, will trigger the function passed in props.selected, usually with the end result of adding this item's firebase primary key
                   />
                 </TableCell>;
           break;

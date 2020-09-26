@@ -22,10 +22,6 @@ import "./index.css";
 // allSelected: a prop which signals if the selectbox within the column header is 'on', in which case every ResourceIndexItem is considered selected
 
 const ResourceIndexTable = (props) => {
-  const selectItem = (event, item) => {
-    props.selectItemCallback(event, item);
-  }
-
   // A bubbled function cast from the prop 'selectColumnCallback'. Is bubbled to ResourceIndexTableHeader components, and is called whenever a column header is clicked.
   const selectColumn = (column) => {
     props.selectColumnCallback(column);
@@ -37,25 +33,24 @@ const ResourceIndexTable = (props) => {
     props.columns
   );
 
-  const getSelectedStatus = (route_key) => props.selectedItems[route_key] ? true : false;
+  const getSelectedStatus = (key) => props.selectedItems.indexOf(key) !== -1;
 
   // Create a ResourceIndexItem for each item passed in as a prop. A ResourceIndexItem will generate 1 row of the table for its corresponding resource (in this case routes)
   let resource_items = props.items.map((item, i) => {
     let key = item.name ? item.name : i;
-    let selected = getSelectedStatus(item.name);
+    let selected = getSelectedStatus(key);
     return (<ResourceIndexItem
       key={key} // this is subject to change once we have a reliable unique primary key
       data={item}
       getColumns={getColumns}
-      selected={selected} // Uses the allSelected prop to override the selected status of individual items
-      selectItemCallback={(event) => selectItem.bind(event, item.name)}/>);
-  }
-
+      selected={selected}
+      selectItemCallback={(event, item) => props.selectItemCallback(event, key)}/>);
+    }
   );
 
   return(
     <Table>
-      <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn} allSelected={props.allSelected}/>
+      <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={props.selectColumnCallback} allSelected={props.allSelected}/>
       <TableBody>
         {resource_items}
       </TableBody>

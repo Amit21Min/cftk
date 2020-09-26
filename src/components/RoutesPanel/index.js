@@ -24,7 +24,7 @@ const RoutesPanel = () => {
   });
 
   // These state objects are used to keep track of which items within the ResourceIndexTable are selected (in order to perform bulk delete/update operations)
-  const [selectedResources, setSelectedResources] = useState({});
+  const [selectedResources, setSelectedResources] = useState([]);
 
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
@@ -83,10 +83,10 @@ const RoutesPanel = () => {
 
   // Is passed to ResourceIndexTable, which passes it to, and handles click events for, ResourceIndexTableHeaders.
   // Expects a .type within the arg object to tell it what operation to perform.
-  const selectColumnHandler = (column_message) => {
+  const selectColumnHandler = (event, column_message) => {
       switch(column_message.type){
         case "select-all":
-          selectAllRoutes(column_message.option);
+          selectAllRoutes(event);
           break;
         default:
           sortRoutes(column_message.query_string);
@@ -96,25 +96,32 @@ const RoutesPanel = () => {
   // This function is passed to a ResourceIndexTable, which will then pass it to the table's child ResourceIndexItems. When an item's row in the html table is selected,
   // its ID will be added to the state object for selected resources
   const selectRoute = (event, route_key) => {
-    let new_selected_resources = selectedResources;
-    if(!event.target.checked){
-      new_selected_resources[route_key] = true;
-    } else {
-      new_selected_resources[route_key] = false;
+    const selectedIndex = selectedResources.indexOf(route_key);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selectedResources, route_key);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selectedResources.slice(1));
+    } else if (selectedIndex === selectedResources.length - 1) {
+      newSelected = newSelected.concat(selectedResources.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selectedResources.slice(0, selectedIndex),
+        selectedResources.slice(selectedIndex + 1),
+      );
     }
-    setSelectedResources(new_selected_resources);
-    console.log(selectedResources);
+    setSelectedResources(newSelected);
   }
 
   // Does the same as selectRoute, but applies to the selectAllResources state object instead
   const selectAllRoutes = (event) => {
-    let new_selected_resources = {};
-    if(event.target.checked){
-      for(let i = 0; i < routes.length; i++){
-        new_selected_resources[routes[i].name] = true;
-      }
+    if (event.target.checked) {
+      const newSelected = routes.map((n) => n.name);
+      setSelectedResources(newSelected);
+      return;
     }
-    setSelectedResources(new_selected_resources);
+    setSelectedResources([]);
     console.log(selectedResources);
   }
 
@@ -196,6 +203,7 @@ const RoutesPanel = () => {
                     items={routes} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
                     columns={routeColumnNames}
                     selectedItems={selectedResources}
+                    allSelected={routes.length > 0 && selectedResources.length === routes.length}
                     selectItemCallback={selectRoute}
                     selectColumnCallback={selectColumnHandler}
                 />
