@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeRouteData } from '../RouteModels/routes';
+import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
+
+import * as ROUTES from '../../constants/routes';
 
 const NewRoutePanel = () => {
 
@@ -131,17 +134,17 @@ const NewRoutePanel = () => {
             <Grid item xs={6}>
               <TextField fullWidth variant="filled" error={!isValidName}
                 // Validates form on blur
-                value={routeName} onChange={(e) => {setRouteName(e.target.value); setIsValidName(true)}} onBlur={validateRequired}
+                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
                 label="Name*" />
             </Grid>
             <Grid item xs={6}>
               <TextField fullWidth variant="filled" error={!isValidCity}
-                value={townCity} onChange={(e) => {setTownCity(e.target.value)}} onBlur={validateRequired}
+                value={townCity} onChange={(e) => { setTownCity(e.target.value) }} onBlur={validateRequired}
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
               <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                fieldValue={currStreet} onChange={(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}} onButtonClick={updateStreetList}
+                fieldValue={currStreet} onChange={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }} onButtonClick={updateStreetList}
               />
               {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
             </Grid>
@@ -176,7 +179,7 @@ const NewRoutePanel = () => {
           </iframe>
         </Grid>
         <Grid item xs={10} />
-        <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Button></Grid>
+        <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
         <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary"
           onClick={saveForm} disabled={!validForm}>Save</Button></Grid>
       </Grid>
