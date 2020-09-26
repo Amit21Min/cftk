@@ -163,7 +163,7 @@ const NewRoutePanel = () => {
             </Grid>
             <Grid item xs={12}>
               <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
-                fieldValue={currNote} onFieldChange={setCurrNote} onButtonClick={updateNoteList}
+                fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
               />
               {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
             </Grid>
