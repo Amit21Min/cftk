@@ -92,13 +92,8 @@ const NewRoutePanel = () => {
       return;
     }
 
-    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
+    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
 
-  }
-
-  const saveDisabled = _ => {
-    if (routeName.length + townCity.length + streetNames.length === 0) return true;
-    else return false;
   }
 
   // Google map implementation is a placeholder from ViewHouseProperties
