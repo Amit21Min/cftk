@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
       margin: theme.spacing(1),
       minWidth: 300,
+    },
+    houseList: {
+        maxWidth: 300,
     }
   }));
 
@@ -88,49 +91,53 @@ const ViewHouseProperties = () => {
     return(
     <div>
         <h2 className="title">Route House Properties</h2>
-        <div>
-            <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel>Street</InputLabel>
-                <Select
-                    value={street}
-                    onChange={handleChange}
-                >
-                    {streets.map((street) => 
-                        <MenuItem value={street}>{street}</MenuItem>
-                    )}
-                </Select>
-            </FormControl>
-        </div>
-        <SearchBar prompt="Search house number"/>
-        <label className="label">Or select from the list</label>
-        <div>
-            <List>
-                {numbers.map((num, index) => (
-                    <MenuItem
-                        selected={num === number}
-                        onClick={() => updateNumber(num)}
-                    >
-                        {num}
-                    </MenuItem>
-                ))}
-            </List>
-        </div>
-        <div className="notes">
-            <strong>Donations from last canning:</strong>
-            <h6>${data.lastDonation}</h6>
-            <strong>Solicitation:</strong>
-            <h6>{solicitationAllowedText()}</h6>
-            <strong>Wants to learn more about CFTK:</strong>
-            <h6>{learnMoreText()}</h6>
-            <strong>Volunteer comments:</strong>
-            <div class="comment">
+        <div class="flex-container">
+            <div class="selectHouse">
                 <div>
-                    <h6>{getComment(0)}</h6>
-                    <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    <FormControl variant="filled" className={classes.formControl}>
+                        <InputLabel>Street</InputLabel>
+                        <Select
+                            value={street}
+                            onChange={handleChange}
+                        >
+                            {streets.map((street) => 
+                                <MenuItem value={street}>{street}</MenuItem>
+                            )}
+                        </Select>
+                    </FormControl>
+                </div>
+                <SearchBar prompt="Search house number"/>
+                <label className="label">Or select from the list</label>
+                <div>
+                    <List className={classes.houseList}>
+                        {numbers.map((num, index) => (
+                            <MenuItem
+                                selected={num === number}
+                                onClick={() => updateNumber(num)}
+                            >
+                                {num}
+                            </MenuItem>
+                        ))}
+                    </List>
                 </div>
             </div>
+            <div className="notes">
+                <strong>Solicitation:</strong>
+                <h6>{solicitationAllowedText()}</h6>
+                <strong>Donations Amounts:</strong>
+                <h6>${data.lastDonation}</h6>
+                <strong>Interest in CFTK:</strong>
+                <h6>{learnMoreText()}</h6>
+                <strong>Volunteer comments:</strong>
+                <div class="comment">
+                    <div>
+                        <h6>{getComment(0)}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
         </div>
-        <div class="clearfix"></div>
     </div>
     )
 };

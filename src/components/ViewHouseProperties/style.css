@@ -18,7 +18,13 @@
 .google_map iframe{
    width:75%;
 }
+
+.selectHouse {
+    flex-grow: 1;
+}
+
 .notes {
+    flex-grow: 3;
     width:30%;
     float:left;
 }
@@ -38,4 +44,9 @@
 
 .comment{
     display: flex;
+}
+
+.flex-container{
+    display: flex;
+    flex-direction: row;
 }
