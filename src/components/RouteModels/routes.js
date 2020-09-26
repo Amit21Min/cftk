@@ -24,7 +24,7 @@ const toComments = (notes) => {
     return comments;
 }
 
-export const storeRouteData = (uid, routeName, streets, volNotes) => {
+export const storeRouteData = (uid, routeName, streets, volNotes, city) => {
     return db.collection("Routes").doc(uid).set( 
         {
             uid: uid,
@@ -35,7 +35,7 @@ export const storeRouteData = (uid, routeName, streets, volNotes) => {
             total: 0.0,
             streets: toStreet(streets),
             comments: toComments(volNotes),
-            city: ""
+            city: city
         })
 }
 
