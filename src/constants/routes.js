@@ -14,7 +14,6 @@ export const ADMIN_VOLUNTEERS = ADMIN+'/volunteers';
 
 // Edit route
 export const ADMIN_ROUTES_EDIT = ADMIN_ROUTES+'/edit';
-export const EDIT_ROUTE = ADMIN_ROUTES+'/edit';
 // Assign route
 export const ASSIGN_ROUTE = ADMIN_ROUTES+'/assign';
 // Delete route
