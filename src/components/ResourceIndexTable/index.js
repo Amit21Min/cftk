@@ -44,7 +44,10 @@ const ResourceIndexTable = (props) => {
       data={item}
       getColumns={getColumns}
       selected={selected}
-      selectItemCallback={(event, item) => props.selectItemCallback(event, key)}/>);
+      selectItemCallback={props.selectItemCallback}
+      options={item.options ? item.options : {}}
+      />);
+
     }
   );
 

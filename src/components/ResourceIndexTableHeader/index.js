@@ -17,7 +17,7 @@ const ResourceIndexTableHeader = (props) => {
         column_header = <TableCell key={column.field} padding="checkbox">
                           <Checkbox type="checkbox" name="all-selectbox"
                             checked={props.allSelected}
-                            onChange={(event, message) => props.selectColumnCallback(event, {type: "select-all", option: !props.allSelected})}/>
+                            onChange={(event, message) => props.selectColumnCallback(event, {type: "select-all"})}/>
                         </TableCell>;
         break;
       case 'overflow-menu':

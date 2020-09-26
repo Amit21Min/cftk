@@ -72,7 +72,9 @@ const RoutesPanel = () => {
     }
   ]);
 
-
+  // ===========================================================================
+  //                        Callback Methods for Props
+  // ===========================================================================
 
   // A function which sends a GET request to firebase for a filtered result set of Routes. This function is used by a searchBar.
   const searchRoutes = (query_string) => {
@@ -122,7 +124,6 @@ const RoutesPanel = () => {
       return;
     }
     setSelectedResources([]);
-    console.log(selectedResources);
   }
 
   // Uses the string of a column title to alter the routes query
@@ -130,6 +131,10 @@ const RoutesPanel = () => {
     let new_query = Object.assign({}, queryState, {sort: column_string});
     setQueryState(new_query);
     console.log(queryState);
+  }
+
+  const expandParentHandler = () => {
+
   }
 
   // Takes routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
@@ -156,6 +161,7 @@ const RoutesPanel = () => {
           }
         }
           tabled_routes.push({
+            options: {open: false},
             name: routes[i].name,
             assignment_status: routes[i].assignmentStatus ? routes[i].assignmentStatus.toString() : "",
             months_since_assigned: months_since_assigned.toString(),
@@ -168,11 +174,10 @@ const RoutesPanel = () => {
                                         {text: "House Properties", action: housePropertiesAction},
                                         {text: "Revision History", action: revisionHistoryAction},
                                         {text: "Delete", action: () => deleteRouteAction(routes[i].name)}
-                                       ]}
+                                      ]}
           });
         }
       }
-      console.log(routes);
     return tabled_routes;
   }
 
@@ -206,6 +211,7 @@ const RoutesPanel = () => {
                     allSelected={routes.length > 0 && selectedResources.length === routes.length}
                     selectItemCallback={selectRoute}
                     selectColumnCallback={selectColumnHandler}
+                    expandParentCallback={expandParentHandler}
                 />
              </div>;
   } else {

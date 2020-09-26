@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import OverflowMenu from '../OverflowMenu';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-
+import IconButton from '@material-ui/core/IconButton';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 import "./index.css";
 
@@ -12,6 +14,7 @@ const ResourceIndexItem = (props) => {
   // Loop through each of the entries in the parent table's columns list returned by the provided getColumns prop.
   // Each entry will be an object which looks something like: {field: "selectbox", type: "selectbox", html_text: ""}
   // Each iteration of this loop will match a key of the columns to a key in the data prop, and use those to populate a single cell within the row
+  const [open, setOpen] = useState(props.options.open);
 
   let cells = props.getColumns().map((column) => {
     let cell;
@@ -26,7 +29,6 @@ const ResourceIndexItem = (props) => {
                 </TableCell>;
           break;
         case 'overflow-menu':
-          // Needs to be established
           cell = <TableCell key={column.field}>
                   <OverflowMenu key={column.field}
                                 items={props.data[column.field].overflow_items} //requires that the props.data[column.field] returns an object with a defined overflow_items key
@@ -34,6 +36,13 @@ const ResourceIndexItem = (props) => {
                  </TableCell>;
           break;
         case 'drop-down-parent':
+          cell = <TableCell key={column.field}>
+                    <IconButton aria-label="expand row" size="small" onClick={() => {setOpen(!open)}}>
+                      {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+                    </IconButton>
+                    {props.data[column.field] || ""}
+                 </TableCell>;
+          break;
         case 'text':
         default:
           cell = <TableCell key={column.field}>{props.data[column.field] || ""}</TableCell>;
