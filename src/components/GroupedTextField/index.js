@@ -11,7 +11,7 @@ const GroupedTextField = (props) => {
           fullWidth variant="filled" error={props.error}
           label={props.label}
           value={props.fieldValue}
-          onChange={(e) => props.onFieldChange(e.target.value)}
+          onChange={props.onChange}
         />
       </Grid>
       <Grid item xs={2}>

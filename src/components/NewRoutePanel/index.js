@@ -15,8 +15,11 @@ const NewRoutePanel = () => {
 
   // variables used in the state
   const [routeName, setRouteName] = useState('');
+  const [isValidName, setIsValidName] = useState(true);
   const [townCity, setTownCity] = useState('');
+  const [isValidCity, setIsValidCity] = useState(true);
   const [currStreet, setCurrStreet] = useState('');
+  const [isValidStreet, setIsValidStreet] = useState(true);
   const [streetNames, setStreetNames] = useState([]);
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
@@ -30,10 +33,7 @@ const NewRoutePanel = () => {
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
     if (streetNames.includes(currStreet)) {
-      alert("Please don't repeat a street name");
-      return;
-    } else if (currStreet === '') {
-      alert("Please enter a street name");
+      setIsValidStreet(false);
       return;
     }
 
@@ -49,6 +49,7 @@ const NewRoutePanel = () => {
   const removeStreet = street => {
     // Removes specified street
     setStreetNames(streetNames.filter(name => name !== street));
+    setIsValidStreet(true);
 
     // Revalidates form
     if (routeName.length === 0) setValidForm(false);
@@ -128,19 +129,19 @@ const NewRoutePanel = () => {
         <Grid item xs={6}>
           <Grid container spacing={3}>
             <Grid item xs={6}>
-              <TextField fullWidth variant="filled"
+              <TextField fullWidth variant="filled" error={!isValidName}
                 // Validates form on blur
-                value={routeName} onChange={(e) => setRouteName(e.target.value)} onBlur={validateRequired}
+                value={routeName} onChange={(e) => {setRouteName(e.target.value); setIsValidName(true)}} onBlur={validateRequired}
                 label="Name*" />
             </Grid>
             <Grid item xs={6}>
-              <TextField fullWidth variant="filled"
-                value={townCity} onChange={(e) => setTownCity(e.target.value)} onBlur={validateRequired}
+              <TextField fullWidth variant="filled" error={!isValidCity}
+                value={townCity} onChange={(e) => {setTownCity(e.target.value)}} onBlur={validateRequired}
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
-              <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary"
-                fieldValue={currStreet} onFieldChange={setCurrStreet} onButtonClick={updateStreetList}
+              <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                fieldValue={currStreet} onChange={(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}} onButtonClick={updateStreetList}
               />
               {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
             </Grid>
