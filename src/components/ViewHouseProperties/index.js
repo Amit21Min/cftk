@@ -2,39 +2,29 @@ import React, { useEffect, useState } from 'react';
 import './style.css'
 import SearchBar from '../SearchBar'
 import {db} from '../Firebase/firebase';
+import { makeStyles } from '@material-ui/core/styles';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 
-// FOR CREATE/UPDATE ROUTES PAGE - build a list of origin+destinations to display a route on google maps
-// EXAMPLE FUNCTION CALL - var source = getRoute(["Franklin+St", "Hillsborough+St", "Bolinwood+Dr", "N+Boundary+St"]);
-
-// function getRoute(streetArray) {
-//     // streetArray needs to be an array of streets, ex. ["Franklin+St", "Hillsborough+St", "Bolinwood+Dr", "N+Boundary+St"]
-//     var maps_API = process.env.REACT_APP_MAPS_API_KEY
-//     var routeString = "&origin=" + streetArray[0]
-//     routeString += "&destination=" + streetArray[streetArray.length - 1]
-//     routeString += "&waypoints="
-//     for (var i = 1; i < streetArray.length - 1; i++) {
-//         routeString += streetArray[i];
-//         if (i < streetArray.length - 2) {
-//             routeString += "|"
-//         }
-//     }
-//     // example routeString = &origin=Franklin+St&destination=N+Boundary+St&waypoints=Hillsborough+St|Bolinwood+Dr
-//     return `https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_MAPS_API_KEY}${routeString}&mode=walking`;
-// }
-
-// build a specific house address and return
-function getHouse(street, houseNumber) {
-    var address = `${houseNumber}+${street}`;
-    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
-}
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 300,
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2),
+    },
+  }));
 
 const ViewHouseProperties = () => {
 
-    const [house, setHouse] = useState({
-        street: "Hillsborough Street",
-        house_number: "425",
-    });
+    var streets = ["Hillsborough Street", "Trask Terrace", "South Road", "Manning Drive"];
+    const [street, setStreet] = useState(streets[0]);
     
+    const classes = useStyles();
+
     const [data, setData] = useState({
         lastDonation: null,
         solicitationAllowed: null,
@@ -87,25 +77,28 @@ const ViewHouseProperties = () => {
         return data.comments[0].date;
     }
 
-    // TODO - get street number + House number from input boxes and pass/store here dynamically
-    var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
-    var houseNumber = "425"; // get from input box, dynamically update and re-render
-    var source = getHouse(street, houseNumber)
+    const handleChange = (event) => {
+        setStreet(event.target.value);
+      };
 
     return(
     <div>
-        <h2 className="title">Hillsborough Street House Properties</h2>
-        <SearchBar prompt="Search house number"/>
-        <label className="label">Or select a house on the map</label>
-        <div className="google_map">
-            <iframe title="viewHouse"
-                width="600"
-                height="450"
-                frameBorder="0" styles="border:0"
-                src={source}
-                allowFullScreen>
-            </iframe>
+        <h2 className="title">Route House Properties</h2>
+        <div>
+            <FormControl variant="filled" className={classes.formControl}>
+                <InputLabel>Street</InputLabel>
+                <Select
+                    value={street}
+                    onChange={handleChange}
+                >
+                    {streets.map((street) => 
+                        <MenuItem value={street}>{street}</MenuItem>
+                    )}
+                </Select>
+            </FormControl>
         </div>
+        <SearchBar prompt="Search house number"/>
+        <label className="label">Or select from the list</label>
         <div className="notes">
             <strong>Donations from last canning:</strong>
             <h6>${data.lastDonation}</h6>
