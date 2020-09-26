@@ -6,7 +6,6 @@ import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import SearchBar from  '../SearchBar';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
-// import { AssignmentReturnRounded } from '@material-ui/icons';
 
 const EditRoutePanel = () => {
 
@@ -100,7 +99,7 @@ const EditRoutePanel = () => {
             alert('Please enter/add a street name');
             return;
         }
-        storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
+        // storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
 
         /*
         console.log({
