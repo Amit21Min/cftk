@@ -3,10 +3,19 @@ import React, { useState } from 'react';
 import { storeRouteData } from '../RouteModels/routes';
 import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField, Button } from '@material-ui/core';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
 
 import * as ROUTES from '../../constants/routes';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#0075A3',
+    },
+  },
+});
 
 const NewRoutePanel = () => {
 
@@ -126,7 +135,7 @@ const NewRoutePanel = () => {
   let source = getHouse(street, houseNumber);
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <Grid container spacing={3}>
         <Grid item xs={12}><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></Grid>
         <Grid item xs={6}>
@@ -183,7 +192,7 @@ const NewRoutePanel = () => {
         <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary"
           onClick={saveForm} disabled={!validForm}>Save</Button></Grid>
       </Grid>
-    </div>
+    </ThemeProvider>
 
   );
 };
