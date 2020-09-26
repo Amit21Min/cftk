@@ -23,6 +23,8 @@ const NewRoutePanel = () => {
   const [currNote, setCurrNote] = useState('');
   const [volNotes, setVolNotes] = useState([]);
 
+  const [validForm, setValidForm] = useState(false)
+
   const updateStreetList = e => {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
@@ -35,13 +37,24 @@ const NewRoutePanel = () => {
       return;
     }
 
+    // Revalidates form
+    if (routeName.length === 0) setValidForm(false);
+    else if (townCity.length === 0) setValidForm(false);
+    else setValidForm(true);
+
     setStreetNames([...streetNames, currStreet]);
     setCurrStreet('');
   }
 
   const removeStreet = street => {
     // Removes specified street
-    setStreetNames(streetNames.filter(name => name !== street))
+    setStreetNames(streetNames.filter(name => name !== street));
+
+    // Revalidates form
+    if (routeName.length === 0) setValidForm(false);
+    else if (townCity.length === 0) setValidForm(false);
+    else if (streetNames.length === 1) setValidForm(false);
+    else setValidForm(true);
   }
 
   const updateNoteList = e => {
@@ -81,7 +94,7 @@ const NewRoutePanel = () => {
     return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
   }
 
-  const saveForm = e => {
+  const saveForm = _ => {
     // Executes when save button is clicked.
     // Alerts and doesn't save if required inputs are not filled (Placeholder)
     if (routeName === '') {
@@ -96,6 +109,13 @@ const NewRoutePanel = () => {
 
   }
 
+  const validateRequired = _ => {
+    if (routeName.length === 0) setValidForm(false);
+    else if (townCity.length === 0) setValidForm(false);
+    else if (streetNames.length === 0) setValidForm(false);
+    else setValidForm(true);
+  }
+
   // Google map implementation is a placeholder from ViewHouseProperties
   let street = "Hillsborough+Street";
   let houseNumber = "425";
@@ -104,17 +124,18 @@ const NewRoutePanel = () => {
   return (
     <div>
       <Grid container spacing={3}>
-        <Grid item xs={12}><Typography style={{fontSize:32, fontWeight:"bold"}}>New Route</Typography></Grid>
+        <Grid item xs={12}><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></Grid>
         <Grid item xs={6}>
           <Grid container spacing={3}>
             <Grid item xs={6}>
               <TextField fullWidth variant="filled"
-                value={routeName} onChange={(e) => setRouteName(e.target.value)}
+                // Validates form on blur
+                value={routeName} onChange={(e) => setRouteName(e.target.value)} onBlur={validateRequired}
                 label="Name*" />
             </Grid>
             <Grid item xs={6}>
               <TextField fullWidth variant="filled"
-                value={townCity} onChange={(e) => setTownCity(e.target.value)}
+                value={townCity} onChange={(e) => setTownCity(e.target.value)} onBlur={validateRequired}
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
@@ -147,15 +168,16 @@ const NewRoutePanel = () => {
         <Grid item xs={6}>
           <iframe title="viewRoute"
             width="700"
-            height="375"
-            frameBorder="0" styles="border:0"
+            height="700"
+            frameBorder="0" styles="border:0;"
             src={source}
             allowFullScreen>
           </iframe>
         </Grid>
-        <Grid item xs={10}/>
-        <Grid item xs={1}><Button style={{ height: "100%", width: "100%" }}>Cancel</Button></Grid>
-        <Grid item xs={1}><Button style={{ height: "100%", width: "100%" }} variant="contained" color="primary" onClick={saveForm} disabled={false}>Save</Button></Grid>
+        <Grid item xs={10} />
+        <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Button></Grid>
+        <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary"
+          onClick={saveForm} disabled={!validForm}>Save</Button></Grid>
       </Grid>
     </div>
 
