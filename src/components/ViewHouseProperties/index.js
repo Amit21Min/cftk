@@ -4,6 +4,7 @@ import SearchBar from '../SearchBar'
 import {db} from '../Firebase/firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
+import List from '@material-ui/core/List';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -12,16 +13,15 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
       margin: theme.spacing(1),
       minWidth: 300,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
+    }
   }));
 
 const ViewHouseProperties = () => {
 
     var streets = ["Hillsborough Street", "Trask Terrace", "South Road", "Manning Drive"];
+    var numbers = [101, 102, 103, 104, 105, 106, 107, 108, 109];
     const [street, setStreet] = useState(streets[0]);
+    const [number, setNumber] = useState(101);
     
     const classes = useStyles();
 
@@ -79,7 +79,11 @@ const ViewHouseProperties = () => {
 
     const handleChange = (event) => {
         setStreet(event.target.value);
-      };
+    };
+
+    const updateNumber = (n) => {
+        setNumber(n)
+    }
 
     return(
     <div>
@@ -99,6 +103,18 @@ const ViewHouseProperties = () => {
         </div>
         <SearchBar prompt="Search house number"/>
         <label className="label">Or select from the list</label>
+        <div>
+            <List>
+                {numbers.map((num, index) => (
+                    <MenuItem
+                        selected={num === number}
+                        onClick={() => updateNumber(num)}
+                    >
+                        {num}
+                    </MenuItem>
+                ))}
+            </List>
+        </div>
         <div className="notes">
             <strong>Donations from last canning:</strong>
             <h6>${data.lastDonation}</h6>
