@@ -202,14 +202,10 @@ const RoutesPanel = () => {
       <PanelBanner title="Routes"/>
       {screen}
       <ul>
-<<<<<<< HEAD
-        <button class="button is-link is-light"><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></button>
-=======
         <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li>
       </ul>
       <ul>
         <li><Link to={ROUTES.EDIT_ROUTE}>Edit Route</Link></li>
->>>>>>> master
       </ul>
     </div>
   );
