@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import ResourceIndexItem from '../ResourceIndexItem';
 import ResourceIndexTableHeader from '../ResourceIndexTableHeader';
 import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
 
 
 import ZeroResource from '../ZeroResource';
@@ -21,8 +22,8 @@ import "./index.css";
 // allSelected: a prop which signals if the selectbox within the column header is 'on', in which case every ResourceIndexItem is considered selected
 
 const ResourceIndexTable = (props) => {
-  const selectItem = (item) => {
-    props.selectItemCallback(item);
+  const selectItem = (event, item) => {
+    props.selectItemCallback(event, item);
   }
 
   // A bubbled function cast from the prop 'selectColumnCallback'. Is bubbled to ResourceIndexTableHeader components, and is called whenever a column header is clicked.
@@ -36,19 +37,28 @@ const ResourceIndexTable = (props) => {
     props.columns
   );
 
+  const getSelectedStatus = (route_key) => props.selectedItems[route_key] ? true : false;
+
   // Create a ResourceIndexItem for each item passed in as a prop. A ResourceIndexItem will generate 1 row of the table for its corresponding resource (in this case routes)
-  let resource_items = props.items.map((item, i) =>
-      <ResourceIndexItem
-        key={item.name ? item.name : i} // this is subject to change once we have a reliable unique primary key
-        data={item}
-        getColumns={getColumns}
-        selected={ props.allSelected ? true : (item.name ? props.selectedItems[item.name] : false)} // Uses the allSelected prop to override the selected status of individual items
-        selectItemCallback={selectItem}/>
+  let resource_items = props.items.map((item, i) => {
+    let key = item.name ? item.name : i;
+    let selected = getSelectedStatus(item.name);
+    return (<ResourceIndexItem
+      key={key} // this is subject to change once we have a reliable unique primary key
+      data={item}
+      getColumns={getColumns}
+      selected={selected} // Uses the allSelected prop to override the selected status of individual items
+      selectItemCallback={(event) => selectItem.bind(event, item.name)}/>);
+  }
+
   );
 
   return(
-    <Table checkboxSelection {...resource_items}>
+    <Table>
       <ResourceIndexTableHeader columns={props.columns} selectColumnCallback={selectColumn} allSelected={props.allSelected}/>
+      <TableBody>
+        {resource_items}
+      </TableBody>
     </Table>
   );
 }

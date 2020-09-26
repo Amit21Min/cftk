@@ -1,5 +1,9 @@
 import React from 'react';
 import OverflowMenu from '../OverflowMenu';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Checkbox from '@material-ui/core/Checkbox';
+
 
 import "./index.css";
 
@@ -13,34 +17,34 @@ const ResourceIndexItem = (props) => {
     let cell;
       switch(column.type) {
         case 'selectbox':
-          cell = <td key={column.field}>
-                  <input type="checkbox"
+          cell = <TableCell key={column.field} padding="checkbox">
+                  <Checkbox
                      name={props.data.name+"-selectbox"}
                      checked={props.selected}
-                     onChange={props.selectItemCallback.bind(this, props.data.name)} // when checked, will trigger the function passed in props.selected, usually with the end result of adding this item's firebase primary key
+                     onChange={(event) => props.selectItemCallback(event, props.data.name)} // when checked, will trigger the function passed in props.selected, usually with the end result of adding this item's firebase primary key
                   />
-                </td>;
+                </TableCell>;
           break;
         case 'overflow-menu':
           // Needs to be established
-          cell = <td key={column.field}>
+          cell = <TableCell key={column.field}>
                   <OverflowMenu key={column.field}
                                 items={props.data[column.field].overflow_items} //requires that the props.data[column.field] returns an object with a defined overflow_items key
                   />
-                 </td>;
+                 </TableCell>;
           break;
         case 'drop-down-parent':
         case 'text':
         default:
-          cell = <td key={column.field}>{props.data[column.field] || ""}</td>;
+          cell = <TableCell key={column.field}>{props.data[column.field] || ""}</TableCell>;
       }
       return cell;
   });
 
   return(
-    <tr>
+    <TableRow>
       {cells}
-    </tr>
+    </TableRow>
   );
 }
 

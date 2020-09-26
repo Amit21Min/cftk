@@ -25,9 +25,6 @@ const RoutesPanel = () => {
 
   // These state objects are used to keep track of which items within the ResourceIndexTable are selected (in order to perform bulk delete/update operations)
   const [selectedResources, setSelectedResources] = useState({});
-    // This is an override toggle- when true, will signal that all items within the generated table are to be treated as selected.
-  const [selectedAllResources, setSelectedAllResources] = useState(false);
-
 
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
@@ -98,15 +95,27 @@ const RoutesPanel = () => {
 
   // This function is passed to a ResourceIndexTable, which will then pass it to the table's child ResourceIndexItems. When an item's row in the html table is selected,
   // its ID will be added to the state object for selected resources
-  const selectRoute = (route_key, option) => {
-    let new_selected_resources = Object.assign({}, selectedResources);
-    new_selected_resources[route_key] = option;
+  const selectRoute = (event, route_key) => {
+    let new_selected_resources = selectedResources;
+    if(!event.target.checked){
+      new_selected_resources[route_key] = true;
+    } else {
+      new_selected_resources[route_key] = false;
+    }
     setSelectedResources(new_selected_resources);
+    console.log(selectedResources);
   }
 
   // Does the same as selectRoute, but applies to the selectAllResources state object instead
-  const selectAllRoutes = (option) => {
-    setSelectedAllResources(option);
+  const selectAllRoutes = (event) => {
+    let new_selected_resources = {};
+    if(event.target.checked){
+      for(let i = 0; i < routes.length; i++){
+        new_selected_resources[routes[i].name] = true;
+      }
+    }
+    setSelectedResources(new_selected_resources);
+    console.log(selectedResources);
   }
 
   // Uses the string of a column title to alter the routes query
@@ -169,7 +178,7 @@ const RoutesPanel = () => {
       const allRoutes = snapshot.docs.map((route) => ({
         ...route.data()
       }));
-      setRoutes(allRoutes);
+      setRoutes(tableTransform(allRoutes));
     });
   }, []);
 
@@ -184,10 +193,9 @@ const RoutesPanel = () => {
                   <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
                 </div>
                 <ResourceIndexTable
-                    items={tableTransform(routes)} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
+                    items={routes} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
                     columns={routeColumnNames}
                     selectedItems={selectedResources}
-                    allSelected={selectedAllResources}
                     selectItemCallback={selectRoute}
                     selectColumnCallback={selectColumnHandler}
                 />
