@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, FormControl, FormGroup, Chip, Button } from '@material-ui/core';
-
-
+// import db from '../Firebase/firebase.js';
+import {storeRouteData} from '../RouteModels/routes';
 const NewRoutePanel = () => {
 
   // TODO 1: Implement donation, route, and house metrics
@@ -9,7 +8,6 @@ const NewRoutePanel = () => {
   // TODO 3: Deal with google map implementation
   // TODO 4: Deal with donation amount not necessarily being a number value
   // TODO 5: Figure out required functionality
-
 
   // variables used in the state
   const [routeName, setRouteName] = useState('');
@@ -20,21 +18,13 @@ const NewRoutePanel = () => {
   const [currNote, setCurrNote] = useState('');
   const [volNotes, setVolNotes] = useState([]);
 
-
-  const defaultQuery = 'University+of+North+Carolina+Chapel+Hill';
-  const defaultOrigin = 'University+of+North+Carolina+Chapel+Hill';
-  const [mapURL, setMapURL] = useState(parseQuery(defaultQuery));
-
-
-
-
-  function updateInput(e, setter) {
+  const updateInput = (e, setter) => {
     // Executes the passed in setter, allows for additional functionality afterwards as well
     setter(e.target.value)
     console.log(e.target.value)
   }
 
-  function addToStreetList(e) {
+  const updateStreetList = e => {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
@@ -48,21 +38,11 @@ const NewRoutePanel = () => {
 
     setStreetNames([...streetNames, currStreet]);
     setCurrStreet('');
-    mapRoute([...streetNames, currStreet]);
   }
 
-  function removeFromStreetList(e, toRemove) {
-    e.preventDefault();
-    let newStreets = streetNames.filter(name => name !== toRemove);
-    setStreetNames(newStreets);
-    if (newStreets.length > 0) {
-      mapRoute(newStreets);
-    } else {
-      setMapURL(parseQuery(defaultQuery))
-    }
-  }
+  
 
-  function addToNoteList(e) {
+  const updateNoteList = e => {
     // Adds note to list as long as the note is not already included or the input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
@@ -78,22 +58,23 @@ const NewRoutePanel = () => {
     setCurrNote('');
   }
 
-  function removeFromNoteList(e, toRemove) {
-    e.preventDefault();
-    setVolNotes(volNotes.filter(note => note !== toRemove));
-  }
-
-  function handleDateFocus(e) {
+  const handleDateFocus = e => {
     // When clicking on input, switches input type to date. Allows for placeholder text
     e.currentTarget.type = 'date';
   }
 
-  function handleDateBlur(e) {
+  const handleDateBlur = e => {
     // Changes input back to text if it is empty so placeholder text can still be shown
     if (canningDate === '' || canningDate === 'mm/dd/yy') e.currentTarget.type = 'text';
   }
 
-  function saveForm() {
+  const getHouse = (street, houseNumber) => {
+    // Returns link for google maps iframe
+    var address = `${houseNumber}+${street}`;
+    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
+  }
+
+  const saveForm = e => {
     // Executes when save button is clicked.
     // Alerts and doesn't save if required inputs are not filled (Placeholder)
     if (routeName === '') {
@@ -104,88 +85,72 @@ const NewRoutePanel = () => {
       return;
     }
 
-    // Currently only logs form information to console
-    console.log({
-      name: routeName,
-      streets: streetNames,
-      date: canningDate,
-      donations: numDonated,
-      notes: volNotes,
-      created: new Date().toString()
-    })
+    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes);
+    
   }
 
+  
 
 
-  // Map Sandbox
-
-  function searchMap(e) {
-    // generates and sets a new map url for map
-    if (e.target.value.length > 0) {
-      let query = parseQuery(e.target.value)
-      setMapURL(query);
-    } else if (streetNames.length > 0) {
-      mapRoute(streetNames);
-    } else {
-      setMapURL(parseQuery(defaultQuery))
-    }
-  }
-
-  function parseQuery(query) {
-    query.replace(' ', '+');
-    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${query}`;
-  }
-
-  function mapRoute(streets) {
-    let waypoints = '';
-    streets.forEach(street => {
-      waypoints += `${street.replace(' ', '+')}|`
-    })
-    setMapURL(`https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_MAPS_API_KEY}
-    &origin=${defaultOrigin}
-    &destination=${defaultOrigin}
-    &waypoints=${waypoints.substring(0, waypoints.length - 1)}`);
-  }
+  // Google map implementation is a placeholder from ViewHouseProperties
+  let street = "Hillsborough+Street";
+  let houseNumber = "425";
+  let source = getHouse(street, houseNumber);
 
   return (
     <div>
       <h1 className="title">New Route</h1>
       <div className="columns">
         <div className="column">
-          <FormControl>
-            <FormGroup>
-              <TextField label="Name" variant="filled" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
-              <div className="new-route-grouped-input">
-                <TextField label="Streets" variant="filled" value={currStreet} onChange={(e) => { updateInput(e, setCurrStreet); searchMap(e); }} />
-                <Button color="primary" disabled={currStreet.length === 0} onClick={addToStreetList}>Add</Button>
+          <form>
+            <div className="field">
+              <div className="control">
+                <input className="input" type="text" placeholder="Name (Required)" value={routeName} onChange={(e) => updateInput(e, setRouteName)} />
               </div>
-              <div>
-                {
-                  streetNames.map(street => (
-                    <Chip color="default" key={street} label={street} onDelete={(e) => removeFromStreetList(e, street)} />
-                  ))
-                }
+            </div>
+            <h1>Street Name</h1>
+            <div>
+              {/* List to render street names, starts empty */}
+              {streetNames.map(street => (
+                // Holds street names in buttons, onClick functionality to be dealt with later
+                <button className="button" key={street}>{street}</button>
+              ))}
+            </div>
+            <div className="field is-grouped">
+              <div className="control">
+                <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange={(e) => updateInput(e, setCurrStreet)} />
               </div>
-            </FormGroup>
-          </FormControl>
-          <h1 className="title">Previous Canning Data</h1>
-          <FormControl>
-            <FormGroup>
-              <TextField label="Date" variant="filled" value={canningDate} onChange={(e) => { updateInput(e, setCanningDate) }} onFocus={handleDateFocus} onBlur={handleDateBlur} />
-              <TextField label="$ Donations" variant="filled" type="number" value={numDonated} onChange={(e) => { updateInput(e, setNumDonated) }} />
-              <div className="new-route-grouped-input">
-                <TextField label="Volunteer notes" variant="filled" value={currNote} onChange={(e) => { updateInput(e, setCurrNote) }} />
-                <Button color="primary" disabled={currNote.length === 0} onClick={addToNoteList}>Add</Button>
+              {/* Pushes current street to list, then clears input */}
+              <button className="button" onClick={updateStreetList}>Add</button>
+            </div>
+            <h1>Last Canning Data</h1>
+            <div className="field">
+              <div className="control">
+                <input className="input" type="text" placeholder="Date (optional)" onFocus={handleDateFocus} onBlur={handleDateBlur} value={canningDate} onChange={(e) => updateInput(e, setCanningDate)} />
               </div>
-              <div>
-                {
-                  volNotes.map(note => (
-                    <Chip color="default" key={note} label={note} onDelete={(e) => removeFromNoteList(e, note)} />
-                  ))
-                }
+              <label className="label">MM/DD/YY</label>
+            </div>
+            <div className="field">
+              <div className="control">
+                <input className="input" type="number" placeholder="Donations (optional)" value={numDonated} onChange={(e) => updateInput(e, setNumDonated)} />
               </div>
-            </FormGroup>
-          </FormControl>
+            </div>
+            <h1>Volunteer Notes</h1>
+            <div>
+              {/* List to render volunteer notes, starts empty */}
+              {volNotes.map(note => (
+                // Holds street names in buttons, onClick functionality to be dealt with later
+                <button className="button" key={note}>{note}</button>
+              ))}
+            </div>
+            <div className="field is-grouped">
+              <div className="control">
+                {/* Pushes current note to list, then clears input */}
+                <input className="input" type="text" placeholder="Note" value={currNote} onChange={(e) => updateInput(e, setCurrNote)} />
+              </div>
+              <button className="button" onClick={updateNoteList}>Add</button>
+            </div>
+          </form>
         </div>
         <div className="column">
           {/* Placeholder google map */}
@@ -194,7 +159,7 @@ const NewRoutePanel = () => {
               width="600"
               height="450"
               frameBorder="0" styles="border:0"
-              src={mapURL}
+              src={source}
               allowFullScreen>
             </iframe>
           </div>
@@ -203,7 +168,6 @@ const NewRoutePanel = () => {
       {/* Figuring out submit button, might put into form */}
       <input className="button" type="submit" onClick={saveForm} value="Save"></input>
     </div>
-
 
   );
 };
