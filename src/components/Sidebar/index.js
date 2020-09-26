@@ -15,7 +15,6 @@ import DeleteDialogs from '../DeleteDialogs';
 
 import EditRoutePanel from '../EditRoutePanel';
 import AssignRoute from '../AssignRoute';
-import EditRoute from '../EditRoute';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -55,7 +54,6 @@ const Sidebar = () => (
         <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
         <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
         <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
-        <Route path={ROUTES.EDIT_ROUTE} component={EditRoute} />
         <Route path={ROUTES.ASSIGN_ROUTE} component={AssignRoute} />
       </Switch>
     </div>
