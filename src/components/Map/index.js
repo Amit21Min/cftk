@@ -16,17 +16,16 @@ export const Map = React.memo(function Map(props) {
 
   if (map) {
     // execute when map object is ready
-    console.log(props.address);
-    // var geocoder = new google.maps.Geocoder();
     var geocoder = new google.maps.Geocoder();
     var address = props.address;
     var cityState = props.cityState;
     var iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/'
     var parkingIcon = iconBase + 'parking_lot_maps.png'
-
     address = address.map(address => address + ", " + cityState);
+    
     address.forEach(address => codeAddress(geocoder, map, address));
 
+    // Most accurate Geocoder result achieved with supplying sa much of the following as possible:
     // House Number, Street Direction, Street Name, Street Suffix, City, State, Zip, Country
   }
 
@@ -51,8 +50,6 @@ export const Map = React.memo(function Map(props) {
 
     });
   }
-  
-  
 
   return (
     <div>
