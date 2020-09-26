@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
+import { storeRouteData } from '../RouteModels/routes';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
 import SearchBar from  '../SearchBar';
+import { AssignmentReturnRounded } from '@material-ui/icons';
 
 const EditRoutePanel = () => {
 
     const [routeName, setRouteName] = useState('');
+    const [isValidName, setIsValidName] = useState(true);
+    const [townCity, setTownCity] = useState('');
+    const [isValidCity, setIsValidCity] = useState(true)
     const [currStreet, setCurrStreet] = useState('');
+    const [isValidStreet, setIsValidStreet] = useState(true);
     const [streetNames, setStreetNames] = useState([]);
     const [canningDate, setCanningDate] = useState('');
     const [numDonated, setNumDonated] = useState('');
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
+    const[validForm, setValidForm] = useState(false);
 
     const updateInput = (e, setter) => {
         setter(e.target.value);
@@ -19,16 +26,40 @@ const EditRoutePanel = () => {
     }
 
     const updateStreetList = e => {
+    //adds street to list as long as street is not a;ready included in the list
+    //preventDefault() prevents the page from reoading every time a button is clicked
         e.preventDefault();
         if (streetNames.includes(currStreet)) {
-            alert ("Please don't repeat a street name");
-            return;
-        } else if (currStreet === '') {
-            alert ("Please enter a street name");
+            setIsValidStreet(false);
             return;
         }
+
+        //Revalidates form
+        if (routeName.length === 0) {
+            setValidForm(false);
+        } else if (townCity.length === 0) {
+            setValidForm(false);
+        } else  {
+            setValidForm(true);
+        }
+
         setStreetNames([...streetNames, currStreet]);
         setCurrStreet('');
+    }
+
+    const removeStreet = street => {
+        //Removes specified street
+        setStreetNames(streetNames.filter(name => name != street));
+        setIsValidStreet(true);
+
+        //Revalidates form
+        if (routeName.length === 0) {
+            setValidForm(false);
+        } else if (townCity.length === 0) {
+            setValidForm(false);
+        } else  {
+            setValidForm(true);
+        }
     }
 
     const updateNoteList = e => {
@@ -42,6 +73,11 @@ const EditRoutePanel = () => {
         }
         setVolNotes([...volNotes, currNote]);
         setCurrNote('');
+    }
+
+    const removeNote = note => {
+        //Removes the specified volunteer note
+        setVolNotes(volNotes.filter(text => text != note));
     }
 
     const handleDateFocus = e => {
@@ -65,8 +101,10 @@ const EditRoutePanel = () => {
         } else if (streetNames.length === 0 && currStreet  === '') {
             alert('Please enter/add a street name');
             return;
-        }  
+        }
+        storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
 
+        /*
         console.log({
             name: routeName,
             streets: streetNames,
@@ -75,13 +113,27 @@ const EditRoutePanel = () => {
             notes: volNotes,
             created: new Date()
         })
+        */
+    }
+
+    const validateRequired = _ => {
+        if (routeName.length === 0) {
+            setValidForm(false);
+        } else if (townCity.length === 0) {
+            setValidForm(false);
+        } else if (streetNames.length === 0) {
+            setValidForm(false);
+        } else {
+            setValidForm(true);
+        }
     }
 
     var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
 
-    function getHouse(street, houseNumber) {
+    const getHouse = (street, houseNumber) => {
+        //Returns link for Google Mpas iframe
         var address = `${houseNumber}+${street}`;
         return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
     }
