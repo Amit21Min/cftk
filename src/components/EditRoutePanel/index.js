@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { storeRouteData } from '../RouteModels/routes';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
-import { Typography, Grid, Textfield, Button } from '@material-ui/core';
+import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import SearchBar from  '../SearchBar';
+import GroupedTextField from '../GroupedTextField';
+import ChipList from '../ChipList';
 // import { AssignmentReturnRounded } from '@material-ui/icons';
 
 const EditRoutePanel = () => {
@@ -20,11 +22,6 @@ const EditRoutePanel = () => {
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
     const[validForm, setValidForm] = useState(false);
-
-    const updateInput = (e, setter) => {
-        setter(e.target.value);
-        console.log(e.target.value);
-    }
 
     const updateStreetList = e => {
     //adds street to list as long as street is not a;ready included in the list
@@ -129,67 +126,61 @@ const EditRoutePanel = () => {
         }
     }
 
-    var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
-    var houseNumber = "425"; // get from input box, dynamically update and re-render
-    var source = getHouse(street, houseNumber);
-
     const getHouse = (street, houseNumber) => {
         //Returns link for Google Mpas iframe
         var address = `${houseNumber}+${street}`;
         return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
     }
-
-return(
-    <div>
-        <h1 className="title"> Edit Route</h1>
-        <div className="columns">
-            <div className="column">
-                <form>
-                    <div className="field">
-                        <div className="control">
-                            <input className="input" type="tecxt" placeholder="Name(Required)" value={routeName} onChange = {(e) => updateInput(e, setRouteName)} />
-                        </div>
-                    </div>
-                    <h1>Street Name</h1>
-                    <div className="field is-grouped">
-                        <div className="control">
-                            <input className="input" type="text" placeholder="Street Name (Required)" value={currStreet} onChange = {(e) => updateInput(e, setCurrStreet)}/>
-                        </div>
-                        <button className="button" onClick = {updateStreetList}>ADD</button>
-                    </div>
-                    <div>
-                        {streetNames.map(street => (
-                            <button class="button is-info is-rounded" key={street}>{street}</button>
-                        ))}
-                    </div>
-                    <h1 class="subtitle"> Previous Canning Data</h1>
-                    <div className="field">
-                        <div className="control">
-                            <input className="input" type="text" placeholder="Date (Optional)" onFocus={handleDateFocus} onBlur={handleDateBlur} value={canningDate} onChange = {(e) => updateInput(e, setCanningDate)}/>
-                        </div>
-                        <label className="label">MM/DD/YY</label>
-                    </div>
-                    <div className="field">
-                        <div className="control">
-                            <input className="input" type="number" placeholder="Donations (Optional)" value={numDonated} onChange = {(e) => updateInput(e, setNumDonated)} />
-                        </div>
-                    </div>
-                    <h1> Volunteer notes</h1>
-                    <div className="field is-grouped">
-                        <div className="control">
-                            <input className="input" type="text" placeholder="Note" value={currNote} onChange = {(e) => updateInput(e, setCurrNote)} />
-                        </div>
-                        <button class="button" onClick = {updateNoteList}>ADD</button>
-                    </div>
-                    <div>
-                        {volNotes.map (note => (
-                            <button class="button is-rounded" key={note}>{note}</button>
-                        ))}
-                    </div>
-                </form>
-            </div>
-            <div className="column">
-                <div>
+    
+    var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
+    var houseNumber = "425"; // get from input box, dynamically update and re-render
+    var source = getHouse(street, houseNumber);
+    
+    return (
+        <div>
+            <Grid container spacing={3}>
+                <Grid item xs={12}> <Typography style = {{ fontSize: 32, fontWeight: "bold"}}>Edit Route</Typography></Grid>
+                <Grid item xs={6}> 
+                    <Grid container spacing={3}>
+                        <Grid item xs={6                        }>
+                            <TextField fullWidth variant="filled" error={!isValidName}
+                                //validates form on blur
+                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
+                                label="Name*" />
+                        </Grid>
+                        <Grid item xs={6}> 
+                        <TextField fullWidth variant="filled" error={!isValidName}
+                            //validates form on blur
+                            value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true) }} onBlur={validateRequired}
+                            label="Town/City*" />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                                fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
+                            />
+                            {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
+                        </Grid>
+                        <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Previous Canning Data</Typography></Grid>
+                        <Grid item xs={6}>
+                            <TextField fullWidth variant="filled" 
+                                value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur} 
+                                onChange = {(e) => setCanningDate(e.target.value)} label="Date*"/>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField fullWidth variant="filled" 
+                                value={numDonated} onChange = {(e) => setNumDonated(e.target.value)}
+                                label="Donations(Optional)"/>
+                        </Grid>
+                        <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Volunteer Notes</Typography></Grid>
+                        <Grid>
+                            <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
+                            fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
+                            />
+                            {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}                        
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={6}>
                     <iframe title="viewHouse"
                         width="600"
                         height="450"
@@ -197,15 +188,15 @@ return(
                         src={source}
                         allowFullScreen>
                     </iframe>
-                </div>
-            </div>
-        </div>
-            <div class="field is-grouped">
-                <button class="button is-primary" onClick={saveForm}>SAVE</button>
-                <button class="button is-link is-light">
-                    <Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link>
-                </button>
-            </div>
+                </Grid>
+                <Grid item xs={10} />
+                <Grid item xs={1}>
+                    <Button variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>SAVE</Button>
+                </Grid>
+                <Grid item xs={1}  >
+                    <Button variant="contained" ><Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link></Button>
+                </Grid>
+            </Grid>
         </div>
     );
 };
