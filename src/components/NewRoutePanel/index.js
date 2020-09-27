@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
+import DualGroupedTextField from '../GroupedTextField/streetGroupedTextField';
 import ChipList from '../ChipList';
 
 import * as ROUTES from '../../constants/routes';
@@ -31,6 +32,7 @@ const NewRoutePanel = () => {
   const [townCity, setTownCity] = useState('');
   const [isValidCity, setIsValidCity] = useState(true);
   const [currStreet, setCurrStreet] = useState('');
+  const [currAddress, setCurrAddress] = useState('')
   const [isValidStreet, setIsValidStreet] = useState(true);
   const [streetNames, setStreetNames] = useState([]);
   const [canningDate, setCanningDate] = useState('');
@@ -44,7 +46,7 @@ const NewRoutePanel = () => {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
-    if (streetNames.includes(currStreet)) {
+    if (streetNames.includes(currStreet) || currAddress.length === 0) {
       setIsValidStreet(false);
       return;
     }
@@ -54,13 +56,17 @@ const NewRoutePanel = () => {
     else if (townCity.length === 0) setValidForm(false);
     else setValidForm(true);
 
-    setStreetNames([...streetNames, currStreet]);
+    let houseNumbers = currAddress.split(',');
+    let newAddresses = houseNumbers.map(number => `${number} ${currStreet}`)
+
+    setStreetNames(prevState => [...prevState, ...newAddresses]);
     setCurrStreet('');
+    setCurrAddress('');
   }
 
   const removeStreet = street => {
     // Removes specified street
-    setStreetNames(streetNames.filter(name => name !== street));
+    setStreetNames(prevState => prevState.filter(name => name !== street));
     setIsValidStreet(true);
 
     // Revalidates form
@@ -82,13 +88,13 @@ const NewRoutePanel = () => {
       return;
     }
 
-    setVolNotes([...volNotes, currNote]);
+    setVolNotes(prevState => [...prevState, currNote]);
     setCurrNote('');
   }
 
   const removeNote = note => {
     // Removes the specified volunteer note
-    setVolNotes(volNotes.filter(text => text !== note))
+    setVolNotes(prevState => prevState.filter(text => text !== note))
   }
 
   const handleDateFocus = e => {
@@ -152,8 +158,10 @@ const NewRoutePanel = () => {
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
-              <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                fieldValue={currStreet} onChange={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }} onButtonClick={updateStreetList}
+              <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                label1="Street Name*" value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
+                label2="House Numbers*" value2={currAddress} onChange2={(e) => { setCurrAddress(e.target.value)}} list={streetNames}
+                onButtonClick={updateStreetList}
               />
               {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
             </Grid>
