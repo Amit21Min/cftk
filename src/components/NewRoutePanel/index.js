@@ -31,8 +31,10 @@ const NewRoutePanel = () => {
   const [townCity, setTownCity] = useState('');
   const [isValidCity, setIsValidCity] = useState(true);
   const [currStreet, setCurrStreet] = useState('');
+  const [currHouses, setCurrHouses] = useState([]);
   const [isValidStreet, setIsValidStreet] = useState(true);
   const [streetNames, setStreetNames] = useState([]);
+  const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
   const [currNote, setCurrNote] = useState('');
@@ -55,7 +57,19 @@ const NewRoutePanel = () => {
     else setValidForm(true);
 
     setStreetNames([...streetNames, currStreet]);
+
+    // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
+    // BARE FUNCTIONALITY, PROBABLY MANY BUGS
+    // there's also an empty and semi-invisible button next to house numbers
+
+    var numbers = currHouses.split(",");
+    var newHouse = {};
+    newHouse[currStreet] = numbers;
+    // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
+    setHouseNumbers({...houseNumbers, [currStreet] : numbers});
+
     setCurrStreet('');
+    setCurrHouses('');
   }
 
   const removeStreet = street => {
@@ -117,8 +131,7 @@ const NewRoutePanel = () => {
       alert('Please enter/add a street name');
       return;
     }
-
-    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
+    storeRouteData(routeName, houseNumbers, volNotes, townCity);
 
   }
 
@@ -152,9 +165,13 @@ const NewRoutePanel = () => {
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
-              <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+              <GroupedTextField label="House Numbers*"
+                fieldValue={currHouses} onChange={(e) => { setCurrHouses(e.target.value); setIsValidStreet(true) }}
+              />
+              <GroupedTextField label="Street*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                 fieldValue={currStreet} onChange={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }} onButtonClick={updateStreetList}
               />
+
               {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
             </Grid>
             <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
