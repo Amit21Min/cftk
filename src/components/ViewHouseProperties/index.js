@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './style.css'
-import SearchBar from '../SearchBar'
 import {db} from '../Firebase/firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -8,6 +7,10 @@ import List from '@material-ui/core/List';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -25,7 +28,8 @@ const ViewHouseProperties = () => {
     var numbers = [101, 102, 103, 104, 105, 106, 107, 108, 109];
     const [street, setStreet] = useState(streets[0]);
     const [number, setNumber] = useState(101);
-    
+    const [street_selected, setStreetSelected] = useState(false);
+
     const classes = useStyles();
 
     const [data, setData] = useState({
@@ -42,7 +46,7 @@ const ViewHouseProperties = () => {
     useEffect(() => {
         db.collection("House").doc("model").get().then(doc => {
             const data = doc.data();
-            console.log(data);
+           // console.log(data);
             let all_comments = [];
             for(let i = 0; i < data.visits.length; i++){
                 all_comments.push({
@@ -80,47 +84,45 @@ const ViewHouseProperties = () => {
         return data.comments[0].date;
     }
 
-    const handleChange = (event) => {
-        setStreet(event.target.value);
+    const handleStreetChange = (event, value, reason) => {
+        if (reason === "select-option") {
+            setStreetSelected(true);
+        }
+        if (reason === "clear") {
+            setStreetSelected(false);
+        }
+        setStreet(value);
     };
 
-    const updateNumber = (n) => {
-        setNumber(n)
+    const handleNumberChange = (event, value) => {
+        setNumber(value)
     }
 
     return(
-    <div>
+   <div>
         <h2 className="title">Route House Properties</h2>
-        <div class="flex-container">
-            <div class="selectHouse">
-                <div>
-                    <FormControl variant="filled" className={classes.formControl}>
-                        <InputLabel>Street</InputLabel>
-                        <Select
-                            value={street}
-                            onChange={handleChange}
-                        >
-                            {streets.map((street) => 
-                                <MenuItem value={street}>{street}</MenuItem>
-                            )}
-                        </Select>
-                    </FormControl>
-                </div>
-                <SearchBar prompt="Search house number"/>
-                <label className="label">Or select from the list</label>
-                <div>
-                    <List className={classes.houseList}>
-                        {numbers.map((num, index) => (
-                            <MenuItem
-                                selected={num === number}
-                                onClick={() => updateNumber(num)}
-                            >
-                                {num}
-                            </MenuItem>
-                        ))}
-                    </List>
-                </div>
-            </div>
+        <Grid>
+            <div className = "street-select">
+                <Autocomplete
+                id="street-select"
+                options={streets}
+                getOptionLabel={(option) => option.toString()}
+                 style={{ width: 275}}
+                 onChange={handleStreetChange}
+                 renderInput={(params) => <TextField {...params} label="Street name" variant="outlined"/>}
+    /> </div>
+                <div className = "house-select">
+                <Autocomplete
+                id="numbers-select"
+                options={numbers}
+                getOptionLabel={(option) => option.toString()}
+                 style={{ width: 275}}
+                 disabled= {(!street_selected)}
+                 onChange={handleNumberChange}
+                 renderInput={(params) => <TextField {...params} label="House number" variant="outlined"                  disabled={!street_selected}
+                 />}
+    /> </div>
+                <Divider orientation="vertical" />
             <div className="notes">
                 <strong>Solicitation:</strong>
                 <h6>{solicitationAllowedText()}</h6>
@@ -137,7 +139,7 @@ const ViewHouseProperties = () => {
                 </div>
             </div>
             <div class="clearfix"></div>
-        </div>
+        </Grid>
     </div>
     )
 };

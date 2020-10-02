@@ -3,6 +3,15 @@
     margin-left:2%;
 }
 
+.street-select {
+    margin-left: 1%;
+    margin-right: 1%;
+    float:left;
+}
+.house-select {
+    float:left;
+}
+
 .search {
     margin-bottom:2%;
     margin-left:5%;
@@ -26,7 +35,7 @@
 .notes {
     flex-grow: 3;
     width:30%;
-    float:left;
+    float:right;
 }
 .clearfix{
     clear:both
