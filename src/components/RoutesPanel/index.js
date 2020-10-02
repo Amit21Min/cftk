@@ -59,7 +59,8 @@ const RoutesPanel = () => {
   // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
   const [routeColumnNames, setRouteColumnNames] = useState([
     {field: "selectbox",             type: "selectbox",        html_text: ""},
-    {field: "name",                  type: "drop-down-parent", html_text: "Name"},
+    {field: "drop_down",             type: "drop-down-parent", html_text: ""},
+    {field: "name",                  type: "text",             html_text: "Name"},
     {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
     {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
     {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
@@ -139,6 +140,7 @@ const RoutesPanel = () => {
 
   // Takes routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
   const tableTransform = (routes) => {
+    console.log(routes);
     let tabled_routes = [];
     for(let i = 0; i < routes.length; i++){
       let months_since_assigned;
@@ -161,7 +163,7 @@ const RoutesPanel = () => {
           }
         }
           tabled_routes.push({
-            options: {open: false},
+            drop_down: {open: false},
             name: routes[i].name,
             assignment_status: routes[i].assignmentStatus ? routes[i].assignmentStatus.toString() : "",
             months_since_assigned: months_since_assigned.toString(),
@@ -178,6 +180,7 @@ const RoutesPanel = () => {
           });
         }
       }
+      console.log(tabled_routes);
     return tabled_routes;
   }
 
