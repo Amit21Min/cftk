@@ -38,7 +38,7 @@ export default function AlertDialogSlide() {
         <DialogTitle id="alert-dialog-slide-title">{"Move Street"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-          The street “**street name**,” has already been assigned to the volunteer group, “Group 15.” 
+          The street **street name**, has already been assigned to the volunteer group, **group name**.
           If you move this route, this group will no longer be assigned to this street.
           </DialogContentText>
         </DialogContent>
