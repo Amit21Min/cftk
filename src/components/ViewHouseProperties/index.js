@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './style.css'
 import {db} from '../Firebase/firebase';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import List from '@material-ui/core/List';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
+import { CardContent } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -27,8 +26,9 @@ const ViewHouseProperties = () => {
     var streets = ["Hillsborough Street", "Trask Terrace", "South Road", "Manning Drive"];
     var numbers = [101, 102, 103, 104, 105, 106, 107, 108, 109];
     const [street, setStreet] = useState(streets[0]);
-    const [number, setNumber] = useState(101);
+    const [number, setNumber] = useState(numbers[0]);
     const [street_selected, setStreetSelected] = useState(false);
+    const [house_selected, setHouseSelected] = useState(false);
 
     const classes = useStyles();
 
@@ -46,7 +46,6 @@ const ViewHouseProperties = () => {
     useEffect(() => {
         db.collection("House").doc("model").get().then(doc => {
             const data = doc.data();
-           // console.log(data);
             let all_comments = [];
             for(let i = 0; i < data.visits.length; i++){
                 all_comments.push({
@@ -94,14 +93,128 @@ const ViewHouseProperties = () => {
         setStreet(value);
     };
 
-    const handleNumberChange = (event, value) => {
+    const handleNumberChange = (event, value, reason) => {
+        if (reason === "select-option") {
+            setHouseSelected(true);
+        }
+        if (reason === "clear") {
+            setHouseSelected(false);
+        }
         setNumber(value)
     }
+
+    function HouseProperties(props) {
+        if (!props.house) {
+          return (
+              <b id="selectHouse">Select a house to view its properties</b>
+          )
+        }
+      
+        return (    
+            
+           <Grid item>
+            <Card>
+                <CardContent>
+                    <strong>Solicitation</strong>
+                    <div>
+                        <h6>{solicitationAllowedText()}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>{solicitationAllowedText()}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>{solicitationAllowedText()}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                </CardContent>
+                <CardActions>
+                    <Button size="small">View More</Button>
+                </CardActions>
+            </Card>
+
+            <Card>
+                <CardContent>
+                    <strong>Donations</strong>
+                    <div>
+                        <h6>${data.lastDonation}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>${data.lastDonation}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>${data.lastDonation}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                </CardContent>
+                <CardActions>
+                    <Button size="small">View More</Button>
+                </CardActions>
+            </Card>
+
+            <Card>
+                <CardContent>
+                    <strong>Volunteer Comments</strong>
+                    <div>
+                        <h6>{getComment(0)}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>{getComment(0)}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>{getComment(0)}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                </CardContent>
+                <CardActions>
+                    <Button size="small">View More</Button>
+                </CardActions>
+            </Card>
+
+            <Card>
+                <CardContent>
+                    <strong>Interested in Learning More</strong>
+                    <div>
+                        <h6>{learnMoreText()}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>{learnMoreText()}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                    <Divider />
+                    <div>
+                        <h6>{learnMoreText()}</h6>
+                        <small>Group {getGroup(0)} | {getDate(0)}</small>
+                    </div>
+                </CardContent>
+                <CardActions>
+                    <Button size="small">View More</Button>
+                </CardActions>
+            </Card>
+
+            </Grid> 
+            
+        );
+      }
 
     return(
    <div>
         <h2 className="title">Route House Properties</h2>
-        <Grid>
+        <Grid container spacing={2}>
+            <Grid item>
             <div className = "street-select">
                 <Autocomplete
                 id="street-select"
@@ -110,8 +223,11 @@ const ViewHouseProperties = () => {
                  style={{ width: 275}}
                  onChange={handleStreetChange}
                  renderInput={(params) => <TextField {...params} label="Street name" variant="outlined"/>}
-    /> </div>
-                <div className = "house-select">
+                /> 
+            </div>
+            </Grid>
+            <Grid item>
+            <div className = "house-select">
                 <Autocomplete
                 id="numbers-select"
                 options={numbers}
@@ -119,25 +235,14 @@ const ViewHouseProperties = () => {
                  style={{ width: 275}}
                  disabled= {(!street_selected)}
                  onChange={handleNumberChange}
-                 renderInput={(params) => <TextField {...params} label="House number" variant="outlined"                  disabled={!street_selected}
-                 />}
-    /> </div>
-                <Divider orientation="vertical" />
-            <div className="notes">
-                <strong>Solicitation:</strong>
-                <h6>{solicitationAllowedText()}</h6>
-                <strong>Donations Amounts:</strong>
-                <h6>${data.lastDonation}</h6>
-                <strong>Interest in CFTK:</strong>
-                <h6>{learnMoreText()}</h6>
-                <strong>Volunteer comments:</strong>
-                <div class="comment">
-                    <div>
-                        <h6>{getComment(0)}</h6>
-                        <small>Group {getGroup(0)} | {getDate(0)}</small>
-                    </div>
-                </div>
+                 renderInput={(params) => <TextField {...params} label="House number" variant="outlined" disabled={!street_selected}/>}
+                /> 
             </div>
+            </Grid>
+            <Divider orientation="vertical" flexItem/>
+
+            <HouseProperties house={house_selected} />
+            
             <div class="clearfix"></div>
         </Grid>
     </div>
