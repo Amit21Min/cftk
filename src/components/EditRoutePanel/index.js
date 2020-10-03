@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { storeRouteData } from '../RouteModels/routes';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
-import { Typography, Grid, TextField, Button } from '@material-ui/core';
+import { Typography, Grid, TextField, Button, InputLabel} from '@material-ui/core';
 import SearchBar from  '../SearchBar';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
@@ -21,6 +21,7 @@ const EditRoutePanel = () => {
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
     const[validForm, setValidForm] = useState(false);
+    const [unableToEdit, setUnableToEdit] = useState(false);
 
     const updateStreetList = e => {
     //adds street to list as long as street is not a;ready included in the list
@@ -135,26 +136,32 @@ const EditRoutePanel = () => {
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
     
+    const townLabel = <p>Town/City<span style={{ color: "#B00020" }}>*</span></p>
+    const nameLabel = <p>Name<span style={{ color: "#B00020" }}>*</span></p>
+    const streetsLabel = <p>Streets<span style={{ color: "#B00020" }}>*</span></p>
+    const dateLabel = <p>Date<span style={{ color: "#B00020" }}>*</span></p>
+    
+
     return (
         <div>
             <Grid container spacing={3}>
                 <Grid item xs={12}> <Typography style = {{ fontSize: 32, fontWeight: "bold"}}>Edit Route</Typography></Grid>
                 <Grid item xs={6}> 
                     <Grid container spacing={3}>
-                        <Grid item xs={6                        }>
+                        <Grid item xs={6}>
                             <TextField fullWidth variant="filled" error={!isValidName}
                                 //validates form on blur
-                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
-                                label="Name*" />
+                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); setUnableToEdit(true) }} onBlur={validateRequired}
+                                label={nameLabel}/>
                         </Grid>
                         <Grid item xs={6}> 
                         <TextField fullWidth variant="filled" error={!isValidName}
                             //validates form on blur
-                            value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true) }} onBlur={validateRequired}
-                            label="Town/City*" />
+                            value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true); setUnableToEdit(true)}} onBlur={validateRequired}
+                            label = {townLabel} />
                         </Grid>
                         <Grid item xs={12}>
-                            <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                            <GroupedTextField label={streetsLabel} buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                                 fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
                             {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
@@ -163,7 +170,7 @@ const EditRoutePanel = () => {
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" 
                                 value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur} 
-                                onChange = {(e) => setCanningDate(e.target.value)} label="Date*"/>
+                                onChange = {(e) => setCanningDate(e.target.value)} label={dateLabel}/>
                         </Grid>
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" 
