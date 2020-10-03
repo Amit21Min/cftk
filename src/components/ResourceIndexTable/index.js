@@ -30,7 +30,7 @@ const ResourceIndexTable = (props) => {
       key={key}
       data={item}
       columns={props.columns}
-      selectableHandler={props.selectableHandler}
+      selectableHandler={props.selectableItemHandler}
       options={item.options ? item.options : {}}
       />);
 
@@ -39,7 +39,7 @@ const ResourceIndexTable = (props) => {
   console.log(props);
   return(
     <Table>
-      <ResourceIndexTableHeader columns={props.columns} />
+      <ResourceIndexTableHeader columns={props.columns} selectableHandler={props.selectableColumnHandler} />
       <TableBody>
         {resource_items}
       </TableBody>

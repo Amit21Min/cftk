@@ -45,14 +45,14 @@ const RoutesPanel = () => {
   // This is used by a ResourceIndexTable to define the column names of an html table, as well as to fit the data from each row into the appropriate column.
   // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns. The string per key is the text which is displayed as the html table column headers
   const [routeColumnNames, setRouteColumnNames] = useState([
-    {field: "selectbox",             type: "selectbox",        html_text: "", selected_items: [],                selectColumnCallback: () => {selectAllRoutes()}},
+    {field: "selectbox",             type: "selectbox",        html_text: "", selected_items: []},
     {field: "drop_down",             type: "drop-down-parent", html_text: ""},
-    {field: "name",                  type: "text",             html_text: "Name",                                selectColumnCallback: () => {sortRoutes("name")}},
-    {field: "assignment_status",     type: "text",             html_text: "Assignment Status",                   selectColumnCallback: () => {sortRoutes("assignment_status")}},
-    {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned",          selectColumnCallback: () => {sortRoutes("months_since_assigned")}},
-    {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations",          selectColumnCallback: () => {sortRoutes("amount_collected")}},
-    {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More",                 selectColumnCallback: () => {sortRoutes("outreach_pct")}},
-    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting",                   selectColumnCallback: () => {sortRoutes("soliciting_pct")}},
+    {field: "name",                  type: "text",             html_text: "Name"},
+    {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
+    {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
+    {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
+    {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
+    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
     {field: "overflow",              type: "overflow-menu",    overflow_items: [
                                                                 {text: "Assign All", action: () => {assignAllAction()}}, // because this field has type "overflow-menu" it requires an overflow_items list, which will be provided to an OverflowMenu component
                                                                 {text: "Delete All", action: () => {deleteAllAction()}}
@@ -97,10 +97,6 @@ const RoutesPanel = () => {
     console.log(queryState);
   }
 
-  const getColumnNames = () => {
-    return routeColumnNames;
-  }
-
   // This function is passed to a ResourceIndexTable, which will then pass it to the table's child ResourceIndexItems. When an item's row in the html table is selected,
   // its ID will be added to the state object for selected resources
   const selectRoute = (event, route_key) => {
@@ -129,12 +125,15 @@ const RoutesPanel = () => {
   // Does the same as selectRoute, but applies to the selectAllResources state object instead
   const selectAllRoutes = (event) => {
     const selected = routeColumnNames[0].selected_items
-    if (event.target.checked && routes) {
+    let c = deepCopyFunction(routeColumnNames);
+    if (event.target.checked) {
       const newSelected = routes.map((n) => n.name);
-      setRouteColumnNames(newSelected);
+      c[0] = Object.assign({}, c[0], {selected_items: newSelected});
+      setRouteColumnNames(c);
       return;
     }
-    setRouteColumnNames([]);
+    c[0] = Object.assign({}, c[0], {selected_items: []});
+    setRouteColumnNames(c);
   }
 
   // Uses the string of a column title to alter the routes query
@@ -201,6 +200,25 @@ const RoutesPanel = () => {
     fn();
   }
 
+  // Similar to above, but handles the click events for column headers instead of index items
+  const selectableHeaderCallbacksHandler = (event, column) => {
+    let fn;
+    switch(column.type){
+      case 'selectbox':
+        fn = () => {selectAllRoutes(event)};
+        break;
+      case 'overflow-menu':
+        fn = () => {console.log('overflow has been clicked')};
+        break;
+      case 'text':
+        fn = () => {sortRoutes(column.field)};
+        break;
+      default:
+        fn = () => {console.log('default route was clicked')};
+    }
+    fn();
+  }
+
   const newRoute = () => {
     console.log("Creating a new route!");
   }
@@ -227,7 +245,8 @@ const RoutesPanel = () => {
                 <ResourceIndexTable
                     items={routes} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
                     columns={routeColumnNames}
-                    selectableHandler={selectableItemCallbacksHandler}
+                    selectableItemHandler={selectableItemCallbacksHandler}
+                    selectableColumnHandler={selectableHeaderCallbacksHandler}
                 />
              </div>;
   } else {

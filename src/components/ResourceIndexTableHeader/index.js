@@ -14,8 +14,7 @@ const ResourceIndexTableHeader = (props) => {
       case 'selectbox':
         column_header = <TableCell key={column.field} padding="checkbox">
                           <Checkbox type="checkbox" name="all-selectbox"
-                            checked={props.allSelected}
-                            onChange={(event) => {column.selectColumnCallback(event)}}/>
+                            onChange={(event) => {props.selectableHandler(event, column)}}/>
                         </TableCell>;
         break;
       case 'overflow-menu':
@@ -30,7 +29,7 @@ const ResourceIndexTableHeader = (props) => {
       default:
         //on Click, a column header will send its self to perform an action, like sorting -->
         column_header = <TableCell key={column.field}
-                            onClick={() => {column.selectColumnCallback()}}>
+                            onClick={(event) => {props.selectableHandler(event, column)}}>
                             {column.html_text}
                         </TableCell>;
     }

@@ -44,7 +44,7 @@ const ResourceIndexItem = (props) => {
                 <Checkbox
                    name={props.data.name+"-selectbox"}
                    checked={selected}
-                   onChange={(event, key) => {props.selectableHandler(event, column, props.data.name); console.log(cell_data.selectItemCallback);}}
+                   onChange={(event, key) => {props.selectableHandler(event, column, props.data.name)}}
                 />
               </TableCell>;
         break;
