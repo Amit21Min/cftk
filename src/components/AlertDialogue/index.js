@@ -25,7 +25,7 @@ export default function AlertDialogSlide() {
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Slide in alert dialog
+        Move Street
       </Button>
       <Dialog
         open={open}
@@ -35,19 +35,19 @@ export default function AlertDialogSlide() {
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-slide-title">{"Move Street"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Let Google help apps determine location. This means sending anonymous location data to
-            Google, even when no apps are running.
+          The street “**street name**,” has already been assigned to the volunteer group, “Group 15.” 
+          If you move this route, this group will no longer be assigned to this street.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Disagree
+          <Button onClick={handleClose} variant="contained">
+            Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
-            Agree
+          <Button onClick={handleClose} variant="contained" color="primary">
+            Move
           </Button>
         </DialogActions>
       </Dialog>
