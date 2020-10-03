@@ -17,13 +17,38 @@ export const Map = React.memo(function Map(props) {
   if (map) {
     // execute when map object is ready
     var geocoder = new google.maps.Geocoder();
-    var address = props.address;
+    var streets = props.streets;
+    var city = props.city;
+    var state = props.state;
+    var addresses = props.address;
+
+    // Housenumbers looks like:
+// {
+//     street1: [123,124,125],
+//     street2: [1,2,3,4]
+// }
+
+  var cityState = props.cityState;
+  for (var street in addresses) {
+    console.log(street);
+    console.log(addresses);
+    console.log(addresses[street]);
+    for (var address in addresses[street]) {
+      console.log(addresses[street][address]);
+      var fullAddress = addresses[street][address] + " " + street + "," + cityState;
+      console.log(fullAddress);
+      codeAddress(geocoder, map, fullAddress);
+    }
+
+    // console.log(street);
+    // console.log(address[street]);
+  }
     var cityState = props.cityState;
     var iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/'
     var parkingIcon = iconBase + 'parking_lot_maps.png'
-    address = address.map(address => address + ", " + cityState);
+    // address = address.map(address => address + ", " + cityState);
     
-    address.forEach(address => codeAddress(geocoder, map, address));
+    // address.forEach(address => codeAddress(geocoder, map, address));
 
     // Most accurate Geocoder result achieved with supplying sa much of the following as possible:
     // House Number, Street Direction, Street Name, Street Suffix, City, State, Zip, Country
