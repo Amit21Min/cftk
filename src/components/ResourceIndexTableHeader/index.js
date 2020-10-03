@@ -8,8 +8,6 @@ import OverflowMenu from '../OverflowMenu';
 
 // Populates and handles actions for the column headers of a ResourceIndexTable
 const ResourceIndexTableHeader = (props) => {
-  console.log(props);
-
   let column_headers = props.columns.map((column) => {
     let column_header;
     switch(column.type){
@@ -17,7 +15,7 @@ const ResourceIndexTableHeader = (props) => {
         column_header = <TableCell key={column.field} padding="checkbox">
                           <Checkbox type="checkbox" name="all-selectbox"
                             checked={props.allSelected}
-                            onChange={(event, message) => props.selectColumnCallback(event, {type: "select-all"})}/>
+                            onChange={(event) => {column.selectColumnCallback(event)}}/>
                         </TableCell>;
         break;
       case 'overflow-menu':
@@ -32,12 +30,12 @@ const ResourceIndexTableHeader = (props) => {
       default:
         //on Click, a column header will send its self to perform an action, like sorting -->
         column_header = <TableCell key={column.field}
-                            onClick={(event, message) => props.selectColumnCallback(event, {column_message: column.field})}>
+                            onClick={() => {column.selectColumnCallback()}}>
                             {column.html_text}
                         </TableCell>;
     }
     return column_header;
-  })
+  });
 
   return (
     <TableHead>
