@@ -36,7 +36,6 @@ const ResourceIndexTable = (props) => {
 
     }
   );
-  console.log(props);
   return(
     <Table>
       <ResourceIndexTableHeader columns={props.columns} selectableHandler={props.selectableColumnHandler} />

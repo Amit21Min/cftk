@@ -4,6 +4,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
+import Collapse from '@material-ui/core/Collapse';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
@@ -11,13 +12,12 @@ import "./index.css";
 
 // Represents a row within a ResourceIndexTable
 const ResourceIndexItem = (props) => {
-  console.log(props.columns);
   // Loop through each of the entries in the parent table's columns list returned by the provided getColumns prop.
   // Each entry will be an object which looks something like: {field: "selectbox", type: "selectbox", html_text: ""}
   // Each iteration of this loop will match a key of the columns to a key in the data prop, and use those to populate a single cell within the row
   const [rowOptions, setRowOptions] = useState(props.options);
 
-  // go through each column first and initialize its corresponding options
+  // go through each column first and initialize its corresponding options (like open in the case of drop-down-parents)
   let init_options = {};
   props.columns.forEach(column => {
     init_options[column.field] = props.data[column.field] ? props.data[column.field] : {};
@@ -32,6 +32,8 @@ const ResourceIndexItem = (props) => {
   }
 
   const getSelectedStatus = (column, key) => column.selected_items.indexOf(key) !== -1;
+
+  let expanded_rows = [];
 
   let cells = props.columns.map((column) => {
     let cell_data = props.data[column.field];
@@ -65,6 +67,17 @@ const ResourceIndexItem = (props) => {
                   </IconButton>
                   {cell_data.html_text || ""}
                </TableCell>;
+        if(cellOptions[column.field].open){
+          expanded_rows.push(
+            <TableRow>
+              <TableCell colspan={9}>
+                <Collapse in={cellOptions[column.field].open}>
+                  {cellOptions[column.field].contents}
+                </Collapse>
+              </TableCell>
+            </TableRow>
+            );
+        }
         break;
       case 'text':
       default:
@@ -72,10 +85,14 @@ const ResourceIndexItem = (props) => {
     }
       return cell;
   });
+
   return(
-    <TableRow>
-      {cells}
-    </TableRow>
+    <React.Fragment>
+      <TableRow>
+        {cells}
+      </TableRow>
+      {expanded_rows}
+    </React.Fragment>
   );
 }
 

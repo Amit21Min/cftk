@@ -29,7 +29,7 @@ const ResourceIndexTableHeader = (props) => {
       default:
         //on Click, a column header will send its self to perform an action, like sorting -->
         column_header = <TableCell key={column.field}
-                            onClick={(event) => {props.selectableHandler(event, column)}}>
+                            onClick={(event) => {if(props.selecableHandler) {props.selectableHandler(event, column)}}}>
                             {column.html_text}
                         </TableCell>;
     }
