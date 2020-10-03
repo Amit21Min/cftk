@@ -31,8 +31,11 @@ const deepCopyFunction = (inObject) => {
   return outObject
 }
 
+const useForceUpdate = () => useState()[1];
+
 
 const RoutesPanel = () => {
+  const forceUpdate = useForceUpdate();
   const [routes, setRoutes] = useState(null);
   const [routeMetrics, setRouteMetrics] = useState({
     total_assigned: "0",
@@ -60,6 +63,21 @@ const RoutesPanel = () => {
                                                                 {text: "Delete All", action: () => {deleteAllAction()}}
                                                                ]
     }
+  ]);
+
+  const [streetColumnNames, setStreetColumnNames] = useState([
+    {field: "selectbox",             type: "selectbox",        html_text: "", selected_items: []},
+    {field: "name",                  type: "text",             html_text: "Name"},
+    {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
+    {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
+    {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
+    {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
+    {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
+    {field: "overflow",              type: "overflow-menu",    overflow_items: [
+                                                                {text: "Assign All", action: () => {assignAllAction()}}, // because this field has type "overflow-menu" it requires an overflow_items list, which will be provided to an OverflowMenu component
+                                                                {text: "Delete All", action: () => {deleteAllAction()}}
+                                                              ]}
+
   ]);
 
   // ===========================================================================
@@ -131,11 +149,47 @@ const RoutesPanel = () => {
     if (event.target.checked) {
       const newSelected = routes.map((n) => n.name);
       c[0] = Object.assign({}, c[0], {selected_items: newSelected});
-      setRouteColumnNames(c);
-      return;
+    } else {
+      c[0] = Object.assign({}, c[0], {selected_items: []});
     }
-    c[0] = Object.assign({}, c[0], {selected_items: []});
     setRouteColumnNames(c);
+  }
+
+  const selectStreet = (event, column, street_data) => {
+    const street_key = street_data.name;
+    const selected = streetColumnNames[0].selected_items;
+    const selectedIndex = selected.indexOf(street_key);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, street_key);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    let n = deepCopyFunction(streetColumnNames);
+    n[0] = Object.assign({}, n[0], {selected_items: newSelected});
+    setStreetColumnNames(n);
+    forceUpdate();
+    console.log(n[0]);
+  }
+
+  const selectAllStreets = (event, data) => {
+    const selected = streetColumnNames[0].selected_items
+    let c = deepCopyFunction(streetColumnNames);
+    if (event.target.checked) {
+      c[0] = Object.assign({}, c[0], {selected_items: data});
+    } else {
+      c[0] = Object.assign({}, c[0], {selected_items: []});
+    }
+    setStreetColumnNames(c);
   }
 
   // Uses the string of a column title to alter the routes query
@@ -172,38 +226,28 @@ const RoutesPanel = () => {
         }
           street_contents = <Box margin={1}>
                               <ResourceIndexTable
+                                selectableItemHandler={selectStreet}
+                                selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
                                 items={[
-                                  {name: "Easy St", amount_collected: "$1M", assignment_status: "", months_since_assigned: "", outreach_pct: "98%", soliciting_pct: "99%", overflow: {overflow_items: [{text: "Edit", action: () => editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                  {route: "R17", name: "Easy St", amount_collected: "$1M", assignment_status: "", months_since_assigned: "", outreach_pct: "98%", soliciting_pct: "99%", overflow: {overflow_items: [{text: "Edit", action: () => editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
                                                               {text: "Assign", action: assignRouteAction},
                                                               {text: "House Properties", action: housePropertiesAction},
                                                               {text: "Revision History", action: revisionHistoryAction},
                                                               {text: "Delete", action: () => deleteRouteAction(raw_routes[i].name)}
                                                             ]}},
-                                  {name: "Easy St", amount_collected: "$3.50", assignment_status: "", months_since_assigned: "", outreach_pct: "2%", soliciting_pct: "1%", overflow: {overflow_items: [{text: "Edit", action: () => editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                  {route: "R17", name: "Hard Knocks Alley", amount_collected: "$3.50", assignment_status: "", months_since_assigned: "", outreach_pct: "2%", soliciting_pct: "1%", overflow: {overflow_items: [{text: "Edit", action: () => editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
                                                               {text: "Assign", action: assignRouteAction},
                                                               {text: "House Properties", action: housePropertiesAction},
                                                               {text: "Revision History", action: revisionHistoryAction},
                                                               {text: "Delete", action: () => deleteRouteAction(raw_routes[i].name)}
                                                             ]}}
                                 ]}
-                                columns={[
-                                  {field: "selectbox",             type: "selectbox",        html_text: "", selected_items: []},
-                                  {field: "name",                  type: "text",             html_text: "Name"},
-                                  {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
-                                  {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
-                                  {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},
-                                  {field: "outreach_pct",          type: "text",             html_text: "Wants to Learn More"},
-                                  {field: "soliciting_pct",        type: "text",             html_text: "Allows Soliciting"},
-                                  {field: "overflow",              type: "overflow-menu",    overflow_items: [
-                                                                                              {text: "Assign All", action: () => {assignAllAction()}}, // because this field has type "overflow-menu" it requires an overflow_items list, which will be provided to an OverflowMenu component
-                                                                                              {text: "Delete All", action: () => {deleteAllAction()}}
-                                                                                            ]}
-
-                                ]}
-                            />
+                                columns={streetColumnNames}
+                                />
                             </Box>;
           tabled_routes.push({
             selectbox: {},
+            streets: ["Easy St", "Hard Knocks Alley"],
             drop_down: {open: false, contents: street_contents},
             name: raw_routes[i].name,
             assignment_status: raw_routes[i].assignmentStatus ? raw_routes[i].assignmentStatus.toString() : "",
@@ -226,11 +270,11 @@ const RoutesPanel = () => {
 
   // This is the function which will be passed as a prop eventually to index items.
   // Requires cases for each of the different selectable columns
-  const selectableItemCallbacksHandler = (event, column, key) => {
+  const selectableItemCallbacksHandler = (event, column, data) => {
     let fn;
     switch(column.field){
       case 'selectbox':
-        fn = () => {selectRoute(event, key)};
+        fn = () => {selectRoute(event, data.name)};
         break;
     }
     fn();

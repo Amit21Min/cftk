@@ -46,7 +46,7 @@ const ResourceIndexItem = (props) => {
                 <Checkbox
                    name={props.data.name+"-selectbox"}
                    checked={selected}
-                   onChange={(event, key) => {props.selectableHandler(event, column, props.data.name)}}
+                   onChange={(event, key) => {props.selectableHandler(event, column, props.data)}}
                 />
               </TableCell>;
         break;
@@ -70,7 +70,7 @@ const ResourceIndexItem = (props) => {
         if(cellOptions[column.field].open){
           expanded_rows.push(
             <TableRow>
-              <TableCell colspan={9}>
+              <TableCell colSpan={props.columns.length}>
                 <Collapse in={cellOptions[column.field].open}>
                   {cellOptions[column.field].contents}
                 </Collapse>
