@@ -137,6 +137,7 @@ const EditRoutePanel = () => {
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
     
+
     const townLabel = <p>Town/City <span style={{ color: "#B00020" }}>*</span></p>
     const nameLabel = <p>Name <span style={{ color: "#B00020" }}>*</span></p>
     const streetsLabel = <p>Streets <span style={{ color: "#B00020" }}>*</span></p>
@@ -159,7 +160,7 @@ const EditRoutePanel = () => {
                         <TextField style={{borderBottomWidth: "10px"}} fullWidth variant="filled" error={!isValidName}
                             //validates form on blur
                             value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true); setUnableToEdit(true)}} onBlur={validateRequired}
-                            label = {townLabel} />
+                            label={townLabel} />
                         </Grid>
                         <Grid item xs={12}>
                             <GroupedTextField label={streetsLabel} buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
