@@ -179,7 +179,7 @@ const EditRoutePanel = () => {
                         </Grid>
                         <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Previous Canning Data</Typography></Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth variant="filled" InputProps={{startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+                            <TextField fullWidth variant="filled"
                                 value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur} 
                                 onChange = {(e) => setCanningDate(e.target.value)} label={dateLabel}/>
                             <span class="help-block">MM/DD/YYYY </span>
@@ -187,14 +187,14 @@ const EditRoutePanel = () => {
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" 
                                 value={numDonated} onChange = {(e) => setNumDonated(e.target.value)}
-                                label="Donations "/>
+                                label="$ Donations "/>
                         </Grid>
                         
                         <Grid item xs={12}>
                             <GroupedTextField label="Volunteer notes " buttonLabel="ADD" buttonColor="primary"
                             fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
                             />
-                            <span class="help-block">Eg. Family was willing to hear out volunteers</span>
+                            <span class="help-block">Eg. Very nice people</span>
                             {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}                        
                         </Grid>
                     </Grid>
