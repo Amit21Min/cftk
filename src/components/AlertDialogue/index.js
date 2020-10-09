@@ -35,7 +35,7 @@ export default function AlertDialogSlide(props) {
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title">{"Move Street"}</DialogTitle>
+        <DialogTitle id="alert-dialog-slide-title">{props.buttonName}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
           {props.message}
