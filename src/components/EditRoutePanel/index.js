@@ -22,7 +22,6 @@ const EditRoutePanel = () => {
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
     const[validForm, setValidForm] = useState(false);
-    const [unableToEdit, setUnableToEdit] = useState(false);
 
     const updateStreetList = e => {
     //adds street to list as long as street is not a;ready included in the list
@@ -152,14 +151,14 @@ const EditRoutePanel = () => {
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" error={!isValidName}
                                 //validates form on blur
-                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); setUnableToEdit(true) }} onBlur={validateRequired}
+                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); }} onBlur={validateRequired}
                                 label={nameLabel}
                                 />
                         </Grid>
                         <Grid item xs={6}> 
                         <TextField style={{borderBottomWidth: "10px"}} fullWidth variant="filled" error={!isValidName}
                             //validates form on blur
-                            value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true); setUnableToEdit(true)}} onBlur={validateRequired}
+                            value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true)}} onBlur={validateRequired}
                             label={townLabel} />
                         </Grid>
                         <Grid item xs={12}>
