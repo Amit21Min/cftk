@@ -166,12 +166,16 @@ const EditRoutePanel = () => {
                                 fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
                             {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
-                            <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
-                            to the volunteer group **group name**. If you move this route, this group will no longer be assigned this street."
-                            primaryButtonName="Move"/>
-                            <AlertDialogue buttonName="Edit Route" message="The user **user name** is currently editing this route. 
-                            You cannot edit a route another user is currently editing."
-                            primaryButtonName="OK"/>
+                        </Grid>
+                        <Grid item xs={6}>
+                                <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
+                                to the volunteer group **group name**. If you move this route, this group will no longer be assigned this street."
+                                primaryButtonName="Move"/>
+                        </Grid>
+                        <Grid item xs={6}>
+                                <AlertDialogue buttonName="Edit Route" message="The user **user name** is currently editing this route. 
+                                You cannot edit a route another user is currently editing."
+                                primaryButtonName="OK"/>
                         </Grid>
                         <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Previous Canning Data</Typography></Grid>
                         <Grid item xs={6}>
