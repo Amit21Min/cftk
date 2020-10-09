@@ -8,6 +8,9 @@ import Collapse from '@material-ui/core/Collapse';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
+// Is used to handle complex behavior in components passed to a drop-down
+import ComponentTransporter from '../ComponentTransporter';
+
 import "./index.css";
 
 // Represents a row within a ResourceIndexTable
@@ -68,11 +71,26 @@ const ResourceIndexItem = (props) => {
                   {cell_data.html_text || ""}
                </TableCell>;
         if(cellOptions[column.field].open){
+          let content;
+
+          switch(cellOptions[column.field].contentsType){
+            case 'component':
+              content = <ComponentTransporter registry={cellOptions[column.field].contents.registry}
+                                              componentType={cellOptions[column.field].contents.componentType}
+                                              componentProps={cellOptions[column.field].contents.componentProps}
+                        />
+              break;
+            case 'raw':
+            default:
+              // Just relays the content
+              content = cellOptions[column.field].contents;
+          }
+
           expanded_rows.push(
-            <TableRow>
+            <TableRow key={column.field+"-content"}>
               <TableCell colSpan={props.columns.length}>
                 <Collapse in={cellOptions[column.field].open}>
-                  {cellOptions[column.field].contents}
+                  {content}
                 </Collapse>
               </TableCell>
             </TableRow>

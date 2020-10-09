@@ -5,7 +5,6 @@ import ResourceIndexTableHeader from '../ResourceIndexTableHeader';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 
-
 import ZeroResource from '../ZeroResource';
 
 import "./index.css";
@@ -21,16 +20,15 @@ import "./index.css";
 // SelectColumnCallback, a function which will fire whenever a column header is clicked (for example, is a pathway to handle column-based sorting)
 // allSelected: a prop which signals if the selectbox within the column header is 'on', in which case every ResourceIndexItem is considered selected
 
-const ResourceIndexTable = (props) => {
-
+const ResourceIndexTable = ({columns, items, selectableItemHandler, selectableColumnHandler}) => {
   // Create a ResourceIndexItem for each item passed in as a prop. A ResourceIndexItem will generate 1 row of the table for its corresponding resource (in this case routes)
-  let resource_items = props.items.map((item, i) => {
+  let resource_items = items.map((item, i) => {
     let key = item.name ? item.name : i;
     return (<ResourceIndexItem
       key={key}
       data={item}
-      columns={props.columns}
-      selectableHandler={props.selectableItemHandler}
+      columns={columns}
+      selectableHandler={selectableItemHandler}
       options={item.options ? item.options : {}}
       />);
 
@@ -38,12 +36,11 @@ const ResourceIndexTable = (props) => {
   );
   return(
     <Table>
-      <ResourceIndexTableHeader columns={props.columns} selectableHandler={props.selectableColumnHandler} />
+      <ResourceIndexTableHeader columns={columns} selectableHandler={selectableColumnHandler} />
       <TableBody>
         {resource_items}
       </TableBody>
     </Table>
   );
 }
-
 export default ResourceIndexTable;
