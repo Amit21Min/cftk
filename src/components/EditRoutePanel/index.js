@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { storeRouteData } from '../RouteModels/routes';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
-import { Typography, Grid, TextField, Button, InputLabel} from '@material-ui/core';
-import SearchBar from  '../SearchBar';
+import { Typography, Grid, TextField, Button, InputLabel, InputAdornment} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
 import AlertDialogue from '../AlertDialogue';
@@ -137,11 +137,10 @@ const EditRoutePanel = () => {
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
     
-    const townLabel = <p>Town/City<span style={{ color: "#B00020" }}>*</span></p>
-    const nameLabel = <p>Name<span style={{ color: "#B00020" }}>*</span></p>
-    const streetsLabel = <p>Streets<span style={{ color: "#B00020" }}>*</span></p>
-    const dateLabel = <p>Date<span style={{ color: "#B00020" }}>*</span></p>
-    
+    const townLabel = <p>Town/City <span style={{ color: "#B00020" }}>*</span></p>
+    const nameLabel = <p>Name <span style={{ color: "#B00020" }}>*</span></p>
+    const streetsLabel = <p>Streets <span style={{ color: "#B00020" }}>*</span></p>
+    const dateLabel = <p>Date <span style={{ color: "#B00020" }}>*</span></p>
 
     return (
         <div>
@@ -153,10 +152,11 @@ const EditRoutePanel = () => {
                             <TextField fullWidth variant="filled" error={!isValidName}
                                 //validates form on blur
                                 value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); setUnableToEdit(true) }} onBlur={validateRequired}
-                                label={nameLabel}/>
+                                label={nameLabel}
+                                />
                         </Grid>
                         <Grid item xs={6}> 
-                        <TextField fullWidth variant="filled" error={!isValidName}
+                        <TextField style={{borderBottomWidth: "10px"}} fullWidth variant="filled" error={!isValidName}
                             //validates form on blur
                             value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true); setUnableToEdit(true)}} onBlur={validateRequired}
                             label = {townLabel} />
@@ -166,24 +166,29 @@ const EditRoutePanel = () => {
                                 fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
                             {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
-                            <AlertDialogue name="Move Street"/>
+                            <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
+                            to the volunteer group **group name**. If you move this route, this group will no longer be assigned this street."
+                            primaryButtonName="Move"
+                            />
                         </Grid>
                         <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Previous Canning Data</Typography></Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth variant="filled" 
+                            <TextField fullWidth variant="filled" InputProps={{startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                                 value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur} 
                                 onChange = {(e) => setCanningDate(e.target.value)} label={dateLabel}/>
+                            <span class="help-block">MM/DD/YYYY </span>
                         </Grid>
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" 
                                 value={numDonated} onChange = {(e) => setNumDonated(e.target.value)}
-                                label="Donations(Optional)"/>
+                                label="Donations "/>
                         </Grid>
                         
                         <Grid item xs={12}>
-                            <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
+                            <GroupedTextField label="Volunteer notes " buttonLabel="ADD" buttonColor="primary"
                             fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
                             />
+                            <span class="help-block">Eg. Family was willing to hear out volunteers</span>
                             {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}                        
                         </Grid>
                     </Grid>

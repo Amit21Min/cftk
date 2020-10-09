@@ -11,7 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AlertDialogSlide() {
+export default function AlertDialogSlide(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -25,7 +25,7 @@ export default function AlertDialogSlide() {
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Move Street
+        {props.buttonName}
       </Button>
       <Dialog
         open={open}
@@ -38,8 +38,7 @@ export default function AlertDialogSlide() {
         <DialogTitle id="alert-dialog-slide-title">{"Move Street"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-          The street **street name**, has already been assigned to the volunteer group, **group name**.
-          If you move this route, this group will no longer be assigned to this street.
+          {props.message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -47,7 +46,7 @@ export default function AlertDialogSlide() {
             Cancel
           </Button>
           <Button onClick={handleClose} variant="contained" color="primary">
-            Move
+            {props.primaryButtonName}
           </Button>
         </DialogActions>
       </Dialog>
