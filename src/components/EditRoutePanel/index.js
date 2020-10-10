@@ -2,11 +2,12 @@ import React, { useState, useReducer } from 'react';
 import { getCity, editRouteData } from '../RouteModels/routes.js';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
-import { Typography, Grid, TextField, Button } from '@material-ui/core';
-import SearchBar from '../SearchBar';
+import { Typography, Grid, TextField, Button, InputLabel, InputAdornment} from '@material-ui/core';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
+import AlertDialogue from '../AlertDialogue';
 import db from '../Firebase/firebase.js';
+
 
 const EditRoutePanel = () => {
 
@@ -21,13 +22,11 @@ const EditRoutePanel = () => {
     const [numDonated, setNumDonated] = useState('');
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
-    const [validForm, setValidForm] = useState(false);
-
-
+    const[validForm, setValidForm] = useState(false);
 
     const updateStreetList = e => {
-        //adds street to list as long as street is not a;ready included in the list
-        //preventDefault() prevents the page from reoading every time a button is clicked
+    //adds street to list as long as street is not a;ready included in the list
+    //preventDefault() prevents the page from reoading every time a button is clicked
         e.preventDefault();
         if (streetNames.includes(currStreet)) {
             setIsValidStreet(false);
@@ -39,7 +38,7 @@ const EditRoutePanel = () => {
             setValidForm(false);
         } else if (townCity.length === 0) {
             setValidForm(false);
-        } else {
+        } else  {
             setValidForm(true);
         }
 
@@ -57,7 +56,7 @@ const EditRoutePanel = () => {
             setValidForm(false);
         } else if (townCity.length === 0) {
             setValidForm(false);
-        } else {
+        } else  {
             setValidForm(true);
         }
     }
@@ -119,7 +118,6 @@ const EditRoutePanel = () => {
             created: new Date()
         })
         */
-
     }
 
     const validateRequired = _ => {
@@ -158,52 +156,71 @@ const EditRoutePanel = () => {
         var address = `${houseNumber}+${street}`;
         return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
     }
-
+    
     var street = "Hillsborough+Street"; // get from input box, dynamically update and re-render
     var houseNumber = "425"; // get from input box, dynamically update and re-render
     var source = getHouse(street, houseNumber);
+    
+
+    const townLabel = <p>Town/City <span style={{ color: "#B00020" }}>*</span></p>
+    const nameLabel = <p>Name <span style={{ color: "#B00020" }}>*</span></p>
+    const streetsLabel = <p>Streets <span style={{ color: "#B00020" }}>*</span></p>
+    const dateLabel = <p>Date <span style={{ color: "#B00020" }}>*</span></p>
 
     return (
         <div>
             <Grid container spacing={3}>
-                <Grid item xs={12}> <Typography style={{ fontSize: 32, fontWeight: "bold" }}>Edit Route</Typography></Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12}> <Typography style = {{ fontSize: 32, fontWeight: "bold"}}>Edit Route</Typography></Grid>
+                <Grid item xs={6}> 
                     <Grid container spacing={3}>
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" error={!isValidName}
                                 //validates form on blur
-                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired, updateFields}
-                                label="Name*" />
+                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); }} onBlur={validateRequired, updateFields}
+                                label={nameLabel}
+                                />
                         </Grid>
-                        <Grid item xs={6}>
-                            <TextField fullWidth variant="filled" error={!isValidName}
-                                //validates form on blur
-                                value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true) }} onBlur={validateRequired}
-                                label="Town/City*" />
+                        <Grid item xs={6}> 
+                        <TextField style={{borderBottomWidth: "10px"}} fullWidth variant="filled" error={!isValidName}
+                            //validates form on blur
+                            value={townCity} onChange={(e) => { setTownCity(e.target.value); setIsValidCity(true)}} onBlur={validateRequired}
+                            label={townLabel} />
                         </Grid>
                         <Grid item xs={12}>
-                            <GroupedTextField label="Streets*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                                fieldValue={currStreet} onButtonClick={updateStreetList} onChange={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
+                            <GroupedTextField label={streetsLabel} buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                                fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
                             {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
                         </Grid>
-                        <Grid item xs={12}> <Typography style={{ fontSize: 24, fontWeight: "bold" }}>Previous Canning Data</Typography></Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth variant="filled"
-                                value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur}
-                                onChange={(e) => setCanningDate(e.target.value)} label="Date*" />
+                                <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
+                                to the volunteer group **group name**. If you move this route, this group will no longer be assigned this street."
+                                primaryButtonName="Move"/>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField fullWidth variant="filled"
-                                value={numDonated} onChange={(e) => setNumDonated(e.target.value)}
-                                label="Donations(Optional)" />
+                                <AlertDialogue buttonName="Edit Route" message="The user **user name** is currently editing this route. 
+                                You cannot edit a route another user is currently editing."
+                                primaryButtonName="OK"/>
                         </Grid>
-
+                        <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Previous Canning Data</Typography></Grid>
+                        <Grid item xs={6}>
+                            <TextField fullWidth variant="filled"
+                                value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur} 
+                                onChange = {(e) => setCanningDate(e.target.value)} label={dateLabel}/>
+                            <span class="help-block">MM/DD/YYYY </span>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField fullWidth variant="filled" 
+                                value={numDonated} onChange = {(e) => setNumDonated(e.target.value)}
+                                label="$ Donations "/>
+                        </Grid>
+                        
                         <Grid item xs={12}>
-                            <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
-                                fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
+                            <GroupedTextField label="Volunteer notes " buttonLabel="ADD" buttonColor="primary"
+                            fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
                             />
-                            {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
+                            <span class="help-block">Eg. Very nice people</span>
+                            {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}                        
                         </Grid>
                     </Grid>
                 </Grid>
