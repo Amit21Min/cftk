@@ -10,7 +10,6 @@ import SignInPage from '../SignIn';
 import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
-import EditRoute from '../EditRoute'
 import ViewHousePropertiesPage from '../ViewHouseProperties'
  
 
