@@ -32,9 +32,14 @@ const NewRoutePanel = () => {
   const [townCity, setTownCity] = useState('');
   const [isValidCity, setIsValidCity] = useState(true);
   const [currStreet, setCurrStreet] = useState('');
+<<<<<<< HEAD
   const [currAddress, setCurrAddress] = useState('')
+=======
+  const [currHouses, setCurrHouses] = useState([]);
+>>>>>>> master
   const [isValidStreet, setIsValidStreet] = useState(true);
   const [streetNames, setStreetNames] = useState([]);
+  const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
   const [currNote, setCurrNote] = useState('');
@@ -56,12 +61,29 @@ const NewRoutePanel = () => {
     else if (townCity.length === 0) setValidForm(false);
     else setValidForm(true);
 
+<<<<<<< HEAD
     let houseNumbers = currAddress.split(',');
     let newAddresses = houseNumbers.map(number => `${number} ${currStreet}`)
 
     setStreetNames(prevState => [...prevState, ...newAddresses]);
     setCurrStreet('');
     setCurrAddress('');
+=======
+    setStreetNames([...streetNames, currStreet]);
+
+    // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
+    // BARE FUNCTIONALITY, PROBABLY MANY BUGS
+    // there's also an empty and semi-invisible button next to house numbers
+
+    var numbers = currHouses.split(",");
+    var newHouse = {};
+    newHouse[currStreet] = numbers;
+    // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
+    setHouseNumbers({...houseNumbers, [currStreet] : numbers});
+
+    setCurrStreet('');
+    setCurrHouses('');
+>>>>>>> master
   }
 
   const removeStreet = street => {
@@ -123,8 +145,7 @@ const NewRoutePanel = () => {
       alert('Please enter/add a street name');
       return;
     }
-
-    storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
+    storeRouteData(routeName, houseNumbers, volNotes, townCity);
 
   }
 
@@ -158,11 +179,20 @@ const NewRoutePanel = () => {
                 label="Town/City*" />
             </Grid>
             <Grid item xs={12}>
+<<<<<<< HEAD
               <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                 label1="Street Name*" value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
                 label2="House Numbers*" value2={currAddress} onChange2={(e) => { setCurrAddress(e.target.value)}} list={streetNames}
                 onButtonClick={updateStreetList}
+=======
+              <GroupedTextField label="House Numbers*"
+                fieldValue={currHouses} onChange={(e) => { setCurrHouses(e.target.value); setIsValidStreet(true) }}
               />
+              <GroupedTextField label="Street*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                fieldValue={currStreet} onChange={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }} onButtonClick={updateStreetList}
+>>>>>>> master
+              />
+
               {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
             </Grid>
             <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
@@ -201,7 +231,6 @@ const NewRoutePanel = () => {
           onClick={saveForm} disabled={!validForm}>Save</Button></Grid>
       </Grid>
     </ThemeProvider>
-
   );
 };
 
