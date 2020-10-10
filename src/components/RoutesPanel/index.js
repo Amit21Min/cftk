@@ -97,10 +97,10 @@ const RoutesPanel = () => {
 
   const selectStreet = (event, column, street_data) => {
     const street_key = street_data.name;
-    const selected = streetColumnNames[0].selected_items;
+    const selected = column.selected_items;
     const selectedIndex = selected.indexOf(street_key);
     let newSelected = [];
-
+    console.log(selected);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, street_key);
     } else if (selectedIndex === 0) {
@@ -169,8 +169,6 @@ const RoutesPanel = () => {
     }
     fn();
   }
-
-
 
   // Takes raw_routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
   const tableTransform = (raw_routes) => {
@@ -297,21 +295,21 @@ const RoutesPanel = () => {
                   <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
                 </div>
                 <StreetColumnContext.Provider value={streetColumnNames}>
-                                    <StreetItemsContext.Provider value={streetItems}>
-                <RouteColumnContext.Consumer>
-                  {columns => (
-                    <RouteItemsContext.Consumer>
-                      {routes => (
-                        <ResourceIndexTable
-                            items={routes} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
-                            columns={columns}
-                            selectableItemHandler={selectableItemCallbacksHandler}
-                            selectableColumnHandler={selectableHeaderCallbacksHandler}
-                        />
+                  <StreetItemsContext.Provider value={streetItems}>
+                    <RouteColumnContext.Consumer>
+                      {columns => (
+                        <RouteItemsContext.Consumer>
+                          {routes => (
+                            <ResourceIndexTable
+                                items={routes} // we use the raw data received in routes, but first we use this function to validate, calculate and truncate/simplify it. This may be inefficient
+                                columns={columns}
+                                selectableItemHandler={selectableItemCallbacksHandler}
+                                selectableColumnHandler={selectableHeaderCallbacksHandler}
+                            />
+                          )}
+                        </RouteItemsContext.Consumer>
                       )}
-                    </RouteItemsContext.Consumer>
-                  )}
-                  </RouteColumnContext.Consumer>
+                    </RouteColumnContext.Consumer>
                   </StreetItemsContext.Provider>
                 </StreetColumnContext.Provider>
              </div>;

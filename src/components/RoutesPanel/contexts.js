@@ -32,7 +32,9 @@ export const init_route_columns = [
   }
 ];
 
+// Need to leave space for the funcitons so that these passed functions perform correctly
 export const StreetItemsContext  = React.createContext([]);
+
 export const StreetColumnContext = React.createContext(init_street_columns);
 
 export const RouteItemsContext  = React.createContext([]);
