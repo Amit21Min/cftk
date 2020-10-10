@@ -32,9 +32,9 @@ const NewRoutePanel = () => {
   const [townCity, setTownCity] = useState('');
   const [isValidCity, setIsValidCity] = useState(true);
   const [currStreet, setCurrStreet] = useState('');
-  const [currHouses, setCurrHouses] = useState([]);
+  const [currHouses, setCurrHouses] = useState('');
   const [isValidStreet, setIsValidStreet] = useState(true);
-  const [streetNames, setStreetNames] = useState([]);
+  const [addressList, setAddressList] = useState([]);
   const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
@@ -47,7 +47,7 @@ const NewRoutePanel = () => {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
-    if (streetNames.includes(currStreet) || currAddress.length === 0) {
+    if (addressList.includes(currStreet) || currHouses.length === 0) {
       setIsValidStreet(false);
       return;
     }
@@ -57,8 +57,7 @@ const NewRoutePanel = () => {
     else if (townCity.length === 0) setValidForm(false);
     else setValidForm(true);
 
-
-    setStreetNames([...streetNames, currStreet]);
+    setAddressList([...addressList, currStreet]);
 
     // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
     // BARE FUNCTIONALITY, PROBABLY MANY BUGS
@@ -68,7 +67,7 @@ const NewRoutePanel = () => {
     var newHouse = {};
     newHouse[currStreet] = numbers;
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    setHouseNumbers({...houseNumbers, [currStreet] : numbers});
+    setHouseNumbers({ ...houseNumbers, [currStreet]: numbers });
 
     setCurrStreet('');
     setCurrHouses('');
@@ -76,13 +75,13 @@ const NewRoutePanel = () => {
 
   const removeStreet = street => {
     // Removes specified street
-    setStreetNames(prevState => prevState.filter(name => name !== street));
+    setAddressList(prevState => prevState.filter(name => name !== street));
     setIsValidStreet(true);
 
     // Revalidates form
     if (routeName.length === 0) setValidForm(false);
     else if (townCity.length === 0) setValidForm(false);
-    else if (streetNames.length === 1) setValidForm(false);
+    else if (addressList.length === 1) setValidForm(false);
     else setValidForm(true);
   }
 
@@ -129,7 +128,7 @@ const NewRoutePanel = () => {
     if (routeName === '') {
       alert('Please enter a route name');
       return;
-    } else if (streetNames.length === 0) {
+    } else if (addressList.length === 0) {
       alert('Please enter/add a street name');
       return;
     }
@@ -140,7 +139,7 @@ const NewRoutePanel = () => {
   const validateRequired = _ => {
     if (routeName.length === 0) setValidForm(false);
     else if (townCity.length === 0) setValidForm(false);
-    else if (streetNames.length === 0) setValidForm(false);
+    else if (addressList.length === 0) setValidForm(false);
     else setValidForm(true);
   }
 
@@ -169,10 +168,10 @@ const NewRoutePanel = () => {
             <Grid item xs={12}>
               <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                 label1="Street Name*" value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
-                label2="House Numbers*" value2={currAddress} onChange2={(e) => { setCurrAddress(e.target.value)}} list={streetNames}
+                label2="House Numbers*" value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value) }} list={addressList}
                 onButtonClick={updateStreetList}
               />
-              {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
+              {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
             </Grid>
             <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
             <Grid item xs={6}>
@@ -206,8 +205,11 @@ const NewRoutePanel = () => {
         </Grid>
         <Grid item xs={10} />
         <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
-        <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary"
-          onClick={saveForm} disabled={!validForm}>Save</Button></Grid>
+        <Grid item xs={1}>
+          <Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+            Save
+          </Button>
+        </Grid>
       </Grid>
     </ThemeProvider>
   );
