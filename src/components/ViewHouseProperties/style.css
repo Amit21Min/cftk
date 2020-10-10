@@ -12,20 +12,10 @@
     float:left;
 }
 
-.search {
-    margin-bottom:2%;
-    margin-left:5%;
-}
-
 .google_map{
-    margin-top:1%;
-    width:50%;
+    margin-top:2%;
     margin-left:2%;
     margin-right:2%;
-    float: left;
-}
-.google_map iframe{
-   width:75%;
 }
 
 .selectHouse {

@@ -22,61 +22,153 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const ViewHouseProperties = () => {
+   //function to get route - not yet implemented
+    /*
+    function getRoute(streetArray) {
+        var maps_API = process.env.REACT_APP_MAPS_API_KEY
+       var routeString = "&origin=" + streetArray[0]
+       routeString += "&destination=" + streetArray[streetArray.length - 1]
+       routeString += "&waypoints="
+       for (var i = 1; i < streetArray.length - 1; i++) {
+         routeString += streetArray[i];
+          if (i < streetArray.length - 2) {
+             routeString += "|"
+         }
+     }
+     return `https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_MAPS_API_KEY}${routeString}&mode=walking`;
+ }
+*/
+    //returns source to display house on google map
+    function getHouse(street, houseNumber, city) {
+    var address = `${houseNumber}+${street}+${city}`;
+    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
+    }
 
-    var streets = ["Hillsborough Street", "Trask Terrace", "South Road", "Manning Drive"];
-    var numbers = [101, 102, 103, 104, 105, 106, 107, 108, 109];
-    const [street, setStreet] = useState(streets[0]);
-    const [number, setNumber] = useState(numbers[0]);
+    const [streets, setStreets] = useState();
+    const [numbers, setNumbers] = useState();
+
+    const [street, setStreet] = useState();
+    const [number, setNumber] = useState();
+    const [city, setCity] = useState();
+
     const [street_selected, setStreetSelected] = useState(false);
     const [house_selected, setHouseSelected] = useState(false);
+
+    const [source, setSource] = useState();
 
     const classes = useStyles();
 
     const [data, setData] = useState({
-        lastDonation: null,
-        solicitationAllowed: null,
-        learnMore: null,
+        donations: [{
+            amount: null,
+            date: null,
+        }],
+        solicitation: [{
+            allowed: null,
+            date: null,
+        }],
+        learnMore: [{
+            learn: null,
+            date: null,
+        }],
         comments: [{
             comment: null,
             date: null,
-            group: null
         }]
     });
 
+    //runs only once - sets streets based on route
     useEffect(() => {
-        db.collection("House").doc("model").get().then(doc => {
-            const data = doc.data();
-            let all_comments = [];
-            for(let i = 0; i < data.visits.length; i++){
-                all_comments.push({
-                    comment: data.visits[i].comment,
-                    date: data.visits[i].date.toDate().toDateString(),
-                    group: data.visits[i].group
-                });
+    db.collection("Routes").doc("R16").get().then(doc => {
+        const data = doc.data();
+        setStreets(data.streets);
+    })
+    }, [])
+   
+    //runs every time street or house number is changed
+    useEffect(() => {
+        if (street_selected) {
+            db.collection("Streets").doc(street).get().then(doc => {
+                const data = doc.data();
+                let _numbers = []
+               for (let address in data) {
+                   if (!isNaN(address)) {  
+                    _numbers.push(address)
+                   }
+               //established house number options and data for google map
+                setNumbers(_numbers);
+               setCity(data.city);
+                }
+               if (house_selected) {
+                //set data according to street and house number
+                let address = data[number]
+                let _comments = []
+                let _solicitation = []
+                let _learnMore = []
+                let _donations = []
+                for(let i = 0; i < address.visitDates.length; i++){
+                    for (let _date in address.visitDates[i]) {
+                    let _address = address.visitDates[i][_date]
+                    _comments.push({
+                        comment: _address.volunteerComments,
+                        date: _date,
+                    }); 
+                    _solicitation.push({
+                        allowed: _address.solicitationAllowed,
+                        date: _date,
+                    });
+                    _learnMore.push({
+                        learn: _address.learnMore,
+                        date: _date,
+                    })
+                    _donations.push({
+                        amount: _address.donationAmt,
+                        date: _date,
+                    }) 
+                }
+                }
+                setData({
+                    donations: _donations,
+                    solicitation: _solicitation,
+                    learnMore: _learnMore,
+                    comments: _comments,
+                }) 
             }
-            setData({
-                lastDonation: data.visits[data.visits.length-1].donationAmount,
-                solicitationAllowed: data.visits[data.visits.length-1].solicitationAllowed,
-                learnMore: data.visits[data.visits.length-1].learnMore,
-                comments: all_comments
-            });
-        })
-    });
+             })  
+        }  
+}, [street, number]); 
 
-    const solicitationAllowedText = () => {
-        return data.solicitationAllowed ? "Allowed" : "Not Allowed";
+
+    const getDonation = (visit_i) => {
+        if (visit_i >= data.donations.length) {
+            return null;
+        } 
+        return data.donations[visit_i].amount;
+    }    
+
+const solicitationAllowedText = (visit_i) => {
+    if (visit_i >= data.solicitation.length) {
+        return null;
+    }  
+    return data.solicitation[visit_i].allowed ? "Allowed" : "Not Allowed";
     }
 
-    const learnMoreText = () => {
-        return data.learnMore ? "Yes" : "No";
+    const learnMoreText = (visit_i) => {
+        if (visit_i >= data.learnMore.length) {
+            return null;
+        } 
+        return data.learnMore[visit_i].learn ? "Yes" : "No";
     }
 
-    const getComment = (index) => {
-        return data.comments[0].comment;
+    const getComment = (visit_i) => {
+        if (visit_i >= data.comments.length) {
+            return null;
+        } 
+        return data.comments[visit_i].comment;
     }
 
     const getGroup = (index) => {
-        return data.comments[0].group;
+        return null;
     }
 
     const getDate = (index) => {
@@ -85,9 +177,11 @@ const ViewHouseProperties = () => {
 
     const handleStreetChange = (event, value, reason) => {
         if (reason === "select-option") {
+            setHouseSelected(false);
             setStreetSelected(true);
         }
         if (reason === "clear") {
+            setHouseSelected(false)
             setStreetSelected(false);
         }
         setStreet(value);
@@ -96,6 +190,7 @@ const ViewHouseProperties = () => {
     const handleNumberChange = (event, value, reason) => {
         if (reason === "select-option") {
             setHouseSelected(true);
+            setSource(getHouse(street, value, city));
         }
         if (reason === "clear") {
             setHouseSelected(false);
@@ -110,24 +205,23 @@ const ViewHouseProperties = () => {
           )
         }
       
-        return (    
-            
+        return (      
            <Grid item>
             <Card>
                 <CardContent>
                     <strong>Solicitation</strong>
                     <div>
-                        <h6>{solicitationAllowedText()}</h6>
+                        <h6>{solicitationAllowedText(0)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>{solicitationAllowedText()}</h6>
+                        <h6>{solicitationAllowedText(1)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>{solicitationAllowedText()}</h6>
+                        <h6>{solicitationAllowedText(2)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                 </CardContent>
@@ -140,17 +234,17 @@ const ViewHouseProperties = () => {
                 <CardContent>
                     <strong>Donations</strong>
                     <div>
-                        <h6>${data.lastDonation}</h6>
+                        <h6>${getDonation(0)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>${data.lastDonation}</h6>
+                        <h6>${getDonation(1)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>${data.lastDonation}</h6>
+                        <h6>${getDonation(2)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                 </CardContent>
@@ -168,12 +262,12 @@ const ViewHouseProperties = () => {
                     </div>
                     <Divider />
                     <div>
-                        <h6>{getComment(0)}</h6>
+                        <h6>{getComment(1)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>{getComment(0)}</h6>
+                        <h6>{getComment(2)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                 </CardContent>
@@ -186,17 +280,17 @@ const ViewHouseProperties = () => {
                 <CardContent>
                     <strong>Interested in Learning More</strong>
                     <div>
-                        <h6>{learnMoreText()}</h6>
+                        <h6>{learnMoreText(0)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>{learnMoreText()}</h6>
+                        <h6>{learnMoreText(1)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                     <Divider />
                     <div>
-                        <h6>{learnMoreText()}</h6>
+                        <h6>{learnMoreText(2)}</h6>
                         <small>Group {getGroup(0)} | {getDate(0)}</small>
                     </div>
                 </CardContent>
@@ -206,7 +300,6 @@ const ViewHouseProperties = () => {
             </Card>
 
             </Grid> 
-            
         );
       }
 
@@ -225,24 +318,30 @@ const ViewHouseProperties = () => {
                  renderInput={(params) => <TextField {...params} label="Street name" variant="outlined"/>}
                 /> 
             </div>
-            </Grid>
-            <Grid item>
             <div className = "house-select">
                 <Autocomplete
                 id="numbers-select"
                 options={numbers}
                 getOptionLabel={(option) => option.toString()}
                  style={{ width: 275}}
+                 value = {!house_selected ? null : number}
                  disabled= {(!street_selected)}
                  onChange={handleNumberChange}
                  renderInput={(params) => <TextField {...params} label="House number" variant="outlined" disabled={!street_selected}/>}
                 /> 
             </div>
-            </Grid>
+            <div className="google_map">
+        <iframe title="viewHouse"
+            width="600"
+            height="450"
+            frameBorder="0" styles="border:0"
+            src={source}
+            allowFullScreen>
+        </iframe>
+        </div>
+        </Grid>
             <Divider orientation="vertical" flexItem/>
-
             <HouseProperties house={house_selected} />
-            
             <div class="clearfix"></div>
         </Grid>
     </div>
