@@ -93,7 +93,7 @@ const ViewHouseProperties = () => {
     var source = getHouse(street, houseNumber)
 
     return(
-    <div>
+    <div className="container">
         <h2 className="title">Hillsborough Street House Properties</h2>
         <SearchBar prompt="Search house number"/>
         <label className="label">Or select a house on the map</label>

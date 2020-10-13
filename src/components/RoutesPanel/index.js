@@ -198,7 +198,7 @@ const RoutesPanel = () => {
   }
 
   return(
-    <div>
+    <div className="container">
       <PanelBanner title="Routes"/>
       {screen}
       <ul>

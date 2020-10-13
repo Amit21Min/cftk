@@ -16,12 +16,12 @@ import ViewHousePropertiesPage from '../ViewHouseProperties'
 import Sidebar from '../Sidebar';
 
 import * as ROUTES from '../../constants/routes';
+import DashboardPanel from '../DashboardPanel';
 
 const App = () => (
   <Router>
     <div>
       <Navigation />
-      <hr />
 
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_IN} component={SignInPage} />
