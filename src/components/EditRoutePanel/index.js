@@ -151,9 +151,8 @@ const EditRoutePanel = () => {
                     setNumDonated("");
                 }
             }).catch(function (error) {
-                //console.log("Error getting document:", error);
-                // temporary holder for the error message on invalid route name
-                setTownCity('PLEASE ENTER A SAVED ROUTE NAME');
+                console.log("Error getting document:", error);
+                setTownCity('');
                 setStreetNames((''));
                 setCanningDate("");
                 setVolNotes('');
