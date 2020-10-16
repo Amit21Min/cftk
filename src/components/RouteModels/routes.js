@@ -35,7 +35,7 @@ export const editRouteData = (routeName, streets, volNotes, city) => {
             perSoliciting: 0.0,
             total: 0.0,
             city: city,
-            comments: toComments(volNotes)
+            comments: (volNotes)
         })
 
 
@@ -64,7 +64,7 @@ export const storeRouteData = (routeName, houseNumbers, volNotes, city) => {
             perSoliciting: 0.0,
             total: 0.0,
             city: city,
-            comments: toComments(volNotes)
+            comments: volNotes
         })
 }
 

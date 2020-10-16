@@ -139,14 +139,25 @@ const EditRoutePanel = () => {
                 if (doc.exists) {
                     setTownCity(doc.get('city'));
                     setStreetNames(doc.get('streets'));
-                    setCanningDate(doc.get('assignmentDates'));
-                    //setVolNotes(doc.get('comments'));
+                    setVolNotes(doc.get('comments'));
+                    // temp (arbitrary) date for the canning and amount
+                    setCanningDate("09/01/2020");
+                    setNumDonated(0);
                 } else {
                     setTownCity('');
+                    setStreetNames('');
+                    setCanningDate("");
+                    setVolNotes('');
+                    setNumDonated("");
                 }
             }).catch(function (error) {
-                console.log("Error getting document:", error);
-                setTownCity('');
+                //console.log("Error getting document:", error);
+                // temporary holder for the error message on invalid route name
+                setTownCity('PLEASE ENTER A SAVED ROUTE NAME');
+                setStreetNames((''));
+                setCanningDate("");
+                setVolNotes('');
+                setNumDonated("");
             });
         }
     }
@@ -190,7 +201,7 @@ const EditRoutePanel = () => {
                             <GroupedTextField label={streetsLabel} buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                                 fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
-                            {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
+                            {streetNames.length >0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
                         </Grid>
                         <Grid item xs={6}>
                                 <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
