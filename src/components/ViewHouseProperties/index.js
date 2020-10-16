@@ -348,4 +348,6 @@ const solicitationAllowedText = (visit_i) => {
     )
 };
 
+// testing changes
+
 export default ViewHouseProperties;
