@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
+import { getCity, editRouteData } from '../RouteModels/routes.js';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
 import { Typography, Grid, TextField, Button, InputLabel, InputAdornment} from '@material-ui/core';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
 import AlertDialogue from '../AlertDialogue';
+import db from '../Firebase/firebase.js';
+
 
 const EditRoutePanel = () => {
 
@@ -61,10 +64,10 @@ const EditRoutePanel = () => {
     const updateNoteList = e => {
         e.preventDefault();
         if (volNotes.includes(currNote)) {
-            alert ("Please don't repeat an existing note");
+            alert("Please don't repeat an existing note");
             return;
         } else if (currNote === '') {
-            alert ("Please enter some text");
+            alert("Please enter some text");
             return;
         }
         setVolNotes([...volNotes, currNote]);
@@ -94,11 +97,16 @@ const EditRoutePanel = () => {
         if (routeName === '') {
             alert('Please enter a route name');
             return;
-        } else if (streetNames.length === 0 && currStreet  === '') {
+        } else if (streetNames.length === 0 && currStreet === '') {
             alert('Please enter/add a street name');
             return;
         }
         // storeRouteData(new Date().getTime().toString(), routeName, streetNames, volNotes, townCity);
+
+        //const dataFound = retrieveData(routeName);
+        //console.log(dataFound);
+
+        editRouteData(routeName, streetNames, volNotes, townCity);
 
         /*
         console.log({
@@ -121,6 +129,35 @@ const EditRoutePanel = () => {
             setValidForm(false);
         } else {
             setValidForm(true);
+        }
+    }
+
+    // update the fields upon the routename entered
+    const updateFields = async () => {
+        if (routeName.length !== 0) {
+            db.collection("Routes").doc(routeName).get().then(function (doc) {
+                if (doc.exists) {
+                    setTownCity(doc.get('city'));
+                    setStreetNames(doc.get('streets'));
+                    setVolNotes(doc.get('comments'));
+                    // temp (arbitrary) date for the canning and amount
+                    setCanningDate("09/01/2020");
+                    setNumDonated(0);
+                } else {
+                    setTownCity('');
+                    setStreetNames('');
+                    setCanningDate("");
+                    setVolNotes('');
+                    setNumDonated("");
+                }
+            }).catch(function (error) {
+                console.log("Error getting document:", error);
+                setTownCity('');
+                setStreetNames((''));
+                setCanningDate("");
+                setVolNotes('');
+                setNumDonated("");
+            });
         }
     }
 
@@ -149,7 +186,7 @@ const EditRoutePanel = () => {
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" error={!isValidName}
                                 //validates form on blur
-                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); }} onBlur={validateRequired}
+                                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true); }} onBlur={validateRequired, updateFields}
                                 label={nameLabel}
                                 />
                         </Grid>
@@ -163,7 +200,7 @@ const EditRoutePanel = () => {
                             <GroupedTextField label={streetsLabel} buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                                 fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
-                            {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
+                            {streetNames.length >0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
                         </Grid>
                         <Grid item xs={6}>
                                 <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
