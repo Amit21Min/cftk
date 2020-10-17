@@ -4,6 +4,7 @@ import { useGoogleMaps } from "react-hook-google-maps";
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
 export const Map = React.memo(function Map(props) {
+  console.log(props);
   const { ref, map, google } = useGoogleMaps(
     process.env.REACT_APP_MAPS_API_KEY,
     {
@@ -25,7 +26,6 @@ export const Map = React.memo(function Map(props) {
         codeAddress(geocoder, map, fullAddress);
       }
     };
-
     var iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/'
     var parkingIcon = iconBase + 'parking_lot_maps.png'
     // address = address.map(address => address + ", " + cityState);
