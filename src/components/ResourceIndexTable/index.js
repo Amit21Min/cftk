@@ -10,15 +10,23 @@ import ZeroResource from '../ZeroResource';
 import "./index.css";
 
 
-// Expects column names in a dict with keys in the order they are expected to appear
+// Expects column objects to be passed as a list of dicts
 // Then expects data to populate the rows of the table.
 
 // PROPS:
-// Column dict ex:
-  // {selectbox: "", name: "Name", soliciting_pct: "Allows Soliciting"} (special field 'selectbox' will create a select box in column header and for each row)
+// Column list ex:
+  // [
+  //   {field: "selectbox",             type: "selectbox",        html_text: "", selected_items: []}, //because this field has type 'selectbox' it also requires a selected_items list, which will be used to keep track of the items selected within the table
+  //   {field: "drop_down",             type: "drop-down-parent", html_text: ""},
+  //   {field: "name",                  type: "text",             html_text: "Name"},
+  //   {field: "overflow",              type: "overflow-menu",    overflow_items: [
+                                                                // {text: "Assign All", action: () => {overflow_actions.assignAllAction()}}, // because this field has type "overflow-menu" it requires an overflow_items list, which will be provided to an OverflowMenu component
+  //                                                               {text: "Delete All", action: () => {overflow_actions.deleteAllAction()}}
+  //                                                              ]
+  //   }
+  // ]
 // SelectItemCallback, a function which will fire whenever one of the rows in the table is selected by the selectbox
 // SelectColumnCallback, a function which will fire whenever a column header is clicked (for example, is a pathway to handle column-based sorting)
-// allSelected: a prop which signals if the selectbox within the column header is 'on', in which case every ResourceIndexItem is considered selected
 
 const ResourceIndexTable = ({columns, items, selectableItemHandler, selectableColumnHandler}) => {
   // Create a ResourceIndexItem for each item passed in as a prop. A ResourceIndexItem will generate 1 row of the table for its corresponding resource (in this case routes)
