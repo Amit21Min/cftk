@@ -225,9 +225,9 @@ const EditRoutePanel = () => {
                             primaryButtonName="Move"/>
                         </Grid>
                         <Grid item xs={4}>
-                                <AlertDialogue buttonName="Edit Route" message="The user **user name** is currently editing this route. 
-                                You cannot edit a route another user is currently editing."
-                                primaryButtonName="OK"/>
+                            <AlertDialogue buttonName="Unable to Edit" message="The user **user name** is currently editing this route. 
+                            You cannot edit a route another user is currently editing."
+                            primaryButtonName="OK"/>
                         </Grid>
                         <Grid item xs={4}>
                             <MoveStreet/>
