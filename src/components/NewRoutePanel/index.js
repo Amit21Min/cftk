@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
-import DualGroupedTextField from '../GroupedTextField/streetGroupedTextField';
+import DualGroupedTextField from '../GroupedTextField/DualGroupedTextField';
 import ChipList from '../ChipList';
 
 import * as ROUTES from '../../constants/routes';
@@ -103,7 +103,7 @@ const NewRoutePanel = () => {
     setAddressList(prevState => prevState.filter(name => name !== street));
     setHouseNumbers(prevState => {
       prevState[streetName] = prevState[streetName].filter(number => number !== streetNum)
-      // If the street no longer has any objects on it, delete it
+      // If the street no longer has any addresses in it, delete it
       if (prevState[streetName].length === 0) delete prevState[streetName];
       return prevState;
     });
@@ -202,7 +202,9 @@ const NewRoutePanel = () => {
             <Grid item xs={12}>
               <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                 label1="Street Name*" value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
-                label2="House Numbers*" value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value) }} list={addressList}
+                label2="House Numbers*" value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[A-Za-z]/g, '')) }} list={addressList}
+                helperText1="Street Name Only"
+                helperText2="Comma Seperated"
                 onButtonClick={updateStreetList}
               />
               {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}

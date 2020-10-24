@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, TextField, Button, InputAdornment } from '@material-ui/core';
-import ChipList from '../ChipList';
+// import ChipList from '../ChipList';
 
 
 const dualGroupedTextField = (props) => {
@@ -14,6 +14,7 @@ const dualGroupedTextField = (props) => {
           label={props.label1}
           value={props.value1}
           onChange={props.onChange1}
+          helperText={props.helperText1}
           // multiline
           // rows={Math.floor(props.list.length / 3)}
         />
@@ -25,6 +26,7 @@ const dualGroupedTextField = (props) => {
           label={props.label2}
           value={props.value2}
           onChange={props.onChange2}
+          helperText={props.helperText2}
           // multiline
           // rows={Math.floor(props.list.length / 3)}
           // InputProps={ props.list.length > 0 ? {
