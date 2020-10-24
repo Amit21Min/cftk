@@ -1,10 +1,8 @@
 import db from '../Firebase/firebase.js';
 
-
-
 const toStreet = (streetNames) => {
     var i;
-    const streets=[];
+    const streets = [];
     for (i = 0; i < streetNames.length; i++) {
         streets.push({
             name: streetNames[i]
@@ -24,6 +22,25 @@ const toComments = (notes) => {
     return comments;
 }
 
+
+
+export const editRouteData = (routeName, streets, volNotes, city) => {
+
+    db.collection("Routes").doc(routeName).update(
+        {
+            streets: streets,
+            assignmentStatus: false,
+            assignmentDates: {},
+            perInterest: 0.0,
+            perSoliciting: 0.0,
+            total: 0.0,
+            city: city,
+            comments: (volNotes)
+        })
+
+
+}
+
 // Housenumbers looks like:
 // {
 //     street1: [123,124,125],
@@ -38,7 +55,7 @@ export const storeRouteData = (routeName, houseNumbers, volNotes, city) => {
         storeStreetData(street, houseNumbers[street], city);
     }
 
-    return db.collection("Routes").doc(routeName).set( 
+    return db.collection("Routes").doc(routeName).set(
         {
             streets: streets,
             assignmentStatus: false,
@@ -46,8 +63,8 @@ export const storeRouteData = (routeName, houseNumbers, volNotes, city) => {
             perInterest: 0.0,
             perSoliciting: 0.0,
             total: 0.0,
-            city: city,            
-            comments: toComments(volNotes)
+            city: city,
+            comments: volNotes
         })
 }
 
@@ -56,24 +73,26 @@ export const storeStreetData = (street, houseNumbers, city) => {
         var houseNumber = houseNumbers[i]
         var house = {
             [houseNumber]:
-                {
-                    "visitDates": [
-                        { "09/01/2020" : 
-                            {
-                                "donationAmt": 150,
-                                "solicitation": "True",
-                                "learnMore": "True",
-                                "volunteerComments":"comments"
-                            }
+            {
+                "visitDates": [
+                    {
+                        "09/01/2020":
+                        {
+                            "donationAmt": 150,
+                            "solicitation": "True",
+                            "learnMore": "True",
+                            "volunteerComments": "comments"
                         }
-                    ] 
-                },
+                    }
+                ]
+            },
             completed: true,
             city: city
-            }
-        
-        db.collection("Streets").doc(street).set(house, {merge:true});
-        
+        }
+
+        db.collection("Streets").doc(street).set(house, { merge: true });
+
     }
     return
 }
+
