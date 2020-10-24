@@ -58,10 +58,10 @@ const NewRoutePanel = () => {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault()
-    if (addressList.includes(currStreet) || currHouses.length === 0) {
-      setIsValidStreet(false);
-      return;
-    }
+    // if (addressList.includes(currStreet) || currHouses.length === 0) {
+    //   setIsValidStreet(false);
+    //   return;
+    // }
 
     // Revalidates form
     if (routeName.length === 0) setValidForm(false);
@@ -96,6 +96,7 @@ const NewRoutePanel = () => {
   const removeStreet = street => {
     // Removes specified street
 
+    // Simplifies Street
     let streetName = street.replace(/\W/g, '').replace(/[0-9]/g, '');
     let streetNum = parseInt(street).toString();
 
