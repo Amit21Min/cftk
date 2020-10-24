@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -12,9 +13,11 @@
     "firebase": "^7.17.1",
     "firebaseui": "^4.6.1",
     "fontsource-roboto": "^3.0.3",
+    "google-maps-react": "^2.0.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-firebaseui": "^4.1.0",
+    "react-hook-google-maps": "0.0.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3"
   },

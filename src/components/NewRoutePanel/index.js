@@ -10,6 +10,8 @@ import ChipList from '../ChipList';
 
 import * as ROUTES from '../../constants/routes';
 
+import { Map } from '../Map';
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -19,7 +21,6 @@ const theme = createMuiTheme({
 });
 
 const NewRoutePanel = () => {
-
   // TODO 1: Implement donation, route, and house metrics
   // TODO 2: Implement revision history and modified by
   // TODO 3: Deal with google map implementation
@@ -73,6 +74,7 @@ const NewRoutePanel = () => {
     setCurrHouses('');
   }
 
+
   const removeStreet = street => {
     // Removes specified street
     setAddressList(prevState => prevState.filter(name => name !== street));
@@ -119,7 +121,7 @@ const NewRoutePanel = () => {
   const getHouse = (street, houseNumber) => {
     // Returns link for google maps iframe
     var address = `${houseNumber}+${street}`;
-    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}`;
+    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}&q=112+Campbell+Ln`;
   }
 
   const saveForm = _ => {
@@ -144,9 +146,11 @@ const NewRoutePanel = () => {
   }
 
   // Google map implementation is a placeholder from ViewHouseProperties
-  let street = "Hillsborough+Street";
-  let houseNumber = "425";
+  let street = "Campbell+Ln";
+  let houseNumber = "108";
   let source = getHouse(street, houseNumber);
+  let streets = ["Rose+Ln", "N+Boundary+St", "Campbell+Ln", "N+Boundary+St"]
+  // let source = getRoute(streets);
 
   return (
     <ThemeProvider theme={theme}>
@@ -195,13 +199,7 @@ const NewRoutePanel = () => {
           </Grid>
         </Grid>
         <Grid item xs={6}>
-          <iframe title="viewRoute"
-            width="700"
-            height="700"
-            frameBorder="0" styles="border:0;"
-            src={source}
-            allowFullScreen>
-          </iframe>
+          <Map address={houseNumbers} cityState={["Chapel Hill, NC"]}/>
         </Grid>
         <Grid item xs={10} />
         <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
