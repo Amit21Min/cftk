@@ -343,7 +343,7 @@ const RoutesPanel = () => {
         <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li>
       </ul>
       <ul>
-        <li><Link to={ROUTES.EDIT_ROUTE}>Edit Route</Link></li>
+        <li><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></li>
       </ul>
     </div>
   );
