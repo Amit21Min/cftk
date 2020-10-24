@@ -44,6 +44,16 @@ const NewRoutePanel = () => {
 
   const [validForm, setValidForm] = useState(false)
 
+  const getNewHouseNums = (parsedStreet, numbers) => {
+    if (houseNumbers[parsedStreet] != null) {
+      let totalNumbers = [...houseNumbers[parsedStreet], ...numbers].filter((c, index) => {
+        return [...houseNumbers[parsedStreet], ...numbers].indexOf(c) === index;
+      });
+      return { ...houseNumbers, [parsedStreet]: totalNumbers.sort((a,b) => a-b) }
+    }
+    else return { ...houseNumbers, [parsedStreet]: numbers.sort((a,b) => a-b) }
+  }
+
   const updateStreetList = e => {
     // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
@@ -66,22 +76,17 @@ const NewRoutePanel = () => {
     // newHouse[currStreet] = numbers;
     let parsedStreet = currStreet.replace(/\W/g, '')
 
-    let newAddresses = numbers.map(number => `${number} ${parsedStreet}`)
-    let totalAddresses = [...addressList, ...newAddresses].filter((c, index) => {
-      return [...addressList, ...newAddresses].indexOf(c) === index;
-    });
+    let newHouseNums = getNewHouseNums(parsedStreet, numbers);
+    let totalAddresses = [];
+
+    for (let street in newHouseNums) {
+      let streetAddresses = newHouseNums[street].map(num => `${num} ${street}`);
+      totalAddresses = [...totalAddresses, ...streetAddresses];
+    }
 
     setAddressList(totalAddresses);
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    setHouseNumbers(prevState => {
-      if (prevState[parsedStreet] != null) {
-        let totalNumbers = [...prevState[parsedStreet], ...numbers].filter((c, index) => {
-          return [...prevState[parsedStreet], ...numbers].indexOf(c) === index;
-        });
-        return { ...houseNumbers, [parsedStreet]: totalNumbers }
-      }
-      else return { ...houseNumbers, [parsedStreet]: numbers }
-    });
+    setHouseNumbers(newHouseNums);
 
     setCurrStreet('');
     setCurrHouses('');
@@ -97,6 +102,7 @@ const NewRoutePanel = () => {
     setAddressList(prevState => prevState.filter(name => name !== street));
     setHouseNumbers(prevState => {
       prevState[streetName] = prevState[streetName].filter(number => number !== streetNum)
+      // If the street no longer has any objects on it, delete it
       if (prevState[streetName].length === 0) delete prevState[streetName];
       return prevState;
     });
@@ -174,8 +180,6 @@ const NewRoutePanel = () => {
   let source = getHouse(street, houseNumber);
   let streets = ["Rose+Ln", "N+Boundary+St", "Campbell+Ln", "N+Boundary+St"]
   // let source = getRoute(streets);
-
-  console.log(houseNumbers)
 
   return (
     <ThemeProvider theme={theme}>
