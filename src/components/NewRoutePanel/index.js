@@ -58,17 +58,30 @@ const NewRoutePanel = () => {
     else if (townCity.length === 0) setValidForm(false);
     else setValidForm(true);
 
-    setAddressList([...addressList, currStreet]);
-
     // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
     // BARE FUNCTIONALITY, PROBABLY MANY BUGS
-    // there's also an empty and semi-invisible button next to house numbers
 
-    var numbers = currHouses.split(",");
-    var newHouse = {};
-    newHouse[currStreet] = numbers;
+    let numbers = currHouses.trim().split(",");
+    // var newHouse = {};
+    // newHouse[currStreet] = numbers;
+    let parsedStreet = currStreet.replace(/\W/g, '')
+
+    let newAddresses = numbers.map(number => `${number} ${parsedStreet}`)
+    let totalAddresses = [...addressList, ...newAddresses].filter((c, index) => {
+      return [...addressList, ...newAddresses].indexOf(c) === index;
+    });
+
+    setAddressList(totalAddresses);
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    setHouseNumbers({ ...houseNumbers, [currStreet]: numbers });
+    setHouseNumbers(prevState => {
+      if (prevState[parsedStreet] != null) {
+        let totalNumbers = [...prevState[parsedStreet], ...numbers].filter((c, index) => {
+          return [...prevState[parsedStreet], ...numbers].indexOf(c) === index;
+        });
+        return { ...houseNumbers, [parsedStreet]: totalNumbers }
+      }
+      else return { ...houseNumbers, [parsedStreet]: numbers }
+    });
 
     setCurrStreet('');
     setCurrHouses('');
@@ -77,7 +90,17 @@ const NewRoutePanel = () => {
 
   const removeStreet = street => {
     // Removes specified street
+
+    let streetName = street.replace(/\W/g, '').replace(/[0-9]/g, '');
+    let streetNum = parseInt(street).toString();
+
     setAddressList(prevState => prevState.filter(name => name !== street));
+    setHouseNumbers(prevState => {
+      prevState[streetName] = prevState[streetName].filter(number => number !== streetNum)
+      if (prevState[streetName].length === 0) delete prevState[streetName];
+      return prevState;
+    });
+
     setIsValidStreet(true);
 
     // Revalidates form
@@ -152,6 +175,8 @@ const NewRoutePanel = () => {
   let streets = ["Rose+Ln", "N+Boundary+St", "Campbell+Ln", "N+Boundary+St"]
   // let source = getRoute(streets);
 
+  console.log(houseNumbers)
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container spacing={3}>
@@ -199,7 +224,7 @@ const NewRoutePanel = () => {
           </Grid>
         </Grid>
         <Grid item xs={6}>
-          <Map address={houseNumbers} cityState={["Chapel Hill, NC"]}/>
+          <Map address={houseNumbers} cityState={["Chapel Hill, NC"]} />
         </Grid>
         <Grid item xs={10} />
         <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
