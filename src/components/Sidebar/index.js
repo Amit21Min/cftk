@@ -33,8 +33,12 @@ import MessageIcon from '@material-ui/icons/Message';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles((theme) => ({
-  drawerPaper: { width: 'inherit' },
-  link: { textDecoration: 'none', color: theme.palette.text.primary }
+  drawerPaper: { 
+    width: 'inherit',
+    background: 'linear-gradient(180deg, #7CC9AA 0%, #0075A3 100%)',
+    // color: 'white'
+  },
+  link: { textDecoration: 'none', color: 'white' }
 }));
 
 const Sidebar = () => {
@@ -76,71 +80,70 @@ const Sidebar = () => {
         justifyContent="center"
         p={1}
         m={1}
+        className="container"
         >
           <List>
-          {/* <Box p={1}> */}
-          <Link to={ROUTES.ADMIN_DASHBOARD} className={classes.link}>
-            <ListItem button>
+            <Link to={ROUTES.ADMIN_DASHBOARD} className={classes.link}>
+              <ListItem button>
+                <ListItemIcon>
+                  <DashboardIcon className={classes.link}/>
+                </ListItemIcon>
+                <ListItemText primary={"Dashboard"}/>
+              </ListItem>
+            </Link>
+            <Link to={ROUTES.ADMIN_ROUTES} className={classes.link}>
+              <ListItem button>
+                <ListItemIcon>
+                  <RoomIcon className={classes.link}/>
+                </ListItemIcon>
+                <ListItemText primary={"Routes"}/>
+              </ListItem>
+            </Link>
+            <Link to={ROUTES.ADMIN_VOLUNTEERS} className={classes.link}>
+              <ListItem button>
+                <ListItemIcon>
+                  <GroupIcon className={classes.link}/>
+                </ListItemIcon>
+                <ListItemText primary={"Volunteer Groups"}/>
+              </ListItem>
+            </Link>
+            <ListItem button className={classes.link}>
               <ListItemIcon>
-                <DashboardIcon/>
+                <MessageIcon className={classes.link}/>
               </ListItemIcon>
-              <ListItemText primary={"Dashboard"}/>
+              <ListItemText primary={"Messages"}/>
             </ListItem>
-          </Link>
-          {/* </Box> */}
-          <Link to={ROUTES.ADMIN_ROUTES} className={classes.link}>
-            <ListItem button>
+            <ListItem button className={classes.link}>
               <ListItemIcon>
-                <RoomIcon/>
+                <SettingsIcon className={classes.link}/>
               </ListItemIcon>
-              <ListItemText primary={"Routes"}/>
+              <ListItemText primary={"Settings"}/>
             </ListItem>
-          </Link>
-          <Link to={ROUTES.ADMIN_VOLUNTEERS} className={classes.link}>
-            <ListItem button>
-              <ListItemIcon>
-                <GroupIcon/>
-              </ListItemIcon>
-              <ListItemText primary={"Volunteer Groups"}/>
-            </ListItem>
-          </Link>
-          <ListItem button>
-            <ListItemIcon>
-              <MessageIcon/>
-            </ListItemIcon>
-            <ListItemText primary={"Messages"}/>
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <SettingsIcon/>
-            </ListItemIcon>
-            <ListItemText primary={"Settings"}/>
-          </ListItem>
-          <Link to={ROUTES.LANDING} className={classes.link}>
-            <ListItem button>
-                <ListItemText primary={"Landing"}></ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={ROUTES.SIGN_IN} className={classes.link}>
-            <ListItem button>
-                <ListItemText primary={"Sign In"}></ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={ROUTES.HOME} className={classes.link}>
-            <ListItem button>
-                <ListItemText primary={"Home"}></ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={ROUTES.ACCOUNT} className={classes.link}>
-            <ListItem button>
-                <ListItemText primary={"Account"}></ListItemText>
-            </ListItem>
-          </Link>
-          <Link to={ROUTES.ADMIN} className={classes.link}>
-            <ListItem button>
-                <ListItemText primary={"Admin Page"}></ListItemText>
-            </ListItem>
-          </Link>
+            {/* <Link to={ROUTES.LANDING} className={classes.link}>
+              <ListItem button>
+                  <ListItemText primary={"Landing"}></ListItemText>
+              </ListItem>
+            </Link>
+            <Link to={ROUTES.SIGN_IN} className={classes.link}>
+              <ListItem button>
+                  <ListItemText primary={"Sign In"}></ListItemText>
+              </ListItem>
+            </Link>
+            <Link to={ROUTES.HOME} className={classes.link}>
+              <ListItem button>
+                  <ListItemText primary={"Home"}></ListItemText>
+              </ListItem>
+            </Link>
+            <Link to={ROUTES.ACCOUNT} className={classes.link}>
+              <ListItem button>
+                  <ListItemText primary={"Account"}></ListItemText>
+              </ListItem>
+            </Link>
+            <Link to={ROUTES.ADMIN} className={classes.link}>
+              <ListItem button>
+                  <ListItemText primary={"Admin Page"}></ListItemText>
+              </ListItem>
+            </Link> */}
         </List>
         </Box>
     </Drawer>
