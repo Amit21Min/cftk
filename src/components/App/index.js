@@ -27,7 +27,7 @@ const App = () => (
       <Route path={ROUTES.SIGN_IN} component={SignInPage} />
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-      <Route path={ROUTES.ADMIN} component={AdminPage} />
+      {/* <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
       <Route path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHousePropertiesPage} />
     </div>
 
