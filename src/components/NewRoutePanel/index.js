@@ -7,6 +7,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
 import DualGroupedTextField from '../GroupedTextField/DualGroupedTextField';
 import ChipList from '../ChipList';
+import PillButton from '../PillButton';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -236,9 +237,9 @@ const NewRoutePanel = () => {
         <Grid item xs={10} />
         <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
         <Grid item xs={1}>
-          <Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+          <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
             Save
-          </Button>
+          </PillButton>
         </Grid>
       </Grid>
     </ThemeProvider>

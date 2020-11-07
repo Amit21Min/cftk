@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, TextField, Button, InputAdornment } from '@material-ui/core';
+import { Grid, TextField, Button } from '@material-ui/core';
+import PillButton from '../PillButton';
 // import ChipList from '../ChipList';
 
 
@@ -39,12 +40,12 @@ const dualGroupedTextField = (props) => {
         />
       </Grid>
       <Grid item xs={2}>
-        <Button fullWidth style={{ height: "100%", width: "100%", borderRadius: '5em' }} color={props.buttonColor}
+        <PillButton color={props.buttonColor}
           onClick={props.onButtonClick}
           disabled={props.value1.length === 0 || props.value2.length === 0}
         >
           {props.buttonLabel}
-        </Button>
+        </PillButton>
       </Grid>
     </Grid>
   );
