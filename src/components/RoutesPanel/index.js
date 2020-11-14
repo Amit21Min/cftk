@@ -310,7 +310,7 @@ const RoutesPanel = () => {
   }
 
   return(
-    <div>
+    <div className="container">
       <PanelBanner title="Routes"/>
       <RouteColumnContext.Provider value={routeColumnNames}>
         <RouteItemsContext.Provider value={routes}>
