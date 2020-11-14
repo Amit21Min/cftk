@@ -78,8 +78,8 @@ const Sidebar = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        p={1}
-        m={1}
+        // p={1}
+        // m={1}
         className="container"
         >
           <List>

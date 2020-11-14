@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { storeRouteData } from '../RouteModels/routes';
 import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField, Button } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
 import DualGroupedTextField from '../GroupedTextField/DualGroupedTextField';
 import ChipList from '../ChipList';
 import PillButton from '../PillButton';
+import './styles.css'
 
 import * as ROUTES from '../../constants/routes';
 
@@ -17,9 +18,28 @@ const theme = createMuiTheme({
   palette: {
     primary: {
       main: '#0075A3',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
     },
   },
 });
+
+const useStyles = makeStyles((theme) => ({
+  pageContainer: {
+    margin: '4rem',
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    // alignItems: 'center',
+    flexDirection: 'column',
+    [theme.breakpoints.down('md')]: {
+      margin: '0px',
+      marginLeft: '160px'
+    },
+  }
+}));
 
 const NewRoutePanel = () => {
   // TODO 1: Implement donation, route, and house metrics
@@ -50,9 +70,9 @@ const NewRoutePanel = () => {
       let totalNumbers = [...houseNumbers[parsedStreet], ...numbers].filter((c, index) => {
         return [...houseNumbers[parsedStreet], ...numbers].indexOf(c) === index;
       });
-      return { ...houseNumbers, [parsedStreet]: totalNumbers.sort((a,b) => a-b) }
+      return { ...houseNumbers, [parsedStreet]: totalNumbers.sort((a, b) => a - b) }
     }
-    else return { ...houseNumbers, [parsedStreet]: numbers.sort((a,b) => a-b) }
+    else return { ...houseNumbers, [parsedStreet]: numbers.sort((a, b) => a - b) }
   }
 
   const updateStreetList = e => {
@@ -183,66 +203,77 @@ const NewRoutePanel = () => {
   let streets = ["Rose+Ln", "N+Boundary+St", "Campbell+Ln", "N+Boundary+St"]
   // let source = getRoute(streets);
 
+  const classes = useStyles();
+
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></Grid>
-        <Grid item xs={6}>
-          <Grid container spacing={3}>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled" error={!isValidName}
-                // Validates form on blur
-                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
-                label="Name*" />
+      <div container className={classes.pageContainer}>
+        <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
+        <div className='new-route-grid'>
+          <div className='new-route-required'>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled" error={!isValidName}
+                  // Validates form on blur
+                  value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
+                  label={<span>Name<span style={{color: '#AA0000'}}>*</span></span>} />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled" error={!isValidCity}
+                  value={townCity} onChange={(e) => { setTownCity(e.target.value) }} onBlur={validateRequired}
+                  label={<span>Town/City<span style={{color: '#AA0000'}}>*</span></span>} />
+              </Grid>
+              <Grid item xs={12}>
+                <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                  label1={<span>Street Name<span style={{color: '#AA0000'}}>*</span></span>} value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
+                  label2={<span>House Number<span style={{color: '#AA0000'}}>*</span></span>} value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[A-Za-z]/g, '')) }} list={addressList}
+                  helperText1="Street Name Only"
+                  helperText2="Comma Seperated"
+                  onButtonClick={updateStreetList}
+                />
+                {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled" error={!isValidCity}
-                value={townCity} onChange={(e) => { setTownCity(e.target.value) }} onBlur={validateRequired}
-                label="Town/City*" />
+          </div>
+          <div className='new-route-map'>
+            <Map address={houseNumbers} width={'100%'} height={'500px'} cityState={["Chapel Hill, NC"]} />
+          </div>
+          <div className='new-route-old'>
+            <Grid container spacing={3}>
+              <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled"
+                  value={canningDate} onChange={(e) => setCanningDate(e.target.value)}
+                  onBlur={handleDateBlur} onFocus={handleDateFocus}
+                  label="Date" helperText="MM/DD/YY" />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled"
+                  value={numDonated} onChange={(e) => setNumDonated(e.target.value)}
+                  label="$ Donations"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
+                  fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
+                />
+                {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                label1="Street Name*" value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
-                label2="House Numbers*" value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[A-Za-z]/g, '')) }} list={addressList}
-                helperText1="Street Name Only"
-                helperText2="Comma Seperated"
-                onButtonClick={updateStreetList}
-              />
-              {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
-            </Grid>
-            <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled"
-                value={canningDate} onChange={(e) => setCanningDate(e.target.value)}
-                onBlur={handleDateBlur} onFocus={handleDateFocus}
-                label="Date" helperText="MM/DD/YY" />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled"
-                value={numDonated} onChange={(e) => setNumDonated(e.target.value)}
-                label="$ Donations"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
-                fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
-              />
-              {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
-            </Grid>
+          </div>
+        </div>
+        <Grid container spacing={3}>
+          <Grid item xs={10} />
+          <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
+          <Grid item xs={1}>
+            <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+              Save
+          </PillButton>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Map address={houseNumbers} cityState={["Chapel Hill, NC"]} />
-        </Grid>
-        <Grid item xs={10} />
-        <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
-        <Grid item xs={1}>
-          <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
-            Save
-          </PillButton>
-        </Grid>
-      </Grid>
-    </ThemeProvider>
+      </div>
+
+    </ThemeProvider >
   );
 };
 
