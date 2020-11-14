@@ -28,7 +28,7 @@ const theme = createMuiTheme({
 const useStyles = makeStyles((theme) => ({
   pageContainer: {
     margin: '4rem',
-    height: '100%',
+    height: 'calc(100% - 8rem)',
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
@@ -37,6 +37,20 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('md')]: {
       margin: '0px',
       marginLeft: '160px'
+    },
+  },
+  formButton: {
+    width: '160px',
+    [theme.breakpoints.down('md')]: {
+      width: '50%',
+    },
+  },
+  buttonContainer: {
+    // width: '100%',
+    marginTop: '3rem',
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      marginLeft: 'auto',
     },
   }
 }));
@@ -216,17 +230,17 @@ const NewRoutePanel = () => {
                 <TextField fullWidth variant="filled" error={!isValidName}
                   // Validates form on blur
                   value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
-                  label={<span>Name<span style={{color: '#AA0000'}}>*</span></span>} />
+                  label={<span>Name<span style={{ color: '#AA0000' }}>*</span></span>} />
               </Grid>
               <Grid item xs={6}>
                 <TextField fullWidth variant="filled" error={!isValidCity}
                   value={townCity} onChange={(e) => { setTownCity(e.target.value) }} onBlur={validateRequired}
-                  label={<span>Town/City<span style={{color: '#AA0000'}}>*</span></span>} />
+                  label={<span>Town/City<span style={{ color: '#AA0000' }}>*</span></span>} />
               </Grid>
               <Grid item xs={12}>
                 <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                  label1={<span>Street Name<span style={{color: '#AA0000'}}>*</span></span>} value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
-                  label2={<span>House Number<span style={{color: '#AA0000'}}>*</span></span>} value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[A-Za-z]/g, '')) }} list={addressList}
+                  label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
+                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[A-Za-z]/g, '')) }} list={addressList}
                   helperText1="Street Name Only"
                   helperText2="Comma Seperated"
                   onButtonClick={updateStreetList}
@@ -262,15 +276,12 @@ const NewRoutePanel = () => {
             </Grid>
           </div>
         </div>
-        <Grid container spacing={3}>
-          <Grid item xs={10} />
-          <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
-          <Grid item xs={1}>
-            <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
-              Save
-          </PillButton>
-          </Grid>
-        </Grid>
+        <div className={classes.buttonContainer}>
+          <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
+          <div className={classes.formButton}><PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+            Save
+          </PillButton></div>
+        </div>
       </div>
 
     </ThemeProvider >
