@@ -1,0 +1,44 @@
+.new-route-grid {
+    display: block;
+}
+
+.new-route-required {
+    margin-top: 1rem
+}
+
+.new-route-old {
+    margin-top: 1rem
+}
+
+.new-route-map {
+    margin-top: 1rem
+}
+
+@media only screen and (min-width: 769px) {
+    .new-route-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    
+    .new-route-required {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 1rem;
+        margin-left: 0px;
+    }
+    
+    .new-route-old {
+        grid-column: 1;
+        grid-row: 2;
+        margin: 1rem;
+        margin-left: 0px;
+    }
+    
+    .new-route-map {
+        grid-column: 2;
+        grid-row: 1/3;
+        margin: 1rem;
+        margin-right: 0px;
+    }
+}
