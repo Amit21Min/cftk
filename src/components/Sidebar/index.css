@@ -19,3 +19,18 @@
 .panel-screen{
   width: 92%;
 }
+
+.logo-box {
+  height: 88px;
+  background-color: #0075A3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+}
