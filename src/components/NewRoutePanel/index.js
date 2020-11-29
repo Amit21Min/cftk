@@ -17,6 +17,7 @@ import { Map } from '../Map';
 // TODO: Deal with google map implementation (the map doesn't update properly after the inital adding of addresses)
 // TODO: Figure out chiplist input (currently just using a chiplist underneath the input)
 // TODO: Validate Route Name, their shouldn't be a repeated name in Firebase. Needs more Firebase integration
+// TODO: Fix vertical overflow with smaller screens. There seems to be extra whitespace somewhere
 
 const theme = createMuiTheme({
   palette: {
