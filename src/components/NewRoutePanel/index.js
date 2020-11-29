@@ -60,7 +60,7 @@ const NewRoutePanel = () => {
   // TODO 2: Implement revision history and modified by
   // TODO 3: Deal with google map implementation
   // TODO 4: Deal with donation amount not necessarily being a number value
-  // TODO 5: Figure out required functionalityInput
+  // TODO 5: Figure out required
 
   // variables used in the state
   const [routeName, setRouteName] = useState('');
@@ -240,7 +240,7 @@ const NewRoutePanel = () => {
               <Grid item xs={12}>
                 <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                   label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }}
-                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[A-Za-z]/g, '')) }} list={addressList}
+                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={(e) => { setCurrHouses(e.target.value.replace(/[^0-9,]/g, '')) }} list={addressList}
                   helperText1="Street Name Only"
                   helperText2="Comma Seperated"
                   onButtonClick={updateStreetList}
@@ -263,7 +263,7 @@ const NewRoutePanel = () => {
               </Grid>
               <Grid item xs={6}>
                 <TextField fullWidth variant="filled"
-                  value={numDonated} onChange={(e) => setNumDonated(e.target.value)}
+                  value={numDonated} onChange={(e) => setNumDonated(e.target.value.replace(/[^0-9]/g, ''))}
                   label="$ Donations"
                 />
               </Grid>
