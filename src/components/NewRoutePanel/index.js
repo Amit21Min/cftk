@@ -8,12 +8,10 @@ import GroupedTextField from '../GroupedTextField';
 import DualGroupedTextField from '../GroupedTextField/DualGroupedTextField';
 import ChipList from '../ChipList';
 import PillButton from '../PillButton';
-import './styles.css'
 
 import * as ROUTES from '../../constants/routes';
 
 import { Map } from '../Map';
-import { ChatSharp } from '@material-ui/icons';
 
 const theme = createMuiTheme({
   palette: {
@@ -53,6 +51,41 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('md')]: {
       marginLeft: 'auto',
     },
+  },
+  gridContainer: {
+    display: 'block',
+    [theme.breakpoints.up('md')]: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '1fr 1fr',
+    }
+  },
+  gridRequired: {
+    marginTop: '1rem',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '1',
+        gridRow: '1',
+        margin: '1rem',
+        marginLeft: '0px',
+    }
+  },
+  gridOld: {
+    marginTop: '1rem',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '1',
+        gridRow: '2',
+        margin: '1rem',
+        marginLeft: '0px',
+    }
+  },
+  gridMap: {
+    marginTop: '1rem',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '2',
+        gridRow: '1/3',
+        margin: '1rem',
+        marginLeft: '0px',
+    }
   }
 }));
 
@@ -216,7 +249,6 @@ const NewRoutePanel = () => {
       return;
     }
     storeRouteData(routeName, houseNumbers, volNotes, cityName);
-
   }
 
   const classes = useStyles();
@@ -225,8 +257,8 @@ const NewRoutePanel = () => {
     <ThemeProvider theme={theme}>
       <div container className={classes.pageContainer}>
         <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
-        <div className='new-route-grid'>
-          <div className='new-route-required'>
+        <div className={classes.gridContainer}>
+          <div className={classes.gridRequired}>
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <TextField fullWidth variant="filled" error={!isValidName}
@@ -241,7 +273,7 @@ const NewRoutePanel = () => {
               <Grid item xs={12}>
                 <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                   label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
-                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress} 
+                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
                   list={addressList}
                   helperText1="Street Name Only"
                   helperText2="Comma Seperated"
@@ -251,10 +283,10 @@ const NewRoutePanel = () => {
               </Grid>
             </Grid>
           </div>
-          <div className='new-route-map'>
+          <div className={classes.gridMap}>
             <Map address={houseNumbers} width={'100%'} height={'500px'} cityState={["Chapel Hill, NC"]} />
           </div>
-          <div className='new-route-old'>
+          <div className={classes.gridOld}>
             <Grid container spacing={3}>
               <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
               <Grid item xs={6}>
