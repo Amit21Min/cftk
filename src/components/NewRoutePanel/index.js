@@ -13,6 +13,11 @@ import * as ROUTES from '../../constants/routes';
 
 import { Map } from '../Map';
 
+// TODO: Implement revision history and modified by (Feature from figma, but rather weird for creating a route)
+// TODO: Deal with google map implementation (the map doesn't update properly after the inital adding of addresses)
+// TODO: Figure out chiplist input (currently just using a chiplist underneath the input)
+// TODO: Validate Route Name, their shouldn't be a repeated name in Firebase. Needs more Firebase integration
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -64,36 +69,32 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '1rem',
     [theme.breakpoints.up('md')]: {
       gridColumn: '1',
-        gridRow: '1',
-        margin: '1rem',
-        marginLeft: '0px',
+      gridRow: '1',
+      margin: '1rem',
+      marginLeft: '0px',
     }
   },
   gridOld: {
     marginTop: '1rem',
     [theme.breakpoints.up('md')]: {
       gridColumn: '1',
-        gridRow: '2',
-        margin: '1rem',
-        marginLeft: '0px',
+      gridRow: '2',
+      margin: '1rem',
+      marginLeft: '0px',
     }
   },
   gridMap: {
     marginTop: '1rem',
     [theme.breakpoints.up('md')]: {
       gridColumn: '2',
-        gridRow: '1/3',
-        margin: '1rem',
-        marginLeft: '0px',
+      gridRow: '1/3',
+      margin: '1rem',
+      marginLeft: '0px',
     }
   }
 }));
 
 const NewRoutePanel = () => {
-  // TODO: Implement revision history and modified by
-  // TODO: Deal with google map implementation
-  // TODO: Deal with donation amount not necessarily being a number value
-  // TODO: Figure out chiplist
 
   // variables used in the state
   const [routeName, setRouteName] = useState('');
@@ -163,7 +164,7 @@ const NewRoutePanel = () => {
     // Removes specified street
 
     // Simplifies Street
-    let streetName = street.replace(/\W/g, '').replace(/[0-9]/g, '');
+    let streetName = street.replace(/\W/g, '').replace(/[0-9]/g, '').toLowerCase();
     let streetNum = parseInt(street).toString();
 
     setAddressList(prevState => prevState.filter(name => name !== street));
