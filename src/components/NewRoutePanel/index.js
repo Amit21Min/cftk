@@ -13,6 +13,7 @@ import './styles.css'
 import * as ROUTES from '../../constants/routes';
 
 import { Map } from '../Map';
+import { ChatSharp } from '@material-ui/icons';
 
 const theme = createMuiTheme({
   palette: {
@@ -95,19 +96,18 @@ const NewRoutePanel = () => {
   }
 
   const updateStreetList = e => {
-    // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault();
 
     // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
     // BARE FUNCTIONALITY, PROBABLY MANY BUGS
 
-    // Current issues: can add the same address more than once
-
+    // Turns comma seperated list into array
     let numbers = currHouses.trim().split(",");
-    // var newHouse = {};
-    // newHouse[currStreet] = numbers;
-    let parsedStreet = currStreet.replace(/\W/g, '')
+    // Removes duplicates
+    numbers = numbers.filter((num, index) => numbers.indexOf(num) === index);
+    // Changes current street into a non basic lowercase characters
+    let parsedStreet = currStreet.replace(/\W/g, '').toLowerCase();
 
     let newHouseNums = getNewHouseNums(parsedStreet, numbers);
     let totalAddresses = [];
