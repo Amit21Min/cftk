@@ -8,6 +8,11 @@ import ResourceIndexTable from '../ResourceIndexTable';
 
 import PanelBanner from '../PanelBanner';
 
+import AssignRoute from '../AssignRoute';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
+
 import Box from '@material-ui/core/Box';
 import { db } from '../Firebase/firebase';
 
@@ -309,6 +314,20 @@ const RoutesPanel = () => {
              </div>;
   }
 
+  // ===========================================================================
+  //                        Open Assign Route Dialog
+  // ===========================================================================
+  const [open, setOpen] = React.useState(false); // true/false: dialog open/close
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const route_names = ["R16"]; // TODO: save list of routes to be assigned here
+  // TODO: Show a success snackbar after assigning successfully
+  // ===========================================================================
+
   return(
     <div className="container">
       <PanelBanner title="Routes"/>
@@ -318,11 +337,23 @@ const RoutesPanel = () => {
         </RouteItemsContext.Provider>
       </RouteColumnContext.Provider>
       <ul>
-        <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li>
+        {/* <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li> */}
       </ul>
       <ul>
         <li><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></li>
       </ul>
+
+      {/* assign route dialog */}
+      <div>
+        <Button color="primary" onClick={handleClickOpen}>
+          Assign Route
+        </Button>
+        <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
+          open={open} onClose={handleClose}>
+          <AssignRoute routes={route_names} close={handleClose}/>
+        </Dialog>
+        {/* TODO: Show a success snackbar after assigning successfully */}
+      </div>
     </div>
   );
 
