@@ -10,6 +10,7 @@ import OverflowMenu from '../OverflowMenu';
 const ResourceIndexTableHeader = (props) => {
   let column_headers = props.columns.map((column) => {
     let column_header;
+    // Different types of column require different rendering
     switch(column.type){
       case 'selectbox':
         column_header = <TableCell key={column.field} padding="checkbox">
@@ -20,16 +21,16 @@ const ResourceIndexTableHeader = (props) => {
       case 'overflow-menu':
         column_header = <TableCell key={column.field}>
                           <OverflowMenu key={column.field}
-                                        items={column.overflow_items} //requires that the props.data[column.field] returns an object with a defined overflow_items key
+                                        items={column.overflow_items}
                           />
                        </TableCell>
         break;
       case 'drop-down-parent':
       case 'text':
       default:
-        //on Click, a column header will send its self to perform an action, like sorting -->
+        //on Click, a column header will send its self to perform an action, ex: sorting -->
         column_header = <TableCell key={column.field}
-                            onClick={(event) => {if(props.selecableHandler) {props.selectableHandler(event, column)}}}>
+                            onClick={(event) => {if(props.selectableHandler) {props.selectableHandler(event, column)}}}>
                             {column.html_text}
                         </TableCell>;
     }

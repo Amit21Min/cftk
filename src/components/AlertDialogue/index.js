@@ -42,10 +42,10 @@ export default function AlertDialogSlide(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} variant="contained">
+          <Button onClick={handleClose} variant="contained" style={{ height: "15%", width: "15%", borderRadius: '5em' }}>
             Cancel
           </Button>
-          <Button onClick={handleClose} variant="contained" color="primary">
+          <Button onClick={handleClose} variant="contained" color="primary" style={{ height: "15%", width: "15%", borderRadius: '5em' }}>
             {props.primaryButtonName}
           </Button>
         </DialogActions>

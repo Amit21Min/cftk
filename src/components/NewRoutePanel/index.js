@@ -1,73 +1,160 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeRouteData } from '../RouteModels/routes';
 import { Link } from 'react-router-dom'
-import { Typography, Grid, TextField, Button } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { Typography, Grid, TextField } from '@material-ui/core';
+import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
+import DualGroupedTextField from '../GroupedTextField/DualGroupedTextField';
 import ChipList from '../ChipList';
+import PillButton from '../PillButton';
 
 import * as ROUTES from '../../constants/routes';
 
 import { Map } from '../Map';
 
+// TODO: Implement revision history and modified by (Feature from figma, but rather weird for creating a route)
+// TODO: Deal with google map implementation (the map doesn't update properly after the inital adding of addresses)
+// TODO: Figure out chiplist input (currently just using a chiplist underneath the input)
+// TODO: Validate Route Name, their shouldn't be a repeated name in Firebase. Needs more Firebase integration
+// TODO: Fix vertical overflow with smaller screens. There seems to be extra whitespace somewhere
+
 const theme = createMuiTheme({
   palette: {
     primary: {
       main: '#0075A3',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
     },
   },
 });
 
+const useStyles = makeStyles((theme) => ({
+  pageContainer: {
+    margin: '4rem',
+    height: 'calc(100% - 8rem)',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    // alignItems: 'center',
+    flexDirection: 'column',
+    [theme.breakpoints.down('md')]: {
+      margin: '0px',
+      marginLeft: '160px'
+    },
+  },
+  formButton: {
+    width: '160px',
+    [theme.breakpoints.down('md')]: {
+      width: '50%',
+    },
+  },
+  buttonContainer: {
+    // width: '100%',
+    marginTop: '3rem',
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      marginLeft: 'auto',
+    },
+  },
+  gridContainer: {
+    display: 'block',
+    [theme.breakpoints.up('md')]: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '1fr 1fr',
+    }
+  },
+  gridRequired: {
+    marginTop: '1rem',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '1',
+      gridRow: '1',
+      margin: '1rem',
+      marginLeft: '0px',
+    }
+  },
+  gridOld: {
+    marginTop: '1rem',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '1',
+      gridRow: '2',
+      margin: '1rem',
+      marginLeft: '0px',
+    }
+  },
+  gridMap: {
+    marginTop: '1rem',
+    [theme.breakpoints.up('md')]: {
+      gridColumn: '2',
+      gridRow: '1/3',
+      margin: '1rem',
+      marginLeft: '0px',
+    }
+  }
+}));
+
 const NewRoutePanel = () => {
-  // TODO 1: Implement donation, route, and house metrics
-  // TODO 2: Implement revision history and modified by
-  // TODO 3: Deal with google map implementation
-  // TODO 4: Deal with donation amount not necessarily being a number value
-  // TODO 5: Figure out required functionalityInput
 
   // variables used in the state
   const [routeName, setRouteName] = useState('');
   const [isValidName, setIsValidName] = useState(true);
-  const [townCity, setTownCity] = useState('');
+  const [cityName, setCityName] = useState('');
   const [isValidCity, setIsValidCity] = useState(true);
   const [currStreet, setCurrStreet] = useState('');
-  const [currHouses, setCurrHouses] = useState([]);
+  const [currHouses, setCurrHouses] = useState('');
   const [isValidStreet, setIsValidStreet] = useState(true);
-  const [streetNames, setStreetNames] = useState([]);
+  const [addressList, setAddressList] = useState([]);
   const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
   const [currNote, setCurrNote] = useState('');
   const [volNotes, setVolNotes] = useState([]);
 
-  const [validForm, setValidForm] = useState(false)
+  const [validForm, setValidForm] = useState(false);
+
+  const validateForm = () => {
+    setValidForm(addressList.length > 0 && routeName.length > 0 && cityName.length > 0)
+  }
+
+  useEffect(validateForm, [routeName, cityName, addressList])
+
+  const getNewHouseNums = (parsedStreet, numbers) => {
+    if (houseNumbers[parsedStreet] != null) {
+      let totalNumbers = [...houseNumbers[parsedStreet], ...numbers].filter((c, index) => {
+        return [...houseNumbers[parsedStreet], ...numbers].indexOf(c) === index;
+      });
+      return { ...houseNumbers, [parsedStreet]: totalNumbers.sort((a, b) => a - b) }
+    }
+    else return { ...houseNumbers, [parsedStreet]: numbers.sort((a, b) => a - b) }
+  }
 
   const updateStreetList = e => {
-    // Adds street to list as long as street not already included or input is not empty
     // preventDefault() prevents the page from reloading whenever a button is pressed
-    e.preventDefault()
-    if (streetNames.includes(currStreet)) {
-      setIsValidStreet(false);
-      return;
-    }
-
-    // Revalidates form
-    if (routeName.length === 0) setValidForm(false);
-    else if (townCity.length === 0) setValidForm(false);
-    else setValidForm(true);
-
-    setStreetNames([...streetNames, currStreet]);
+    e.preventDefault();
 
     // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
     // BARE FUNCTIONALITY, PROBABLY MANY BUGS
-    // there's also an empty and semi-invisible button next to house numbers
 
-    var numbers = currHouses.split(",");
-    var newHouse = {};
-    newHouse[currStreet] = numbers;
+    // Turns comma seperated list into array
+    let numbers = currHouses.trim().split(",");
+    // Removes duplicates
+    numbers = numbers.filter((num, index) => numbers.indexOf(num) === index);
+    // Changes current street into a non basic lowercase characters
+    let parsedStreet = currStreet.replace(/\W/g, '').toLowerCase();
+
+    let newHouseNums = getNewHouseNums(parsedStreet, numbers);
+    let totalAddresses = [];
+
+    for (let street in newHouseNums) {
+      let streetAddresses = newHouseNums[street].map(num => `${num} ${street}`);
+      totalAddresses = [...totalAddresses, ...streetAddresses];
+    }
+
+    setAddressList(totalAddresses);
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    setHouseNumbers({...houseNumbers, [currStreet] : numbers});
+    setHouseNumbers(newHouseNums);
 
     setCurrStreet('');
     setCurrHouses('');
@@ -76,14 +163,20 @@ const NewRoutePanel = () => {
 
   const removeStreet = street => {
     // Removes specified street
-    setStreetNames(streetNames.filter(name => name !== street));
-    setIsValidStreet(true);
 
-    // Revalidates form
-    if (routeName.length === 0) setValidForm(false);
-    else if (townCity.length === 0) setValidForm(false);
-    else if (streetNames.length === 1) setValidForm(false);
-    else setValidForm(true);
+    // Simplifies Street
+    let streetName = street.replace(/\W/g, '').replace(/[0-9]/g, '').toLowerCase();
+    let streetNum = parseInt(street).toString();
+
+    setAddressList(prevState => prevState.filter(name => name !== street));
+    setHouseNumbers(prevState => {
+      prevState[streetName] = prevState[streetName].filter(number => number !== streetNum)
+      // If the street no longer has any addresses in it, delete it
+      if (prevState[streetName].length === 0) delete prevState[streetName];
+      return prevState;
+    });
+
+    setIsValidStreet(true);
   }
 
   const updateNoteList = e => {
@@ -98,13 +191,13 @@ const NewRoutePanel = () => {
       return;
     }
 
-    setVolNotes([...volNotes, currNote]);
+    setVolNotes(prevState => [...prevState, currNote]);
     setCurrNote('');
   }
 
   const removeNote = note => {
     // Removes the specified volunteer note
-    setVolNotes(volNotes.filter(text => text !== note))
+    setVolNotes(prevState => prevState.filter(text => text !== note))
   }
 
   const handleDateFocus = e => {
@@ -117,10 +210,34 @@ const NewRoutePanel = () => {
     if (canningDate === '' || canningDate === 'mm/dd/yy') e.currentTarget.type = 'text';
   }
 
-  const getHouse = (street, houseNumber) => {
-    // Returns link for google maps iframe
-    var address = `${houseNumber}+${street}`;
-    return `https://www.google.com/maps/embed/v1/search?key=${process.env.REACT_APP_MAPS_API_KEY}&q=${address}&q=112+Campbell+Ln`;
+  const handleRoute = (e) => {
+    setIsValidName(e.target.value.length > 0);
+    setRouteName(e.target.value);
+  }
+
+  const handleCity = (e) => {
+    setIsValidCity(e.target.value.length > 0);
+    setCityName(e.target.value);
+  }
+
+  const handleStreet = (e) => {
+    setCurrStreet(e.target.value.replace(/[^A-Za-z]/g, ''))
+  }
+
+  const handleAddress = (e) => {
+    setCurrHouses(e.target.value.replace(/[^0-9,]/g, ''))
+  }
+
+  const handleDonated = (e) => {
+    setNumDonated(e.target.value.replace(/[^0-9]/g, ''))
+  }
+
+  const handleDates = (e) => {
+    setCanningDate(e.target.value)
+  }
+
+  const handleNotes = (e) => {
+    setCurrNote(e.target.value)
   }
 
   const saveForm = _ => {
@@ -129,86 +246,81 @@ const NewRoutePanel = () => {
     if (routeName === '') {
       alert('Please enter a route name');
       return;
-    } else if (streetNames.length === 0) {
+    } else if (addressList.length === 0) {
       alert('Please enter/add a street name');
       return;
     }
-    storeRouteData(routeName, houseNumbers, volNotes, townCity);
-
+    storeRouteData(routeName, houseNumbers, volNotes, cityName);
   }
 
-  const validateRequired = _ => {
-    if (routeName.length === 0) setValidForm(false);
-    else if (townCity.length === 0) setValidForm(false);
-    else if (streetNames.length === 0) setValidForm(false);
-    else setValidForm(true);
-  }
-
-  // Google map implementation is a placeholder from ViewHouseProperties
-  let street = "Campbell+Ln";
-  let houseNumber = "108";
-  let source = getHouse(street, houseNumber);
-  let streets = ["Rose+Ln", "N+Boundary+St", "Campbell+Ln", "N+Boundary+St"]
-  // let source = getRoute(streets);
+  const classes = useStyles();
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></Grid>
-        <Grid item xs={6}>
-          <Grid container spacing={3}>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled" error={!isValidName}
-                // Validates form on blur
-                value={routeName} onChange={(e) => { setRouteName(e.target.value); setIsValidName(true) }} onBlur={validateRequired}
-                label="Name*" />
+      <div container className={classes.pageContainer}>
+        <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
+        <div className={classes.gridContainer}>
+          <div className={classes.gridRequired}>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled" error={!isValidName}
+                  value={routeName} onChange={handleRoute}
+                  label={<span>Name<span style={{ color: '#AA0000' }}>*</span></span>} />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled" error={!isValidCity}
+                  value={cityName} onChange={handleCity}
+                  label={<span>Town/City<span style={{ color: '#AA0000' }}>*</span></span>} />
+              </Grid>
+              <Grid item xs={12}>
+                <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                  label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
+                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
+                  list={addressList}
+                  helperText1="Street Name Only"
+                  helperText2="Comma Seperated"
+                  onButtonClick={updateStreetList}
+                />
+                {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled" error={!isValidCity}
-                value={townCity} onChange={(e) => { setTownCity(e.target.value) }} onBlur={validateRequired}
-                label="Town/City*" />
+          </div>
+          <div className={classes.gridMap}>
+            <Map address={houseNumbers} width={'100%'} height={'500px'} cityState={["Chapel Hill, NC"]} />
+          </div>
+          <div className={classes.gridOld}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled"
+                  value={canningDate} onChange={handleDates}
+                  onBlur={handleDateBlur} onFocus={handleDateFocus}
+                  label="Date" helperText="MM/DD/YY" />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField fullWidth variant="filled"
+                  value={numDonated} onChange={handleDonated}
+                  label="$ Donations"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
+                  fieldValue={currNote} onChange={handleNotes} onButtonClick={updateNoteList}
+                />
+                {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <GroupedTextField label="House Numbers*"
-                fieldValue={currHouses} onChange={(e) => { setCurrHouses(e.target.value); setIsValidStreet(true) }}
-              />
-              <GroupedTextField label="Street*" buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                fieldValue={currStreet} onChange={(e) => { setCurrStreet(e.target.value); setIsValidStreet(true) }} onButtonClick={updateStreetList}
-              />
+          </div>
+        </div>
+        <div className={classes.buttonContainer}>
+          <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
+          <div className={classes.formButton}><PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+            Save
+          </PillButton></div>
+        </div>
+      </div>
 
-              {streetNames.length > 0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
-            </Grid>
-            <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled"
-                value={canningDate} onChange={(e) => setCanningDate(e.target.value)}
-                onBlur={handleDateBlur} onFocus={handleDateFocus}
-                label="Date" helperText="MM/DD/YY" />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth variant="filled"
-                value={numDonated} onChange={(e) => setNumDonated(e.target.value)}
-                label="$ Donations"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
-                fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
-              />
-              {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={6}>
-          <Map address={houseNumbers} cityState={["Chapel Hill, NC"]}/>
-        </Grid>
-        <Grid item xs={10} />
-        <Grid item xs={1}><Link to={ROUTES.ADMIN_ROUTES} component={Button} style={{ height: "100%", width: "100%", borderRadius: '5em' }}>Cancel</Link></Grid>
-        <Grid item xs={1}><Button style={{ height: "100%", width: "100%", borderRadius: '5em' }} variant="contained" color="primary"
-          onClick={saveForm} disabled={!validForm}>Save</Button></Grid>
-      </Grid>
-    </ThemeProvider>
-
+    </ThemeProvider >
   );
 };
 

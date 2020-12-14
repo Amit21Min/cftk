@@ -53,13 +53,13 @@ export const Map = React.memo(function Map(props) {
 
   return (
     <div>
-      <span>
+      {/* <span>
         Example from{" "}
         <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
           https://developers.google.com/maps/documentation/javascript/adding-a-google-map
         </a>
-      </span>
-      <div ref={ref} style={{ width: 400, height: 300 }} />
+      </span> */}
+      <div ref={ref} style={{ width: props.width, height: props.height }} />
     </div>
   );
   

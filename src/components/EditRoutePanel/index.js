@@ -2,10 +2,12 @@ import React, { useState, useReducer } from 'react';
 import { getCity, editRouteData } from '../RouteModels/routes.js';
 import * as ROUTES from '../../constants/routes';
 import { Link } from 'react-router-dom';
-import { Typography, Grid, TextField, Button, InputLabel, InputAdornment} from '@material-ui/core';
+import { Typography, Grid, Chip, TextField, Button, InputLabel, InputAdornment} from '@material-ui/core';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import GroupedTextField from '../GroupedTextField';
 import ChipList from '../ChipList';
 import AlertDialogue from '../AlertDialogue';
+import MoveStreet from '../MoveStreet';
 import db from '../Firebase/firebase.js';
 
 
@@ -23,6 +25,14 @@ const EditRoutePanel = () => {
     const [currNote, setCurrNote] = useState('');
     const [volNotes, setVolNotes] = useState([]);
     const[validForm, setValidForm] = useState(false);
+
+    const theme = createMuiTheme({
+        palette: {
+          primary: {
+            main: '#0075A3',
+          },
+        },
+      });
 
     const updateStreetList = e => {
     //adds street to list as long as street is not a;ready included in the list
@@ -177,8 +187,11 @@ const EditRoutePanel = () => {
     const streetsLabel = <p>Streets <span style={{ color: "#B00020" }}>*</span></p>
     const dateLabel = <p>Date <span style={{ color: "#B00020" }}>*</span></p>
 
+    //fetch number of houses from firebase for this
+    const housesLabel = <p>Total number of houses: <span style={{ fontWeight: "bold"}}>52</span></p>
+
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <Grid container spacing={3}>
                 <Grid item xs={12}> <Typography style = {{ fontSize: 32, fontWeight: "bold"}}>Edit Route</Typography></Grid>
                 <Grid item xs={6}> 
@@ -200,36 +213,42 @@ const EditRoutePanel = () => {
                             <GroupedTextField label={streetsLabel} buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                                 fieldValue={currStreet} onButtonClick={updateStreetList} onChange= {(e) => {setCurrStreet(e.target.value); setIsValidStreet(true)}}
                             />
+                            <Grid item xs={12}>
+                                <span class="help-block" style={{fontSize: 12}}>Tap or press ADD to add a street </span>
+                            </Grid>
                             {streetNames.length >0 ? <ChipList color="primary" list={streetNames} onDelete={removeStreet} /> : null}
+                            <Chip label={housesLabel} variant="outlined"></Chip>
                         </Grid>
-                        <Grid item xs={6}>
-                                <AlertDialogue buttonName="Move Street" message="The street **street name** has already been assigned 
-                                to the volunteer group **group name**. If you move this route, this group will no longer be assigned this street."
-                                primaryButtonName="Move"/>
+                        <Grid item xs={4}>
+                            <AlertDialogue buttonName="Move Street Alert" message="The street **street name** has already been assigned 
+                            to the volunteer group **group name**. If you move this route, this group will no longer be assigned this street."
+                            primaryButtonName="Move"/>
                         </Grid>
-                        <Grid item xs={6}>
-                                <AlertDialogue buttonName="Edit Route" message="The user **user name** is currently editing this route. 
-                                You cannot edit a route another user is currently editing."
-                                primaryButtonName="OK"/>
+                        <Grid item xs={4}>
+                            <AlertDialogue buttonName="Unable to Edit" message="The user **user name** is currently editing this route. 
+                            You cannot edit a route another user is currently editing."
+                            primaryButtonName="OK"/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <MoveStreet/>
                         </Grid>
                         <Grid item xs={12}> <Typography style = {{ fontSize: 24, fontWeight: "bold"}}>Previous Canning Data</Typography></Grid>
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled"
                                 value={canningDate} onFocus={handleDateFocus} onBlur={handleDateBlur} 
                                 onChange = {(e) => setCanningDate(e.target.value)} label={dateLabel}/>
-                            <span class="help-block">MM/DD/YYYY </span>
+                            <span class="help-block"  style={{fontSize: 12}}>MM/DD/YYYY </span>
                         </Grid>
                         <Grid item xs={6}>
                             <TextField fullWidth variant="filled" 
                                 value={numDonated} onChange = {(e) => setNumDonated(e.target.value)}
                                 label="$ Donations "/>
-                        </Grid>
-                        
+                        </Grid> 
                         <Grid item xs={12}>
                             <GroupedTextField label="Volunteer notes " buttonLabel="ADD" buttonColor="primary"
                             fieldValue={currNote} onChange={(e) => setCurrNote(e.target.value)} onButtonClick={updateNoteList}
                             />
-                            <span class="help-block">Eg. Very nice people</span>
+                            <span class="help-block"  style={{fontSize: 12}}>Eg. Very nice people</span>
                             {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}                        
                         </Grid>
                     </Grid>
@@ -244,14 +263,14 @@ const EditRoutePanel = () => {
                     </iframe>
                 </Grid>
                 <Grid item xs={10} />
-                <Grid item xs={1}>
-                    <Button variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>SAVE</Button>
-                </Grid>
                 <Grid item xs={1}  >
-                    <Button variant="contained" ><Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link></Button>
+                    <Button variant="contained" style={{ height: "100%", width: "100%", borderRadius: '5em' }} ><Link to={ROUTES.ADMIN_ROUTES}>CANCEL</Link></Button>
+                </Grid>
+                <Grid item xs={1}>
+                    <Button variant="contained" color="primary" style={{ height: "100%", width: "100%", borderRadius: '5em' }} onClick={saveForm} disabled={!validForm}>SAVE</Button>
                 </Grid>
             </Grid>
-        </div>
+        </ThemeProvider>
     );
 };
 export default EditRoutePanel;

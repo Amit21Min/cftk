@@ -11,22 +11,6 @@
   padding: 0.2em;
 }
 
-#sidebar-header-container{
-
-}
-
-#sidebar-user-portrait{
-
-}
-
-#sidebar-user-name{
-
-}
-
-#sidebar-adaptation{
-
-}
-
 #sidebar-panel{
   flex-basis: 88%;
   padding: 0.2em;
@@ -34,5 +18,19 @@
 
 .panel-screen{
   width: 92%;
+}
 
+.logo-box {
+  height: 88px;
+  background-color: #0075A3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
 }
