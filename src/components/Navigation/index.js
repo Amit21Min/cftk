@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { signOut } from '../Firebase/firebase.js'
  
 import * as ROUTES from '../../constants/routes';
+import Sidebar from '../Sidebar/index.js';
  
 const Navigation = () => (
   <div>
@@ -27,6 +28,7 @@ const Navigation = () => (
           <span onClick={signOut}>Sign Out</span>
         </Link>
       </li>
+      <Sidebar />
     </ul>
   </div>
 );

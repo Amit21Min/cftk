@@ -17,21 +17,27 @@ import Sidebar from '../Sidebar';
 
 import * as ROUTES from '../../constants/routes';
 import DashboardPanel from '../DashboardPanel';
+import RoutesPanel from '../RoutesPanel';
+import AdminLayout from '../../layouts/adminLayout';
 
 const App = () => (
   <Router>
-    <div>
-      <Navigation />
+      {/* <Navigation /> */}
 
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
-      <Route path={ROUTES.SIGN_IN} component={SignInPage} />
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       {/* <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
       <Route path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHousePropertiesPage} />
-    </div>
+      <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+      <Route path={ROUTES.ADMIN_DASHBOARD} component={AdminLayout} />
+      <Route path={ROUTES.ADMIN_ROUTES} component={AdminLayout} />
+      <Route path={ROUTES.ADMIN_VOLUNTEERS} component={AdminLayout} />
 
-    <Sidebar/>
+    {/* <Sidebar/> */}
+
+      
+
 
   </Router>
 
