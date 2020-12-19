@@ -59,7 +59,7 @@ const App = () => {
   return (
     <div className="main">
       <div className="signin-container">
-        <h1>Hello!</h1>
+        <h1 className="title-text">Hello!</h1>
         <p className="subtext">Sign in to your account</p>
         <br></br>
         <form className="form">
@@ -92,11 +92,11 @@ const App = () => {
               }
             />
           </FormControl>
-          <a><p className="forgot-password">Forgot Password</p></a> 
+          <p className="forgot-password"><a href="/forgot-password">Forgot Password</a></p> 
         </form>
         <br></br>
         <SignInButton>Sign-In</SignInButton>
-        <a><p className="signup-text">I'm New. Sign Me Up!</p></a>
+        <p className="signup-text"><a href="/signup">I'm New. Sign Me Up!</a></p>
         <div className="LoginBoxContainer">
           <div className="LoginBox">
             <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />

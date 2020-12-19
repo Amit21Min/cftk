@@ -17,7 +17,7 @@
     margin: auto;
 }
 
-h1 {
+h1.title-text {
     font-size: 56px;
     font-weight: bold;
     color: #051820;
@@ -30,6 +30,9 @@ p.subtext {
 
 p.forgot-password {
     text-align: end;
+}
+
+p.forgot-password a {
     text-transform: uppercase;
     font-size: 14px;
     line-height: 19px;
@@ -40,6 +43,9 @@ p.forgot-password {
 
 p.signup-text {
     padding-top: 24px;
+}
+
+p.signup-text a{
     text-transform: uppercase;
     font-size: 14px;
     line-height: 19px;

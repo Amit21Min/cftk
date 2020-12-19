@@ -4,7 +4,8 @@ export const SIGN_IN = '/signin';
 export const HOME = '/home';
 export const ACCOUNT = '/account';
 export const ADMIN = '/admin';
-export const VIEW_HOUSE_PROPS = '/view-house-props'
+export const VIEW_HOUSE_PROPS = '/view-house-props';
+export const FORGOT_PASSWORD = '/forgot-password';
 
 // Sidebar ROUTES
 export const ADMIN_DASHBOARD  = ADMIN+'/dashboard';
