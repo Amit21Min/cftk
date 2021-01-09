@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { signOut } from '../Firebase/firebase.js'
+import { signOut } from '../FirebaseComponents/Firebase/firebase.js'
  
 import * as ROUTES from '../../constants/routes';
  

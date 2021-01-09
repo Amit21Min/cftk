@@ -13,10 +13,10 @@ import AdminPage from '../Admin';
 import ViewHousePropertiesPage from '../ViewHouseProperties'
  
 
-import Sidebar from '../Sidebar';
+import Sidebar from '../RoutesComponents/Sidebar';
 
 import * as ROUTES from '../../constants/routes';
-import DashboardPanel from '../DashboardPanel';
+import DashboardPanel from '../RoutesComponents/DashboardPanel';
 
 const App = () => (
   <Router>
