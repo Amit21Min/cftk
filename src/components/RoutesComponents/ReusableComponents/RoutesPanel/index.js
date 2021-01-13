@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 
 import RouteMetrics from '../RouteMetrics';
-import ZeroResource from '../ZeroResource';
-import SearchBar from '../SearchBar';
+import ZeroResource from '../../../ReusableComponents/ZeroResource';
+import SearchBar from '../../SearchBar';
 import AddButton from '../../../ReusableComponents/AddButton';
 import ResourceIndexTable from '../ResourceIndexTable';
 
@@ -14,7 +14,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 
 import Box from '@material-ui/core/Box';
-import { db } from '../Firebase/firebase';
+import { db } from '../../../FirebaseComponents/Firebase/firebase';
 
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../../../constants/routes';

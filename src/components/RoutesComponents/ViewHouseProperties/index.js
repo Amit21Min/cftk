@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './style.css'
-import {db} from '../Firebase/firebase';
+import {db} from '../../FirebaseComponents/Firebase/firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';

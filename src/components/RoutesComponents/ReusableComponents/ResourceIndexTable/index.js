@@ -5,7 +5,7 @@ import ResourceIndexTableHeader from '../ResourceIndexTableHeader';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 
-import ZeroResource from '../ZeroResource';
+import ZeroResource from '../../../ReusableComponents/ZeroResource';
 
 import "./index.css";
 

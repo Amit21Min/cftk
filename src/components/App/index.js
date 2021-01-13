@@ -6,11 +6,11 @@ import {
 import 'bulma/css/bulma.css';
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
-import SignInPage from '../SignIn';
+import SignInPage from '../FirebaseComponents/SignIn';
 import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
-import ViewHousePropertiesPage from '../ViewHouseProperties'
+import ViewHousePropertiesPage from '../RoutesComponents/ViewHouseProperties'
  
 
 import Sidebar from '../RoutesComponents/Sidebar';

@@ -20,7 +20,7 @@ import AdminPage from '../../Admin';
 
 import Box from '@material-ui/core/Box';
 
-import * as ROUTES from '../../../../constants/routes';
+import * as ROUTES from '../../../constants/routes';
 
 import './index.css';
 import logo from '../../../assets/images/cftk-logo-white.png';
