@@ -3,12 +3,12 @@ import React, {useState, useEffect} from 'react';
 import RouteMetrics from '../RouteMetrics';
 import ZeroResource from '../ZeroResource';
 import SearchBar from '../SearchBar';
-import AddButton from '../AddButton';
+import AddButton from '../../../ReusableComponents/AddButton';
 import ResourceIndexTable from '../ResourceIndexTable';
 
 import PanelBanner from '../PanelBanner';
 
-import AssignRoute from '../AssignRoute';
+import AssignRoute from '../../AssignRoute';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
@@ -17,7 +17,7 @@ import Box from '@material-ui/core/Box';
 import { db } from '../Firebase/firebase';
 
 import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
+import * as ROUTES from '../../../../constants/routes';
 
 import "./index.css";
 import * as overflow_actions from './overflow_actions.js';

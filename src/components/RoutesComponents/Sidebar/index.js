@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import DashboardPanel from '../DashboardPanel';
-import RoutesPanel from '../RoutesPanel';
+import RoutesPanel from '../ReusableComponents/RoutesPanel';
 import VolunteersPanel from '../VolunteersPanel';
 
 import NewRoutePanel from '../NewRoutePanel';
@@ -16,14 +16,14 @@ import DeleteDialogs from '../DeleteDialogs';
 import EditRoutePanel from '../EditRoutePanel';
 import AssignRoute from '../AssignRoute';
 
-import AdminPage from '../Admin';
+import AdminPage from '../../Admin';
 
 import Box from '@material-ui/core/Box';
 
-import * as ROUTES from '../../constants/routes';
+import * as ROUTES from '../../../../constants/routes';
 
 import './index.css';
-import logo from '../../assets/images/cftk-logo-white.png';
+import logo from '../../../assets/images/cftk-logo-white.png';
 
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles"

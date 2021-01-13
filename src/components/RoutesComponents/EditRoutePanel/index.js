@@ -1,14 +1,14 @@
 import React, { useState, useReducer } from 'react';
-import { getCity, editRouteData } from '../RouteModels/routes.js';
-import * as ROUTES from '../../constants/routes';
+import { getCity, editRouteData } from '../ReusableComponents/RouteModels/routes.js';
+import * as ROUTES from '../../../constants/routes';
 import { Link } from 'react-router-dom';
 import { Typography, Grid, Chip, TextField, Button, InputLabel, InputAdornment} from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import GroupedTextField from '../GroupedTextField';
-import ChipList from '../ChipList';
-import AlertDialogue from '../AlertDialogue';
-import MoveStreet from '../MoveStreet';
-import db from '../Firebase/firebase.js';
+import GroupedTextField from '../../ReusableComponents/GroupedTextField';
+import ChipList from '../../ReusableComponents/ChipList';
+import AlertDialogue from '../../ReusableComponents/AlertDialogue';
+import MoveStreet from '../../MoveStreet';
+import db from '../../FirebaseComponents/Firebase/firebase.js';
 
 
 const EditRoutePanel = () => {

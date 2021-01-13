@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PanelBanner from '../PanelBanner';
+import PanelBanner from '../ReusableComponents/PanelBanner';
 
 const VolunteersPanel = () => (
   <div>
