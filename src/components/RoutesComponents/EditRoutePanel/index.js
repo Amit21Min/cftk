@@ -7,7 +7,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import ChipList from '../../ReusableComponents/ChipList';
 import AlertDialogue from '../../ReusableComponents/AlertDialogue';
-import MoveStreet from '../../MoveStreet';
+import MoveStreet from '../MoveStreet';
 import db from '../../FirebaseComponents/Firebase/firebase.js';
 
 
