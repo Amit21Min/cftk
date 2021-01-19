@@ -4,7 +4,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
 import Checkbox from '@material-ui/core/Checkbox';
-import OverflowMenu from '../OverflowMenu';
+import OverflowMenu from '../../OverflowMenu';
 
 // Populates and handles actions for the column headers of a ResourceIndexTable
 const ResourceIndexTableHeader = (props) => {

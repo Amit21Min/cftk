@@ -1,4 +1,4 @@
-import db from '../Firebase/firebase.js';
+import db from '../../../FirebaseComponents/Firebase/firebase.js';
 
 const toStreet = (streetNames) => {
     var i;

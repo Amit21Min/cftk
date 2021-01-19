@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import OverflowMenu from '../OverflowMenu';
+import OverflowMenu from '../../OverflowMenu';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
