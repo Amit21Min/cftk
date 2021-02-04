@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 // https://www.npmjs.com/package/material-ui-chip-input
 // npm i --save material-ui-chip-input@next
-import ChipInput from 'material-ui-chip-input' // not working well - hard to style
+// import ChipInput from 'material-ui-chip-input' // not working well - hard to style
 
 const AssignRoute = (props) => {
     const phone_helptext = "Enter a phone number, and press Enter to add it.";
