@@ -35,11 +35,12 @@ function useAddressLists(addresses, city) {
 }
 
 function Map(props) {
+  const defaultLoc = { lat: 35.9132, lng: -79.0558 }
   const { ref, map, google } = useGoogleMaps(
     process.env.REACT_APP_MAPS_API_KEY,
     {
       zoom: 18,
-      center: { lat: 35.9132, lng: -79.0558 }
+      center: defaultLoc
     },
   );
   const { added, removed, current } = useAddressLists(props.addresses, props.cityState);
@@ -86,7 +87,7 @@ function Map(props) {
     }
 
     // Pan to the last marker
-    let lastLocation = { lat: 35.9132, lng: -79.0558 };
+    let lastLocation = defaultLoc;
     if (current.length > 0 && newMarkers[current[current.length - 1]]) lastLocation = newMarkers[current[0]].position;
     map.setCenter(lastLocation);
     map.panTo(lastLocation);
