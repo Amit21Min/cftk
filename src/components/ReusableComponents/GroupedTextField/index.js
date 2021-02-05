@@ -19,6 +19,7 @@ const GroupedTextField = (props) => {
         <PillButton color={props.buttonColor}
           onClick={props.onButtonClick}
           disabled={props.fieldValue.length === 0}
+          style={{ height: "100%", width: "100%", borderRadius: '5em' }}
         >
           {props.buttonLabel}
         </PillButton>
