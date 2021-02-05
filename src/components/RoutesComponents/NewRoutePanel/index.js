@@ -257,7 +257,7 @@ const NewRoutePanel = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div container className={classes.pageContainer}>
+      <div className={classes.pageContainer}>
         <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
         <div className={classes.gridContainer}>
           <div className={classes.gridRequired}>
@@ -286,7 +286,7 @@ const NewRoutePanel = () => {
             </Grid>
           </div>
           <div className={classes.gridMap}>
-            <Map address={houseNumbers} width={'100%'} height={'500px'} cityState={["Chapel Hill, NC"]} />
+            <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} />
           </div>
           <div className={classes.gridOld}>
             <Grid container spacing={3}>

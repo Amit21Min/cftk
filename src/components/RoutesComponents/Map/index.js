@@ -1,23 +1,50 @@
+import { AddCircle } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
 import { useGoogleMaps } from "react-hook-google-maps";
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
+function useAddressLists(addresses, city) {
+  const [prevAddr, setPrevAddr] = useState([]);
+  const [addr, setAddr] = useState({
+    added: [],
+    removed: []
+  });
+
+  useEffect(() => {
+    let flatAddr = [];
+    for (let street in addresses) {
+      for (let address of addresses[street]) {
+        flatAddr.push(`${address} ${street},${city}`);
+      }
+    }
+    let added = flatAddr.filter(address => !prevAddr.includes(address))
+    let removed = prevAddr.filter(address => !flatAddr.includes(address))
+
+    setPrevAddr(flatAddr);
+    setAddr({
+      added,
+      removed
+    });
+
+  }, [JSON.stringify(addresses)]);
+
+  return addr
+}
+
 function Map(props) {
   const { ref, map, google } = useGoogleMaps(
     process.env.REACT_APP_MAPS_API_KEY,
     {
-      zoom: 4,
-      center: { lat: 35.9132, lng: 79.0558 }
+      zoom: 18,
+      center: { lat: 35.9132, lng: -79.0558 }
     },
   );
-  const addresses = props.address;
-  const cityState = props.cityState;
+  const { added, removed } = useAddressLists(props.addresses, props.cityState);
+  const [markers, setMarkers] = useState({});
 
   useEffect(() => {
 
-    if (!map || !google) return;
-    let markers = [];
     function codeAddress(geocoder, address) {
       geocoder.geocode({ address: address }, (results, status) => {
         if (status === "OK") {
@@ -27,32 +54,37 @@ function Map(props) {
             position: results[0].geometry.location,
             icon: parkingIcon
           });
-          map.panTo(newMarker.position)
-          map.setZoom(18);
-          markers.push(newMarker);
+          newMarkers[address] = newMarker;
+          lastLocation = results[0].geometry.location
         } else {
           alert("Geocode was not successful for the following reason: " + status);
         }
       });
     }
 
-    const geocoder = new google.maps.Geocoder();
-    for (let street in addresses) {
-      for (let address of addresses[street]) {
-        const fullAddress = `${address} ${street},${cityState}`;
-        codeAddress(geocoder, fullAddress)
-      }
-    }
+    if (!map || !google) return;
 
+    let newMarkers = markers;
+    let lastLocation = { lat: 35.9132, lng: -79.0558 };
     const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
     const parkingIcon = iconBase + 'parking_lot_maps.png';
 
-    return () => {
-      for (let marker of markers) {
-        if (marker.setMap) marker.setMap(null)
+    const geocoder = new google.maps.Geocoder();
+    for (let address of added) {
+      codeAddress(geocoder, address)
+    }
+    map.setCenter(lastLocation);
+    map.panTo(lastLocation);
+
+    for (let addr of removed) {
+      if (newMarkers[addr] && newMarkers[addr].setMap) {
+        newMarkers[addr].setMap(null);
+        delete newMarkers[addr]
       }
     }
-  }, [addresses, cityState, map, google]);
+    setMarkers(newMarkers)
+
+  }, [added, removed, map, google]);
 
   return (
     <div>
@@ -68,71 +100,3 @@ function Map(props) {
 }
 
 export default Map;
-
-// export const Map = React.memo(function Map(props) {
-//   console.log(props);
-//   const { ref, map, google } = useGoogleMaps(
-//     process.env.REACT_APP_MAPS_API_KEY,
-//     {
-//       zoom: 4,
-//       center: { lat: 35.9132, lng: 79.0558 }
-//     },
-//   );
-//   console.log("render MapWithMarkers");
-
-//   if (map) {
-//     // execute when map object is ready
-//     var geocoder = new google.maps.Geocoder();
-//     var addresses = props.address;
-//     var cityState = props.cityState;
-
-//     for (var street in addresses) {
-//       for (var i = 0; i < addresses[street].length; i++) {
-//         var fullAddress = addresses[street][i] + " " + street + "," + cityState;
-//         codeAddress(geocoder, map, fullAddress);
-//       }
-//     };
-//     var iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/'
-//     var parkingIcon = iconBase + 'parking_lot_maps.png'
-//     // address = address.map(address => address + ", " + cityState);
-
-//     // Most accurate Geocoder result achieved with supplying sa much of the following as possible:
-//     // House Number, Street Direction, Street Name, Street Suffix, City, State, Zip, Country
-//   }
-
-//   function codeAddress(geocoder, resultsMap, address) {    
-//     geocoder.geocode({ address: address }, (results, status) => {
-//         if (status === "OK") {
-//         resultsMap.setCenter(results[0].geometry.location);
-//         var curmarker = new google.maps.Marker({
-//           map: resultsMap,
-//           position: results[0].geometry.location,
-//           icon : parkingIcon
-//         });
-//         resultsMap.setZoom(18);
-//         resultsMap.panTo(curmarker.position);
-//       } else {
-//         alert("Geocode was not successful for the following reason: " + status);
-//       }
-//     });
-//   }
-
-//   return (
-//     <div>
-//       {/* <span>
-//         Example from{" "}
-//         <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
-//           https://developers.google.com/maps/documentation/javascript/adding-a-google-map
-//         </a>
-//       </span> */}
-//       <div ref={ref} style={{ width: props.width, height: props.height }} />
-//     </div>
-//   );
-
-// }, (prevProps, nextProps) => {
-//   const lodash = require("lodash");
-//   if (lodash.isEqual(prevProps, nextProps)) {
-//     return true; // props are equal
-//   }
-//   return false; // props are not equal -> update the component
-// });
