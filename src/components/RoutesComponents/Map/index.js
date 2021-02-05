@@ -5,26 +5,28 @@ import { useGoogleMaps } from "react-hook-google-maps";
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
 function useAddressLists(addresses, city) {
-  const [prevAddr, setPrevAddr] = useState([]);
+  // Splits the address list into 3 lists, the new ones that were added, the ones that were removed, and the total existing ones
   const [addr, setAddr] = useState({
     added: [],
-    removed: []
+    removed: [],
+    total: []
   });
 
   useEffect(() => {
-    let flatAddr = [];
+    let total = [];
+    const prevAddr = addr.total;
     for (let street in addresses) {
       for (let address of addresses[street]) {
-        flatAddr.push(`${address} ${street},${city}`);
+        total.push(`${address} ${street},${city}`);
       }
     }
-    let added = flatAddr.filter(address => !prevAddr.includes(address));
-    let removed = prevAddr.filter(address => !flatAddr.includes(address));
+    let added = total.filter(address => !prevAddr.includes(address));
+    let removed = prevAddr.filter(address => !total.includes(address));
 
-    setPrevAddr(flatAddr);
     setAddr({
       added,
-      removed
+      removed,
+      total
     });
 
   }, [JSON.stringify(addresses)]);
@@ -40,7 +42,7 @@ function Map(props) {
       center: { lat: 35.9132, lng: -79.0558 }
     },
   );
-  const { added, removed } = useAddressLists(props.addresses, props.cityState);
+  const { added, removed, total } = useAddressLists(props.addresses, props.cityState);
   const [markers, setMarkers] = useState({});
 
   useEffect(() => {
@@ -55,7 +57,6 @@ function Map(props) {
             icon: parkingIcon
           });
           newMarkers[address] = newMarker;
-          lastLocation = results[0].geometry.location
         } else {
           alert("Geocode was not successful for the following reason: " + status);
         }
@@ -73,8 +74,7 @@ function Map(props) {
     for (let address of added) {
       codeAddress(geocoder, address)
     }
-    map.setCenter(lastLocation);
-    map.panTo(lastLocation);
+    
 
     for (let addr of removed) {
       if (newMarkers[addr] && newMarkers[addr].setMap) {
@@ -82,6 +82,11 @@ function Map(props) {
         delete newMarkers[addr]
       }
     }
+
+    if (total.length > 0 && newMarkers[total[0]]) lastLocation = newMarkers[total[0]].position;
+    map.setCenter(lastLocation);
+    map.panTo(lastLocation);
+
     setMarkers(newMarkers)
 
   }, [added, removed, map, google]);
