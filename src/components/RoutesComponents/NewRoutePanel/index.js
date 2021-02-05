@@ -16,7 +16,7 @@ import Map from '../Map';
 // TODO: Implement revision history and modified by (Feature from figma, but rather weird for creating a route)
 // TODO: Deal with google map implementation (the map doesn't update properly after the inital adding of addresses)
 // TODO: Figure out chiplist input (currently just using a chiplist underneath the input)
-// TODO: Validate Route Name, their shouldn'st be a repeated name in Firebase. Needs more Firebase integration
+// TODO: Validate Route Name, their shouldn't be a repeated name in Firebase. Needs more Firebase integration
 // TODO: Fix vertical overflow with smaller screens. There seems to be extra whitespace somewhere
 
 const useStyles = makeStyles((theme) => ({
@@ -94,7 +94,7 @@ const NewRoutePanel = () => {
   const [currStreet, setCurrStreet] = useState('');
   const [currHouses, setCurrHouses] = useState('');
   const [isValidStreet, setIsValidStreet] = useState(true);
-  const [addressList, setAddressList] = useState([]);
+  const [streetList, setStreetList] = useState([]);
   const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
@@ -104,10 +104,10 @@ const NewRoutePanel = () => {
   const [validForm, setValidForm] = useState(false);
 
   const validateForm = () => {
-    setValidForm(addressList.length > 0 && routeName.length > 0 && cityName.length > 0)
+    setValidForm(streetList.length > 0 && routeName.length > 0 && cityName.length > 0)
   }
 
-  useEffect(validateForm, [routeName, cityName, addressList])
+  useEffect(validateForm, [routeName, cityName, streetList])
 
   const getNewHouseNums = (parsedStreet, numbers) => {
     if (houseNumbers[parsedStreet] != null) {
@@ -130,20 +130,26 @@ const NewRoutePanel = () => {
     let numbers = currHouses.trim().split(",");
     // Removes duplicates
     numbers = numbers.filter((num, index) => numbers.indexOf(num) === index);
-    // Changes current street into a non basic lowercase characters
-    let parsedStreet = currStreet.replace(/\W/g, '').toLowerCase();
+    // Changes current street into Title Case
+    let parsedStreet = currStreet.replace(
+      /\w\S*/g,
+      function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
 
-    let newHouseNums = getNewHouseNums(parsedStreet, numbers);
-    let totalAddresses = [];
+    // let newHouseNums = getNewHouseNums(parsedStreet, numbers);
 
-    for (let street in newHouseNums) {
-      let streetAddresses = newHouseNums[street].map(num => `${num} ${street}`);
-      totalAddresses = [...totalAddresses, ...streetAddresses];
-    }
-
-    setAddressList(totalAddresses);
+    setStreetList(prevState => {
+      const streets = [...prevState, parsedStreet]
+      return streets.filter((street, index) => streets.indexOf(street) == index)
+    });
+    console.log(numbers)
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    setHouseNumbers(newHouseNums);
+    setHouseNumbers(prevState => ({
+      ...prevState,
+      [parsedStreet]: numbers
+    }));
 
     setCurrStreet('');
     setCurrHouses('');
@@ -152,16 +158,18 @@ const NewRoutePanel = () => {
 
   const removeStreet = street => {
     // Removes specified street
+    let streetName = street.replace(
+      // Simplifies Street to Title Case
+      /\w\S*/g,
+      function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
 
-    // Simplifies Street
-    let streetName = street.replace(/\W/g, '').replace(/[0-9]/g, '').toLowerCase();
-    let streetNum = parseInt(street).toString();
-
-    setAddressList(prevState => prevState.filter(name => name !== street));
+    setStreetList(prevState => prevState.filter(name => name !== street));
     setHouseNumbers(prevState => {
-      prevState[streetName] = prevState[streetName].filter(number => number !== streetNum)
       // If the street no longer has any addresses in it, delete it
-      if (prevState[streetName].length === 0) delete prevState[streetName];
+      delete prevState[streetName];
       return prevState;
     });
 
@@ -210,7 +218,8 @@ const NewRoutePanel = () => {
   }
 
   const handleStreet = (e) => {
-    setCurrStreet(e.target.value.replace(/[^A-Za-z]/g, ''))
+    // setCurrStreet(e.target.value.replace(/[^A-Za-z]/g, ''))
+    setCurrStreet(e.target.value)
   }
 
   const handleAddress = (e) => {
@@ -229,13 +238,20 @@ const NewRoutePanel = () => {
     setCurrNote(e.target.value)
   }
 
+  const openStreet = (street) => {
+    const streetAddresses = houseNumbers[street];
+    const asString = streetAddresses ? streetAddresses.join(",") : "";
+    setCurrStreet(street);
+    setCurrHouses(asString);
+  }
+
   const saveForm = _ => {
     // Executes when save button is clicked.
     // Alerts and doesn't save if required inputs are not filled (Placeholder)
     if (routeName === '') {
       alert('Please enter a route name');
       return;
-    } else if (addressList.length === 0) {
+    } else if (streetList.length === 0) {
       alert('Please enter/add a street name');
       return;
     }
@@ -264,12 +280,12 @@ const NewRoutePanel = () => {
               <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
                 label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
                 label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
-                list={addressList}
+                list={streetList}
                 helperText1="Street Name Only"
                 helperText2="Comma Seperated"
                 onButtonClick={updateStreetList}
               />
-              {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
+              {streetList.length > 0 ? <ChipList color="primary" list={streetList} onClick={openStreet} onDelete={removeStreet} /> : null}
             </Grid>
           </Grid>
         </div>

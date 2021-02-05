@@ -9,7 +9,7 @@ const ChipList = (props) => {
         <div>
             {props.list.map((item, index) => (
                 <Chip key={index} color={props.color} label={item} style={{margin: 6}}
-                    onClick={props.onClick} onDelete={() => props.onDelete(item)}
+                    onClick={() => {if (props.onClick) props.onClick(item)}} onDelete={() => {if (props.onDelete) props.onDelete(item)}}
                 />
             ))}
         </div>
