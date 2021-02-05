@@ -5,28 +5,28 @@ import { useGoogleMaps } from "react-hook-google-maps";
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
 function useAddressLists(addresses, city) {
-  // Splits the address list into 3 lists, the new ones that were added, the ones that were removed, and the total existing ones
+  // Custom hool that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
   const [addr, setAddr] = useState({
     added: [],
     removed: [],
-    total: []
+    current: []
   });
 
   useEffect(() => {
-    let total = [];
-    const prevAddr = addr.total;
+    let current = [];
+    const prevAddr = addr.current;
     for (let street in addresses) {
       for (let address of addresses[street]) {
-        total.push(`${address} ${street},${city}`);
+        current.push(`${address} ${street},${city}`);
       }
     }
-    let added = total.filter(address => !prevAddr.includes(address));
-    let removed = prevAddr.filter(address => !total.includes(address));
+    let added = current.filter(address => !prevAddr.includes(address));
+    let removed = prevAddr.filter(address => !current.includes(address));
 
     setAddr({
       added,
       removed,
-      total
+      current
     });
 
   }, [JSON.stringify(addresses)]);
@@ -42,12 +42,13 @@ function Map(props) {
       center: { lat: 35.9132, lng: -79.0558 }
     },
   );
-  const { added, removed, total } = useAddressLists(props.addresses, props.cityState);
+  const { added, removed, current } = useAddressLists(props.addresses, props.cityState);
   const [markers, setMarkers] = useState({});
 
   useEffect(() => {
 
     function codeAddress(geocoder, address) {
+      // geocoder has a limit of about 10 requests per second, need to find solution for longer lists
       geocoder.geocode({ address: address }, (results, status) => {
         if (status === "OK") {
           map.setCenter(results[0].geometry.location);
@@ -63,19 +64,20 @@ function Map(props) {
       });
     }
 
+    // Exit if the map or google objects are not yet ready
     if (!map || !google) return;
 
     let newMarkers = markers;
-    let lastLocation = { lat: 35.9132, lng: -79.0558 };
     const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
     const parkingIcon = iconBase + 'parking_lot_maps.png';
 
+    // Add only the markers that are new
     const geocoder = new google.maps.Geocoder();
     for (let address of added) {
       codeAddress(geocoder, address)
     }
     
-
+    // Remove all markers that are no longer there
     for (let addr of removed) {
       if (newMarkers[addr] && newMarkers[addr].setMap) {
         newMarkers[addr].setMap(null);
@@ -83,7 +85,9 @@ function Map(props) {
       }
     }
 
-    if (total.length > 0 && newMarkers[total[0]]) lastLocation = newMarkers[total[0]].position;
+    // Pan to the last marker
+    let lastLocation = { lat: 35.9132, lng: -79.0558 };
+    if (current.length > 0 && newMarkers[current[current.length - 1]]) lastLocation = newMarkers[current[0]].position;
     map.setCenter(lastLocation);
     map.panTo(lastLocation);
 
