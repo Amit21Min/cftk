@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { storeRouteData } from '../ReusableComponents/RouteModels/routes';
 import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import DualGroupedTextField from '../../ReusableComponents/GroupedTextField/DualGroupedTextField';
 import ChipList from '../../ReusableComponents/ChipList';
@@ -18,17 +18,6 @@ import Map from '../Map';
 // TODO: Figure out chiplist input (currently just using a chiplist underneath the input)
 // TODO: Validate Route Name, their shouldn'st be a repeated name in Firebase. Needs more Firebase integration
 // TODO: Fix vertical overflow with smaller screens. There seems to be extra whitespace somewhere
-
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: '#0075A3',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-  },
-});
 
 const useStyles = makeStyles((theme) => ({
   pageContainer: {
@@ -256,71 +245,69 @@ const NewRoutePanel = () => {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={classes.pageContainer}>
-        <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
-        <div className={classes.gridContainer}>
-          <div className={classes.gridRequired}>
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <TextField fullWidth variant="filled" error={!isValidName}
-                  value={routeName} onChange={handleRoute}
-                  label={<span>Name<span style={{ color: '#AA0000' }}>*</span></span>} />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField fullWidth variant="filled" error={!isValidCity}
-                  value={cityName} onChange={handleCity}
-                  label={<span>Town/City<span style={{ color: '#AA0000' }}>*</span></span>} />
-              </Grid>
-              <Grid item xs={12}>
-                <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
-                  label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
-                  label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
-                  list={addressList}
-                  helperText1="Street Name Only"
-                  helperText2="Comma Seperated"
-                  onButtonClick={updateStreetList}
-                />
-                {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
-              </Grid>
+    <div className={classes.pageContainer}>
+      <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
+      <div className={classes.gridContainer}>
+        <div className={classes.gridRequired}>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled" error={!isValidName}
+                value={routeName} onChange={handleRoute}
+                label={<span>Name<span style={{ color: '#AA0000' }}>*</span></span>} />
             </Grid>
-          </div>
-          <div className={classes.gridMap}>
-            <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} />
-          </div>
-          <div className={classes.gridOld}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
-              <Grid item xs={6}>
-                <TextField fullWidth variant="filled"
-                  value={canningDate} onChange={handleDates}
-                  onBlur={handleDateBlur} onFocus={handleDateFocus}
-                  label="Date" helperText="MM/DD/YY" />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField fullWidth variant="filled"
-                  value={numDonated} onChange={handleDonated}
-                  label="$ Donations"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
-                  fieldValue={currNote} onChange={handleNotes} onButtonClick={updateNoteList}
-                />
-                {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
-              </Grid>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled" error={!isValidCity}
+                value={cityName} onChange={handleCity}
+                label={<span>Town/City<span style={{ color: '#AA0000' }}>*</span></span>} />
             </Grid>
-          </div>
+            <Grid item xs={12}>
+              <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+                label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
+                label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
+                list={addressList}
+                helperText1="Street Name Only"
+                helperText2="Comma Seperated"
+                onButtonClick={updateStreetList}
+              />
+              {addressList.length > 0 ? <ChipList color="primary" list={addressList} onDelete={removeStreet} /> : null}
+            </Grid>
+          </Grid>
         </div>
-        <div className={classes.buttonContainer}>
-          <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
-          <div className={classes.formButton}><PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
-            Save
-          </PillButton></div>
+        <div className={classes.gridMap}>
+          <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} />
+        </div>
+        <div className={classes.gridOld}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}><h1>Previous Canning Data</h1></Grid>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled"
+                value={canningDate} onChange={handleDates}
+                onBlur={handleDateBlur} onFocus={handleDateFocus}
+                label="Date" helperText="MM/DD/YY" />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField fullWidth variant="filled"
+                value={numDonated} onChange={handleDonated}
+                label="$ Donations"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <GroupedTextField label="Volunteer Notes" buttonLabel="ADD" buttonColor="primary"
+                fieldValue={currNote} onChange={handleNotes} onButtonClick={updateNoteList}
+              />
+              {volNotes.length > 0 ? <ChipList color="default" list={volNotes} onDelete={removeNote} /> : null}
+            </Grid>
+          </Grid>
         </div>
       </div>
+      <div className={classes.buttonContainer}>
+        <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
+        <div className={classes.formButton}><PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+          Save
+          </PillButton></div>
+      </div>
+    </div>
 
-    </ThemeProvider >
   );
 };
 
