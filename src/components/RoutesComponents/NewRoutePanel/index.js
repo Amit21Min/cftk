@@ -87,13 +87,16 @@ const useStyles = makeStyles((theme) => ({
 const NewRoutePanel = () => {
 
   // variables used in the state
-  const [routeName, setRouteName] = useState('');
-  const [isValidName, setIsValidName] = useState(true);
-  const [cityName, setCityName] = useState('');
-  const [isValidCity, setIsValidCity] = useState(true);
+  const [{routeName, isValidName}, setRouteName] = useState({
+    routeName: "",
+    isValidName: true
+  });
+  const [{cityName, isValidCity}, setCityName] = useState({
+    cityName: "",
+    isValidCity: true
+  });
   const [currStreet, setCurrStreet] = useState('');
   const [currHouses, setCurrHouses] = useState('');
-  const [isValidStreet, setIsValidStreet] = useState(true);
   const [streetList, setStreetList] = useState([]);
   const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
@@ -108,16 +111,6 @@ const NewRoutePanel = () => {
   }
 
   useEffect(validateForm, [routeName, cityName, streetList])
-
-  const getNewHouseNums = (parsedStreet, numbers) => {
-    if (houseNumbers[parsedStreet] != null) {
-      let totalNumbers = [...houseNumbers[parsedStreet], ...numbers].filter((c, index) => {
-        return [...houseNumbers[parsedStreet], ...numbers].indexOf(c) === index;
-      });
-      return { ...houseNumbers, [parsedStreet]: totalNumbers.sort((a, b) => a - b) }
-    }
-    else return { ...houseNumbers, [parsedStreet]: numbers.sort((a, b) => a - b) }
-  }
 
   const updateStreetList = e => {
     // preventDefault() prevents the page from reloading whenever a button is pressed
@@ -168,12 +161,9 @@ const NewRoutePanel = () => {
 
     setStreetList(prevState => prevState.filter(name => name !== street));
     setHouseNumbers(prevState => {
-      // If the street no longer has any addresses in it, delete it
       delete prevState[streetName];
       return prevState;
     });
-
-    setIsValidStreet(true);
   }
 
   const updateNoteList = e => {
@@ -208,13 +198,17 @@ const NewRoutePanel = () => {
   }
 
   const handleRoute = (e) => {
-    setIsValidName(e.target.value.length > 0);
-    setRouteName(e.target.value);
+    setRouteName({
+      routeName: e.target.value,
+      isValidName: e.target.value.length > 0
+    });
   }
 
   const handleCity = (e) => {
-    setIsValidCity(e.target.value.length > 0);
-    setCityName(e.target.value);
+    setCityName({
+      cityName: e.target.value,
+      isValidCity: e.target.value.length > 0
+    });
   }
 
   const handleStreet = (e) => {
@@ -277,7 +271,7 @@ const NewRoutePanel = () => {
                 label={<span>Town/City<span style={{ color: '#AA0000' }}>*</span></span>} />
             </Grid>
             <Grid item xs={12}>
-              <DualGroupedTextField buttonLabel="ADD" buttonColor="primary" error={!isValidStreet}
+              <DualGroupedTextField buttonLabel="ADD" buttonColor="primary"
                 label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
                 label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
                 list={streetList}
@@ -318,9 +312,11 @@ const NewRoutePanel = () => {
       </div>
       <div className={classes.buttonContainer}>
         <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
-        <div className={classes.formButton}><PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
-          Save
-          </PillButton></div>
+        <div className={classes.formButton}>
+          <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
+            Save
+          </PillButton>
+        </div>
       </div>
     </div>
 
