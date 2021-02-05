@@ -75,7 +75,7 @@ function Map(props) {
     // Add only the markers that are new
     const geocoder = new google.maps.Geocoder();
     for (let address of added) {
-      codeAddress(geocoder, address)
+      codeAddress(geocoder, address);
     }
     
     // Remove all markers that are no longer there
