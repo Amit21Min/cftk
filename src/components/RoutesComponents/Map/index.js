@@ -94,7 +94,7 @@ function Map(props) {
 
     setMarkers(newMarkers)
 
-  }, [added, removed, map, google]);
+  }, [added, removed, current, map, google]);
 
   return (
     <div>
