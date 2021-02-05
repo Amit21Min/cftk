@@ -18,8 +18,8 @@ function useAddressLists(addresses, city) {
         flatAddr.push(`${address} ${street},${city}`);
       }
     }
-    let added = flatAddr.filter(address => !prevAddr.includes(address))
-    let removed = prevAddr.filter(address => !flatAddr.includes(address))
+    let added = flatAddr.filter(address => !prevAddr.includes(address));
+    let removed = prevAddr.filter(address => !flatAddr.includes(address));
 
     setPrevAddr(flatAddr);
     setAddr({
