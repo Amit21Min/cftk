@@ -4,7 +4,7 @@ import PillButton from '../PillButton';
 // import ChipList from '../ChipList';
 
 
-const dualGroupedTextField = (props) => {
+const DualGroupedTextField = (props) => {
 
   return (
     <Grid container spacing={1}>
@@ -56,4 +56,4 @@ const dualGroupedTextField = (props) => {
   );
 };
 
-export default dualGroupedTextField;
+export default DualGroupedTextField;
