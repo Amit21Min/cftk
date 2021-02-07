@@ -1,4 +1,4 @@
-# Carolina for the Kids (CFTK) Canvassing Web App (Fall 2020)
+# Carolina for the Kids (CFTK) Canvassing Web App
 
 Make sure you fill out the [CFTK Work Interest Form](https://forms.gle/g6nVfh1dojhdVpqA8) ASAP to get your GitHub and Google Drive access!
 
