@@ -1,72 +1,112 @@
-import React from "react";
+// import { AddCircle } from "@material-ui/icons";
+import React, { useState, useEffect } from "react";
 import { useGoogleMaps } from "react-hook-google-maps";
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-export const Map = React.memo(function Map(props) {
-  console.log(props);
+function useAddressLists(addresses, city) {
+  // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
+  const [addr, setAddr] = useState({
+    added: [],
+    removed: [],
+    current: []
+  });
+
+  useEffect(() => {
+    let current = [];
+    const prevAddr = addr.current;
+    for (let street in addresses) {
+      for (let address of addresses[street]) {
+        current.push(`${address} ${street},${city}`);
+      }
+    }
+    let added = current.filter(address => !prevAddr.includes(address));
+    let removed = prevAddr.filter(address => !current.includes(address));
+
+    setAddr({
+      added,
+      removed,
+      current
+    });
+
+  }, [JSON.stringify(addresses)]);
+
+  return addr
+}
+
+function Map(props) {
+  const defaultLoc = { lat: 35.9132, lng: -79.0558 }
   const { ref, map, google } = useGoogleMaps(
     process.env.REACT_APP_MAPS_API_KEY,
     {
-      zoom: 4,
-      center: { lat: 35.9132, lng: 79.0558 }
+      zoom: 18,
+      center: defaultLoc
     },
   );
-  console.log("render MapWithMarkers");
+  const { added, removed, current } = useAddressLists(props.addresses, props.cityState);
+  const [markers, setMarkers] = useState({});
 
-  if (map) {
-    // execute when map object is ready
-    var geocoder = new google.maps.Geocoder();
-    var addresses = props.address;
-    var cityState = props.cityState;
+  useEffect(() => {
 
-    for (var street in addresses) {
-      for (var i = 0; i < addresses[street].length; i++) {
-        var fullAddress = addresses[street][i] + " " + street + "," + cityState;
-        codeAddress(geocoder, map, fullAddress);
-      }
-    };
-    var iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/'
-    var parkingIcon = iconBase + 'parking_lot_maps.png'
-    // address = address.map(address => address + ", " + cityState);
-
-    // Most accurate Geocoder result achieved with supplying sa much of the following as possible:
-    // House Number, Street Direction, Street Name, Street Suffix, City, State, Zip, Country
-  }
-
-  function codeAddress(geocoder, resultsMap, address) {    
-    geocoder.geocode({ address: address }, (results, status) => {
+    function codeAddress(geocoder, address) {
+      // geocoder has a limit of about 10 requests per second, need to find solution for longer lists
+      geocoder.geocode({ address: address }, (results, status) => {
         if (status === "OK") {
-        resultsMap.setCenter(results[0].geometry.location);
-        var curmarker = new google.maps.Marker({
-          map: resultsMap,
-          position: results[0].geometry.location,
-          icon : parkingIcon
-        });
-        resultsMap.setZoom(18);
-        resultsMap.panTo(curmarker.position);
-      } else {
-        alert("Geocode was not successful for the following reason: " + status);
+          map.setCenter(results[0].geometry.location);
+          let newMarker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location,
+            icon: parkingIcon
+          });
+          newMarkers[address] = newMarker;
+        } else {
+          alert("Geocode was not successful for the following reason: " + status);
+        }
+      });
+    }
+
+    // Exit if the map or google objects are not yet ready
+    if (!map || !google) return;
+
+    let newMarkers = markers;
+    const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+    const parkingIcon = iconBase + 'parking_lot_maps.png';
+
+    // Add only the markers that are new
+    const geocoder = new google.maps.Geocoder();
+    for (let address of added) {
+      codeAddress(geocoder, address);
+    }
+    
+    // Remove all markers that are no longer there
+    for (let addr of removed) {
+      if (newMarkers[addr] && newMarkers[addr].setMap) {
+        newMarkers[addr].setMap(null);
+        delete newMarkers[addr]
       }
-    });
-  }
+    }
+
+    // Pan to the last marker
+    let lastLocation = defaultLoc;
+    if (current.length > 0 && newMarkers[current[current.length - 1]]) lastLocation = newMarkers[current[0]].position;
+    map.setCenter(lastLocation);
+    map.panTo(lastLocation);
+
+    setMarkers(newMarkers)
+
+  }, [added, removed, current, map, google]);
 
   return (
     <div>
       {/* <span>
-        Example from{" "}
-        <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
-          https://developers.google.com/maps/documentation/javascript/adding-a-google-map
-        </a>
-      </span> */}
+            Example from{" "}
+            <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
+              https://developers.google.com/maps/documentation/javascript/adding-a-google-map
+            </a>
+          </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
     </div>
   );
-  
-}, (prevProps, nextProps) => {
-  const lodash = require("lodash");
-  if (lodash.isEqual(prevProps, nextProps)) {
-    return true; // props are equal
-  }
-  return false; // props are not equal -> update the component
-});
+}
+
+export default Map;
