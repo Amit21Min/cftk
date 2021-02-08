@@ -45,6 +45,7 @@ function Map(props) {
   );
   const { added, removed, current } = useAddressLists(props.addresses, props.cityState);
   const [markers, setMarkers] = useState({});
+  const [markers2, setMarkers2] = useState({});
 
   useEffect(() => {
 
@@ -105,7 +106,6 @@ function Map(props) {
     let mapListener = map.addListener("click", (mapsMouseEvent) => {
       let clickLoc = mapsMouseEvent.latLng;
       let newMarker = new google.maps.Marker({
-        map: map,
         position: clickLoc,
         icon: parkingIcon
       });
@@ -113,7 +113,31 @@ function Map(props) {
         if (status === "OK") {
           if (results[0]) {
             // Reverse geocodes the coordinates to an address
-            console.log(results[0].formatted_address)
+            let formatted = results[0].formatted_address
+            setMarkers2(prevState => {
+              if (prevState[formatted]) {
+                console.log('address already stored')
+                newMarker.setMap(null);
+                return prevState;
+              }
+              let newState = {
+                ...prevState,
+                [formatted]: clickLoc.toJSON()
+              };
+              let markerListener = newMarker.addListener("click", () => {
+                // Removes the listener and clears the address from the state
+                newMarker.setMap(null);
+                // The most convoluted code I've written lately. It has a setState within another setState. Probably should look into useReducer or something
+                // Update, useReducer does not work because reducers must be pure, and this sure ain't gonna be pure
+                setMarkers2(prevState => {
+                  delete prevState[formatted]
+                  return prevState;
+                })
+                google.maps.event.clearInstanceListeners(markerListener);
+              });
+              newMarker.setMap(map)
+              return newState
+            })
           } else {
             window.alert("No results found");
           }
@@ -121,10 +145,6 @@ function Map(props) {
           window.alert("Geocoder failed due to: " + status);
         }
       });    
-      let markerListener = newMarker.addListener("click", () => {
-        newMarker.setMap(null)
-        google.maps.event.clearInstanceListeners(markerListener);
-      })
     });
 
     return function cleanup() {
@@ -132,7 +152,7 @@ function Map(props) {
         google.maps.event.clearInstanceListeners(mapListener)
       }
     }
-  }, [map, google])
+  }, [map, google]);
 
   return (
     <div>
