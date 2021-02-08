@@ -96,6 +96,44 @@ function Map(props) {
 
   }, [added, removed, current, map, google]);
 
+  useEffect(() => {
+    // Allows for adding markers on map click
+    if (!map) return;
+    const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+    const parkingIcon = iconBase + 'parking_lot_maps.png';
+    const geocoder = new google.maps.Geocoder();
+    let mapListener = map.addListener("click", (mapsMouseEvent) => {
+      let clickLoc = mapsMouseEvent.latLng;
+      let newMarker = new google.maps.Marker({
+        map: map,
+        position: clickLoc,
+        icon: parkingIcon
+      });
+      geocoder.geocode({ location: clickLoc }, (results, status) => {
+        if (status === "OK") {
+          if (results[0]) {
+            // Reverse geocodes the coordinates to an address
+            console.log(results[0].formatted_address)
+          } else {
+            window.alert("No results found");
+          }
+        } else {
+          window.alert("Geocoder failed due to: " + status);
+        }
+      });    
+      let markerListener = newMarker.addListener("click", () => {
+        newMarker.setMap(null)
+        google.maps.event.clearInstanceListeners(markerListener);
+      })
+    });
+
+    return function cleanup() {
+      if (google) {
+        google.maps.event.clearInstanceListeners(mapListener)
+      }
+    }
+  }, [map, google])
+
   return (
     <div>
       {/* <span>
