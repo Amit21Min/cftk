@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { signOut } from '../Firebase/firebase.js'
+import { signOut } from '../FirebaseComponents/Firebase/firebase.js'
  
 import * as ROUTES from '../../constants/routes';
-import Sidebar from '../Sidebar/index.js';
  
 const Navigation = () => (
+  // Need to figure out what this page is in our Routing structure and if its neccessary
   <div>
     <ul>
       <li>
@@ -28,7 +28,6 @@ const Navigation = () => (
           <span onClick={signOut}>Sign Out</span>
         </Link>
       </li>
-      <Sidebar />
     </ul>
   </div>
 );

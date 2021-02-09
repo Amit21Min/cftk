@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 
 const App = () => (
+  // This to needs to removed, and we need to either create a Home Page or not have one
   <div className="container">
     <h1>Home</h1>
     <li>
