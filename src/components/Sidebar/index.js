@@ -61,20 +61,6 @@ const Sidebar = () => {
           </Switch>
         </div>
       </div>
-
-      <div id="sidebar-panel">
-        <Switch>
-          <Route exact path={ROUTES.ADMIN_DASHBOARD} component={DashboardPanel} />
-          <Route exact path={ROUTES.ADMIN_ROUTES} component={RoutesPanel} />
-          <Route exact path={ROUTES.ADMIN_VOLUNTEERS} component={VolunteersPanel} />
-          <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
-          <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
-          <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
-          <Route path={ROUTES.ASSIGN_ROUTE} component={AssignRoute} />
-          <Route path={ROUTES.ADMIN} component={AdminPage} />
-        </Switch>
-      </div>
-
       <Drawer
         style={{ width: '200px' }}
         variant="persistent"
@@ -167,7 +153,22 @@ const Sidebar = () => {
         </div>
       </Drawer>
 
+
+      <div id="sidebar-panel">
+        <Switch>
+          <Route exact path={ROUTES.ADMIN_DASHBOARD} component={DashboardPanel} />
+          <Route exact path={ROUTES.ADMIN_ROUTES} component={RoutesPanel} />
+          <Route exact path={ROUTES.ADMIN_VOLUNTEERS} component={VolunteersPanel} />
+          <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
+          <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
+          <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
+          <Route path={ROUTES.ASSIGN_ROUTE} component={AssignRoute} />
+          <Route path={ROUTES.ADMIN} component={AdminPage} />
+        </Switch>
+      </div>
+
     </div>
+    
   );
 };
 
