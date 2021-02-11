@@ -1,0 +1,54 @@
+.main {
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signin-container {
+    width: 100%;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    max-width: 544px;
+    margin: auto;
+}
+
+h1.title-text {
+    font-size: 56px;
+    font-weight: bold;
+    color: #051820;
+}
+
+p.subtext {
+    font-weight: 600;
+    color: #051820;
+}
+
+p.forgot-password {
+    text-align: end;
+}
+
+p.forgot-password a {
+    text-transform: uppercase;
+    font-size: 14px;
+    line-height: 19px;
+    font-weight: 600;
+    color: #0075A3;
+    padding: 10px;
+}
+
+p.signup-text {
+    padding-top: 24px;
+}
+
+p.signup-text a{
+    text-transform: uppercase;
+    font-size: 14px;
+    line-height: 19px;
+    font-weight: 600;
+    color: #0075A3;
+}
