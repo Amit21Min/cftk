@@ -6,10 +6,12 @@ import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
-import { auth, googleSignIn } from "../Firebase/firebase.js";
-
+import db, { auth, googleSignIn } from "../Firebase/firebase.js";
 import "../SignIn/index.css";
+import { Redirect, Route, useHistory } from "react-router-dom";
 
 const uiConfig = {
   // Popup signin box rather than redirect
@@ -17,6 +19,10 @@ const uiConfig = {
   SignInSuccessUrl: "/Home",
   signInOptions: [googleSignIn],
 };
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const SignInButton = withStyles({
   root: {
@@ -44,9 +50,53 @@ const App = () => {
     showPassword: false,
   });
 
+  const history = useHistory();
+
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
+
+  const[snackBar, setSnackBar] = React.useState({
+    open: false,
+    message: ""
+  });
+  
+  const handleClose = (reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+  
+    setSnackBar({open: false});
+  };
+
+  const signIn = () => {
+    // Validation -------------------------------------------------
+    if(values.username == '' || values.password == '') {
+      setSnackBar({open: true, message: "Fill in values!"})
+      return;
+    }
+
+    const email_test = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if(!email_test.test(values.username.toLowerCase())) {
+      setSnackBar({open: true, message: "Email not valid"});
+      return;
+    }
+    // End of Validation ------------------------------------------
+
+    auth.signInWithEmailAndPassword(values.username, values.password).then(cred => {
+      db.collection('User').doc(cred.user.uid).get().then(user => {
+        if(user.exists) {
+          ;let userData = user.data()
+          if(userData.role == 'admin') {
+            history.push('/admin/dashboard')
+          } else if(userData.role == 'volunteer') {
+            history.push('/volunteer')
+          }
+        }
+      })
+    })
+  }
 
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
@@ -69,6 +119,7 @@ const App = () => {
             variant="filled"
             margin="normal"
             required
+            onChange={handleChange('username')}
           />
           <FormControl variant="filled" required>
             <InputLabel htmlFor="standard-adornment-password">
@@ -95,13 +146,18 @@ const App = () => {
           <p className="forgot-password"><a href="/forgot-password">Forgot Password</a></p> 
         </form>
         <br></br>
-        <SignInButton>Sign-In</SignInButton>
+        <SignInButton onClick={() => signIn()}>Sign-In</SignInButton>
         <p className="signup-text"><a href="/signup">I'm New. Sign Me Up!</a></p>
         <div className="LoginBoxContainer">
           <div className="LoginBox">
             <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
           </div>
         </div>
+        <Snackbar open={snackBar.open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              {snackBar.message}
+            </Alert>
+          </Snackbar>
       </div>
     </div>
   );

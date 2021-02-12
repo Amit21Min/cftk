@@ -123,7 +123,8 @@ const App = () => {
           completedRoutes: [],
           assignment: null,
           sms: false,
-          emailNotifications: false
+          emailNotifications: false,
+          role: 'volunteer'
         })
       })
   }
