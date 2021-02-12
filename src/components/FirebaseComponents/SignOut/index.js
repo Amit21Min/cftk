@@ -1,6 +1,7 @@
 import React from 'react';
  
 import { signOut } from '../Firebase/firebase.js'
+import * as ROUTES from '../../constants/routes';
 
 const App = () => (
   <div>
