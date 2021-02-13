@@ -63,7 +63,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div id="sidebar">
+    <div id="sidebar"> 
 
       <div id="sidebar-menu">
         <div id="sidebar-adaptation">
