@@ -1,0 +1,19 @@
+.forgot-password-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 23px;
+  text-align: center;
+  color: #051820;
+  margin-bottom: 16px;
+}
+
+.forgot-password-paragraph {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: #051820;
+  max-width: 544px;
+  text-align: left;
+}
