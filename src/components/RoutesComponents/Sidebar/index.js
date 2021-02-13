@@ -6,7 +6,7 @@ import {
   Link
 } from "react-router-dom";
 
-import DashboardPanel from '../DashboardPanel';
+import DashboardPanel from '../DashboardPanel/index';
 import RoutesPanel from '../ReusableComponents/RoutesPanel';
 import VolunteersPanel from '../VolunteersPanel';
 
@@ -61,20 +61,6 @@ const Sidebar = () => {
           </Switch>
         </div>
       </div>
-
-      <div id="sidebar-panel">
-        <Switch>
-          <Route exact path={ROUTES.ADMIN_DASHBOARD} component={DashboardPanel} />
-          <Route exact path={ROUTES.ADMIN_ROUTES} component={RoutesPanel} />
-          <Route exact path={ROUTES.ADMIN_VOLUNTEERS} component={VolunteersPanel} />
-          <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
-          <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
-          <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
-          <Route path={ROUTES.ASSIGN_ROUTE} component={AssignRoute} />
-          <Route path={ROUTES.ADMIN} component={AdminPage} />
-        </Switch>
-      </div>
-
       <Drawer
         style={{ width: '200px' }}
         variant="persistent"
@@ -130,31 +116,6 @@ const Sidebar = () => {
               </ListItemIcon>
               <ListItemText primary={"Settings"} />
             </ListItem>
-            {/* <Link to={ROUTES.LANDING} className={classes.link}>
-              <ListItem button>
-                  <ListItemText primary={"Landing"}></ListItemText>
-              </ListItem>
-            </Link>
-            <Link to={ROUTES.SIGN_IN} className={classes.link}>
-              <ListItem button>
-                  <ListItemText primary={"Sign In"}></ListItemText>
-              </ListItem>
-            </Link>
-            <Link to={ROUTES.HOME} className={classes.link}>
-              <ListItem button>
-                  <ListItemText primary={"Home"}></ListItemText>
-              </ListItem>
-            </Link>
-            <Link to={ROUTES.ACCOUNT} className={classes.link}>
-              <ListItem button>
-                  <ListItemText primary={"Account"}></ListItemText>
-              </ListItem>
-            </Link>
-            <Link to={ROUTES.ADMIN} className={classes.link}>
-              <ListItem button>
-                  <ListItemText primary={"Admin Page"}></ListItemText>
-              </ListItem>
-            </Link> */}
           </List>
         </Box>
         <div className="logout-container">
@@ -167,7 +128,23 @@ const Sidebar = () => {
         </div>
       </Drawer>
 
+
+      <div id="sidebar-panel">
+        {/* This is the routing for the sidebar, and without this I cannot match the links to the routes. But I think there is a better way to this so that Navigation can be kept without disrupting routing here ??? */}
+        <Switch>
+          <Route exact path={ROUTES.ADMIN_DASHBOARD} component={DashboardPanel} />
+          <Route exact path={ROUTES.ADMIN_ROUTES} component={RoutesPanel} />
+          <Route exact path={ROUTES.ADMIN_VOLUNTEERS} component={VolunteersPanel} />
+          <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
+          <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
+          <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
+          <Route path={ROUTES.ASSIGN_ROUTE} component={AssignRoute} />
+          <Route path={ROUTES.ADMIN} component={AdminPage} />
+        </Switch>
+      </div>
+
     </div>
+    
   );
 };
 
