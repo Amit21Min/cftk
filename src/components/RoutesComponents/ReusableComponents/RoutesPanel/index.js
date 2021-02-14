@@ -176,6 +176,22 @@ const RoutesPanel = () => {
     }
     fn();
   }
+
+  const routeHistory = async function(lastRoute) {
+    var date;
+    const routeRef = await db.collection('RouteHistory').doc('R17_12345').get();
+    console.log(routeRef.data());
+    // routeRef.get().then(function(doc) {
+    //   if (doc.exists) {
+    //     console.log(doc.data().visitDate)
+    //     date = doc.data().visitDate;
+    //   } else {
+    //     return 'failed to fetch';
+    //   }
+    // });
+    // console.log('hello3', date);
+    // return date;
+  }
   // ===========================================================================
   //                                 Data Transformation
   // ===========================================================================
@@ -187,28 +203,40 @@ const RoutesPanel = () => {
       let data = raw_routes[i];
       console.log(data);
 
-      let name, assignment_status, months_since_assigned, total_donations, soliciting_pct;
+      let name, assignment_status, months_since_assigned, total_donations, soliciting_pct, interest_pct, lastVisitDate;
       name = data.routeName;
       if (data.assignmentStatus) {
         assignment_status = "Assigned";
       } else {
         assignment_status = "Unassigned";
       }
-      if (data.assignmentDates) {
-        console.log(data.assignmentDates);
-        var lastRoute = data.assignmentDates[data.assignmentDates.length - 1];
-        console.log(lastRoute);
-        console.log(typeof lastRoute);
-        var lastVisitDate;
-        const doc = db.collection('RouteHistory'); //.doc(lastRoute).get();
-        // lastVisitDate = doc.visitDate;
-        // console.log(lastVisitDate);
-      } else {
-        months_since_assigned = "No history";
+      // if (data.assignmentDates.length >= 1) {
+      //   var lastRoute = data.assignmentDates[data.assignmentDates.length - 1];
+      //   console.log(lastRoute);
+      //   if (typeof lastRoute !== 'undefined') {
+      //     lastVisitDate = routeHistory(lastRoute);
+      //   }
+      // }
+      
+
+      total_donations = data.total; // TODO: CREATE A SUM OF TOTAL DONATIONS
+
+      interest_pct = data.perInterest;
+      soliciting_pct = data.perSoliciting;
+
+
+      if (typeof months_since_assigned == 'undefined') {
+        months_since_assigned = "No History";
       }
-      months_since_assigned = "6";
-      total_donations = 100;
-      soliciting_pct = 25;
+      if (typeof totaldonations == 'undefined') {
+        total_donations = "No History";
+      }
+      if (typeof interest_pct == 'undefined') {
+        interest_pct = "No History";
+      }
+      if (typeof soliciting_pct == 'undefined') {
+        soliciting_pct = "No History";
+      }
       // Once data models are set in stone, we can pick a better pattern for data validation, but for now, nested ifs seem okay.
       // for now, we need this to validate each route
 
@@ -268,13 +296,13 @@ const RoutesPanel = () => {
         selectbox: {},
         streets: ["Easy St", "Hard Knocks Alley"],
         drop_down: {open: false, contentsType: 'raw', contents: street_contents},
-        name: raw_routes[i].name,
-        assignment_status: raw_routes[i].assignmentStatus ? raw_routes[i].assignmentStatus.toString() : "",
+        name: data.routeName,
+        assignment_status: data.assignmentStatus ? data.assignmentStatus.toString() : assignment_status,
         months_since_assigned: months_since_assigned.toString(),
-        amount_collected: total_donations,
+        amount_collected: null,
         household_avg: null,
-        outreach_pct: null,
-        soliciting_pct: null,
+        outreach_pct: interest_pct,
+        soliciting_pct: soliciting_pct,
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
         overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
                                     {text: "Assign",           action: overflow_actions.assignRouteAction},
@@ -296,13 +324,35 @@ const RoutesPanel = () => {
 
   useEffect(() => {
     db.collection('Routes').onSnapshot(snapshot => {
-      const allRoutes = snapshot.docs.map((route) => ({
-        ...(route.data()),
-        routeName: route.id
-      }));
+      // const allRoutes = snapshot.docs.map((route) => ({
+      //   ...(route.data()),
+      //   routeName: route.id
+      // }));
+      const allRoutes = snapshot.docs.map((route) => {
+        
+        return({
+          ...(route.data()),
+          routeName: route.id
+        })
+      });
       console.log(allRoutes);
+
+      
+      // const routeRef = db.collection('RouteHistory').doc("R17");
+      // var visitDate;
+      // routeRef.get().then(function(doc) {
+      //   if (doc.exists) {
+      //     console.log(doc.data().visitDate)
+      //     visitDate = doc.data().visitDate;
+      //   } else {
+      //     console.log('failed to fetch');
+      //   }
+      //   console.log(visitDate);
+      // });
+
       setRoutes(tableTransform(allRoutes));
     });
+    console.log("hello123");
   }, []);
 
   let screen;
