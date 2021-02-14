@@ -1,0 +1,68 @@
+h4.title-text {
+    font-size: 20px;
+    font-weight: 600;
+    font-style: normal;
+    text-align: left;
+}
+
+div.main-container {
+    height: 100vh;
+    align-items: center;
+    text-align: center;
+}
+
+
+.content-container {
+    width: 100%;
+}
+
+div.contact-container {
+    margin: auto;
+    width: 350px;
+}
+
+div.notification-container {
+    margin: auto;
+    width: 350px;
+    align-items: left;
+}
+
+form.this-form {
+    max-width: 350px;
+}
+
+div.details {
+    display: inline-block;
+    text-align: left;
+}
+
+p.description {
+    font-size: 12px;
+}
+
+div.phone-notifs {
+    display: flex;
+    width: 325px;
+    margin-top: 10px;
+}
+
+div.email-notifs {
+    display: flex;
+    width: 325px;
+    margin-top: 10px;
+}
+
+div.icon {
+    margin-right: 10px;
+    margin-left: 5px;
+    margin-top:5px;
+}
+
+div.text-boxes {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+h3 {
+    font-size: 20px;
+}
