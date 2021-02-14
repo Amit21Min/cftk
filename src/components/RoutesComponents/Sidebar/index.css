@@ -7,12 +7,12 @@
 }
 
 #sidebar-menu{
-  flex-basis: 12%;
+  flex-basis: 200px;
   padding: 0.2em;
 }
 
 #sidebar-panel{
-  flex-basis: 88%;
+  flex-basis: calc(110% -200px);
   padding: 0.2em;
 }
 
