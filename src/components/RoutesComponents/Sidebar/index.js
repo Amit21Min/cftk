@@ -36,8 +36,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
-    width: 'inherit',
     background: 'linear-gradient(180deg, #7CC9AA 0%, #0075A3 100%)',
+    width: '200px'
   },
   link: { 
     textDecoration: 'none', 
@@ -62,7 +62,6 @@ const Sidebar = () => {
         </div>
       </div>
       <Drawer
-        style={{ width: '200px' }}
         variant="persistent"
         anchor="left"
         open={true}
