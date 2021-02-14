@@ -304,8 +304,8 @@ const RoutesPanel = () => {
         outreach_pct: interest_pct,
         soliciting_pct: soliciting_pct,
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
-        overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                    {text: "Assign",           action: overflow_actions.assignRouteAction},
+        overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(data.routeName)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                    {text: "Assign",           action: () => overflow_actions.assignRouteAction(data.routeName)},
                                     {text: "House Properties", action: overflow_actions.housePropertiesAction},
                                     {text: "Revision History", action: overflow_actions.revisionHistoryAction},
                                     {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
@@ -324,12 +324,8 @@ const RoutesPanel = () => {
 
   useEffect(() => {
     db.collection('Routes').onSnapshot(snapshot => {
-      // const allRoutes = snapshot.docs.map((route) => ({
-      //   ...(route.data()),
-      //   routeName: route.id
-      // }));
       const allRoutes = snapshot.docs.map((route) => {
-        
+        // TODO - fetch route visit date
         return({
           ...(route.data()),
           routeName: route.id
@@ -337,7 +333,7 @@ const RoutesPanel = () => {
       });
       console.log(allRoutes);
 
-      
+    
       // const routeRef = db.collection('RouteHistory').doc("R17");
       // var visitDate;
       // routeRef.get().then(function(doc) {
