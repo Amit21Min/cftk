@@ -184,11 +184,35 @@ const RoutesPanel = () => {
   const tableTransform = (raw_routes) => {
     let tabled_routes = [];
     for(let i = 0; i < raw_routes.length; i++){
-      let months_since_assigned, total_donations;
-      var street_contents;
+      let data = raw_routes[i];
+      console.log(data);
+
+      let name, assignment_status, months_since_assigned, total_donations, soliciting_pct;
+      name = data.routeName;
+      if (data.assignmentStatus) {
+        assignment_status = "Assigned";
+      } else {
+        assignment_status = "Unassigned";
+      }
+      if (data.assignmentDates) {
+        console.log(data.assignmentDates);
+        var lastRoute = data.assignmentDates[data.assignmentDates.length - 1];
+        console.log(lastRoute);
+        console.log(typeof lastRoute);
+        var lastVisitDate;
+        const doc = db.collection('RouteHistory'); //.doc(lastRoute).get();
+        // lastVisitDate = doc.visitDate;
+        // console.log(lastVisitDate);
+      } else {
+        months_since_assigned = "No history";
+      }
+      months_since_assigned = "6";
+      total_donations = 100;
+      soliciting_pct = 25;
       // Once data models are set in stone, we can pick a better pattern for data validation, but for now, nested ifs seem okay.
       // for now, we need this to validate each route
-      if(raw_routes[i].name){
+
+        /*
         if(raw_routes[i].canningData){
           if(raw_routes[i].canningData.lastCanned){
             // Example calculation for months_since_assigned
@@ -207,60 +231,61 @@ const RoutesPanel = () => {
         if(raw_routes[i].streets){
 
         }
+
+        */
         // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
         // Right now this is hardcoded as an example while the data model for streets is worked out.
-          street_contents =
-                                <StreetColumnContext.Consumer>
-                                {columns => (
-                                  <StreetItemsContext.Consumer>
-                                    {items => (
-                                      <ResourceIndexTable
-                                        selectableItemHandler={selectStreet}
-                                        selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
-                                        items={[
-                                          {route: "R17", name: "Easy St", amount_collected: "$1M", assignment_status: "", months_since_assigned: "", outreach_pct: "98%", soliciting_pct: "99%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                                                      {text: "Assign",           action: overflow_actions.assignRouteAction},
-                                                                      {text: "House Properties", action: overflow_actions.housePropertiesAction},
-                                                                      {text: "Revision History", action: overflow_actions.revisionHistoryAction},
-                                                                      {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
-                                                                    ]}},
-                                          {route: "R17", name: "Hard Knocks Alley", amount_collected: "$3.50", assignment_status: "", months_since_assigned: "", outreach_pct: "2%", soliciting_pct: "1%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                                                      {text: "Assign",           action: overflow_actions.assignRouteAction},
-                                                                      {text: "House Properties", action: overflow_actions.housePropertiesAction},
-                                                                      {text: "Revision History", action: overflow_actions.revisionHistoryAction},
-                                                                      {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
-                                                                    ]}}
-                                        ]}
-                                        columns={columns}
-                                      />
-                                    )}
-                                  </StreetItemsContext.Consumer>
+      var street_contents =
+                            <StreetColumnContext.Consumer>
+                            {columns => (
+                              <StreetItemsContext.Consumer>
+                                {items => (
+                                  <ResourceIndexTable
+                                    selectableItemHandler={selectStreet}
+                                    selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
+                                    items={[
+                                      {route: "R17", name: "Easy St", amount_collected: "$1M", assignment_status: "", months_since_assigned: "", outreach_pct: "98%", soliciting_pct: "99%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                                                  {text: "Assign",           action: overflow_actions.assignRouteAction},
+                                                                  {text: "House Properties", action: overflow_actions.housePropertiesAction},
+                                                                  {text: "Revision History", action: overflow_actions.revisionHistoryAction},
+                                                                  {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
+                                                                ]}},
+                                      {route: "R17", name: "Hard Knocks Alley", amount_collected: "$3.50", assignment_status: "", months_since_assigned: "", outreach_pct: "2%", soliciting_pct: "1%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                                                  {text: "Assign",           action: overflow_actions.assignRouteAction},
+                                                                  {text: "House Properties", action: overflow_actions.housePropertiesAction},
+                                                                  {text: "Revision History", action: overflow_actions.revisionHistoryAction},
+                                                                  {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
+                                                                ]}}
+                                    ]}
+                                    columns={columns}
+                                  />
                                 )}
-                              </StreetColumnContext.Consumer>
+                              </StreetItemsContext.Consumer>
+                            )}
+                          </StreetColumnContext.Consumer>
 
-          tabled_routes.push({
-            selectbox: {},
-            streets: ["Easy St", "Hard Knocks Alley"],
-            drop_down: {open: false, contentsType: 'raw', contents: street_contents},
-            name: raw_routes[i].name,
-            assignment_status: raw_routes[i].assignmentStatus ? raw_routes[i].assignmentStatus.toString() : "",
-            months_since_assigned: months_since_assigned.toString(),
-            amount_collected: total_donations,
-            household_avg: null,
-            outreach_pct: null,
-            soliciting_pct: null,
-            // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
-            overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                        {text: "Assign",           action: overflow_actions.assignRouteAction},
-                                        {text: "House Properties", action: overflow_actions.housePropertiesAction},
-                                        {text: "Revision History", action: overflow_actions.revisionHistoryAction},
-                                        {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
-                                      ],
-                       hidden: true
-                      }
-          });
-        }
-      }
+      tabled_routes.push({
+        selectbox: {},
+        streets: ["Easy St", "Hard Knocks Alley"],
+        drop_down: {open: false, contentsType: 'raw', contents: street_contents},
+        name: raw_routes[i].name,
+        assignment_status: raw_routes[i].assignmentStatus ? raw_routes[i].assignmentStatus.toString() : "",
+        months_since_assigned: months_since_assigned.toString(),
+        amount_collected: total_donations,
+        household_avg: null,
+        outreach_pct: null,
+        soliciting_pct: null,
+        // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
+        overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+                                    {text: "Assign",           action: overflow_actions.assignRouteAction},
+                                    {text: "House Properties", action: overflow_actions.housePropertiesAction},
+                                    {text: "Revision History", action: overflow_actions.revisionHistoryAction},
+                                    {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
+                                  ],
+                  hidden: true
+                  }
+      });
+    }
 
     return tabled_routes;
   }
@@ -270,9 +295,10 @@ const RoutesPanel = () => {
   }
 
   useEffect(() => {
-    db.collection('tempRoutes').onSnapshot(snapshot => {
+    db.collection('Routes').onSnapshot(snapshot => {
       const allRoutes = snapshot.docs.map((route) => ({
-        ...route.data()
+        ...(route.data()),
+        routeName: route.id
       }));
       console.log(allRoutes);
       setRoutes(tableTransform(allRoutes));
