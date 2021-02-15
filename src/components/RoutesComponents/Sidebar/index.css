@@ -12,7 +12,7 @@
 }
 
 #sidebar-panel{
-  flex-basis: calc(110% -200px);
+  flex-basis: calc(100% - 200px);
   padding: 0.2em;
 }
 
