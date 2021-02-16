@@ -45,12 +45,20 @@ function Map(props) {
   );
   const { added, removed, current } = useAddressLists(props.addresses, props.cityState);
   const [markers, setMarkers] = useState({});
-  const [markers2, setMarkers2] = useState({});
 
   useEffect(() => {
 
-    function codeAddress(geocoder, address) {
-      // geocoder has a limit of about 10 requests per second, need to find solution for longer lists
+    // Exit if the map or google objects are not yet ready
+    if (!map || !google) return;
+
+    let newMarkers = markers;
+    const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+    const parkingIcon = iconBase + 'parking_lot_maps.png';
+
+    // Add only the markers that are new
+    const geocoder = new google.maps.Geocoder();
+
+    for (let address of added) {
       geocoder.geocode({ address: address }, (results, status) => {
         if (status === "OK") {
           map.setCenter(results[0].geometry.location);
@@ -64,19 +72,6 @@ function Map(props) {
           alert("Geocode was not successful for the following reason: " + status);
         }
       });
-    }
-
-    // Exit if the map or google objects are not yet ready
-    if (!map || !google) return;
-
-    let newMarkers = markers;
-    const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
-    const parkingIcon = iconBase + 'parking_lot_maps.png';
-
-    // Add only the markers that are new
-    const geocoder = new google.maps.Geocoder();
-    for (let address of added) {
-      codeAddress(geocoder, address);
     }
     
     // Remove all markers that are no longer there
@@ -97,62 +92,62 @@ function Map(props) {
 
   }, [added, removed, current, map, google]);
 
-  useEffect(() => {
-    // Allows for adding markers on map click
-    if (!map) return;
-    const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
-    const parkingIcon = iconBase + 'parking_lot_maps.png';
-    const geocoder = new google.maps.Geocoder();
-    let mapListener = map.addListener("click", (mapsMouseEvent) => {
-      let clickLoc = mapsMouseEvent.latLng;
-      let newMarker = new google.maps.Marker({
-        position: clickLoc,
-        icon: parkingIcon
-      });
-      geocoder.geocode({ location: clickLoc }, (results, status) => {
-        if (status === "OK") {
-          if (results[0]) {
-            // Reverse geocodes the coordinates to an address
-            let formatted = results[0].formatted_address
-            setMarkers2(prevState => {
-              if (prevState[formatted]) {
-                console.log('address already stored')
-                newMarker.setMap(null);
-                return prevState;
-              }
-              let newState = {
-                ...prevState,
-                [formatted]: clickLoc.toJSON()
-              };
-              let markerListener = newMarker.addListener("click", () => {
-                // Removes the listener and clears the address from the state
-                newMarker.setMap(null);
-                // The most convoluted code I've written lately. It has a setState within another setState. Probably should look into useReducer or something
-                // Update, useReducer does not work because reducers must be pure, and this sure ain't gonna be pure
-                setMarkers2(prevState => {
-                  delete prevState[formatted]
-                  return prevState;
-                })
-                google.maps.event.clearInstanceListeners(markerListener);
-              });
-              newMarker.setMap(map)
-              return newState
-            })
-          } else {
-            window.alert("No results found");
-          }
-        } else {
-          window.alert("Geocoder failed due to: " + status);
-        }
-      });    
-    });
+  // useEffect(() => {
+  //   // Allows for adding markers on map click
+  //   if (!map) return;
+  //   const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+  //   const parkingIcon = iconBase + 'parking_lot_maps.png';
+  //   const geocoder = new google.maps.Geocoder();
+  //   let mapListener = map.addListener("click", (mapsMouseEvent) => {
+  //     let clickLoc = mapsMouseEvent.latLng;
+  //     let newMarker = new google.maps.Marker({
+  //       position: clickLoc,
+  //       icon: parkingIcon
+  //     });
+  //     geocoder.geocode({ location: clickLoc }, (results, status) => {
+  //       if (status === "OK") {
+  //         if (results[0]) {
+  //           // Reverse geocodes the coordinates to an address
+  //           let formatted = results[0].formatted_address
+  //           setMarkers2(prevState => {
+  //             if (prevState[formatted]) {
+  //               console.log('address already stored')
+  //               newMarker.setMap(null);
+  //               return prevState;
+  //             }
+  //             let newState = {
+  //               ...prevState,
+  //               [formatted]: clickLoc.toJSON()
+  //             };
+  //             let markerListener = newMarker.addListener("click", () => {
+  //               // Removes the listener and clears the address from the state
+  //               newMarker.setMap(null);
+  //               // The most convoluted code I've written lately. It has a setState within another setState. Probably should look into useReducer or something
+  //               // Update, useReducer does not work because reducers must be pure, and this sure ain't gonna be pure
+  //               setMarkers2(prevState => {
+  //                 delete prevState[formatted]
+  //                 return prevState;
+  //               })
+  //               google.maps.event.clearInstanceListeners(markerListener);
+  //             });
+  //             newMarker.setMap(map)
+  //             return newState
+  //           })
+  //         } else {
+  //           window.alert("No results found");
+  //         }
+  //       } else {
+  //         window.alert("Geocoder failed due to: " + status);
+  //       }
+  //     });    
+  //   });
 
-    return function cleanup() {
-      if (google) {
-        google.maps.event.clearInstanceListeners(mapListener)
-      }
-    }
-  }, [map, google]);
+  //   return function cleanup() {
+  //     if (google) {
+  //       google.maps.event.clearInstanceListeners(mapListener)
+  //     }
+  //   }
+  // }, [map, google]);
 
   return (
     <div>
