@@ -119,7 +119,7 @@ const NewRoutePanel = () => {
 
   useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)])
 
-  async function geocodeAddresses(addressList, streetName) {
+  async function geocodeAddresses(addressList, streetName, cityName) {
     return await new Promise((resolve, reject) => {
       let withCoordinates = {};
       if (addressList.length === 0) {
@@ -133,7 +133,7 @@ const NewRoutePanel = () => {
           if (counter > 5) clearInterval(geocodingProcess);
         }
         const addrNumber = addressList.pop();
-        geocoder.geocode({ address: `${addrNumber} ${streetName}` }, (results, status) => {
+        geocoder.geocode({ address: `${addrNumber} ${streetName} ${cityName}` }, (results, status) => {
           if (status === "OK") {
             withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
             if (addressList.length === 0) {
@@ -144,13 +144,14 @@ const NewRoutePanel = () => {
             if (status === "OVER_QUERY_LIMIT") {
               counter = 0;
               addressList.push(addrNumber)
-              console.log('trying again')
+              console.log('trying to geocode again')
             } else {
               clearInterval(geocodingProcess);
               reject("Geocode was not successful for the following reason: " + status);
             }
           }
         });
+        // For whatever reason, the balance is once ever 500ms. I don't know why, but it just is
       }, 500);
     })
   }
@@ -171,7 +172,7 @@ const NewRoutePanel = () => {
       }
     );
 
-    geocodeAddresses([...numbers], parsedStreet).then(newList => console.log(newList))
+    geocodeAddresses([...numbers], parsedStreet, cityName).then(newList => console.log(newList))
 
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
     setHouseNumbers(prevState => ({
