@@ -8,6 +8,7 @@ import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import DualGroupedTextField from '../../ReusableComponents/GroupedTextField/DualGroupedTextField';
 import ChipList from '../../ReusableComponents/ChipList';
 import PillButton from '../../ReusableComponents/PillButton';
+import { useGoogleMaps } from "react-hook-google-maps";
 
 import * as ROUTES from '../../../constants/routes';
 
@@ -23,10 +24,8 @@ const useStyles = makeStyles((theme) => ({
   pageContainer: {
     margin: '4rem',
     height: 'calc(100% - 8rem)',
-    width: '100%',
+    width: 'calc(100% - 8rem)',
     display: 'flex',
-    justifyContent: 'center',
-    // alignItems: 'center',
     flexDirection: 'column',
     [theme.breakpoints.down('md')]: {
       margin: '0px',
@@ -87,17 +86,16 @@ const useStyles = makeStyles((theme) => ({
 const NewRoutePanel = () => {
 
   // variables used in the state
-  const [{routeName, isValidName}, setRouteName] = useState({
+  const [{ routeName, isValidName }, setRouteName] = useState({
     routeName: "",
     isValidName: true
   });
-  const [{cityName, isValidCity}, setCityName] = useState({
+  const [{ cityName, isValidCity }, setCityName] = useState({
     cityName: "",
     isValidCity: true
   });
   const [currStreet, setCurrStreet] = useState('');
   const [currHouses, setCurrHouses] = useState('');
-  const [streetList, setStreetList] = useState([]);
   const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
@@ -106,18 +104,60 @@ const NewRoutePanel = () => {
 
   const [validForm, setValidForm] = useState(false);
 
+  const defaultLoc = { lat: 35.9132, lng: -79.0558 }
+  const { ref, google } = useGoogleMaps(
+    process.env.REACT_APP_MAPS_API_KEY,
+    {
+      zoom: 18,
+      center: defaultLoc
+    },
+  );
+
   const validateForm = () => {
-    setValidForm(streetList.length > 0 && routeName.length > 0 && cityName.length > 0)
+    setValidForm(Object.keys(houseNumbers).length > 0 && routeName.length > 0 && cityName.length > 0)
   }
 
-  useEffect(validateForm, [routeName, cityName, streetList])
+  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)])
+
+  async function geocodeAddresses(addressList, streetName) {
+    return await new Promise((resolve, reject) => {
+      let withCoordinates = {};
+      if (addressList.length === 0) {
+        resolve(withCoordinates)
+      };
+      const geocoder = new google.maps.Geocoder();
+      let counter = 0;
+      let geocodingProcess = setInterval(() => {
+        if (addressList.length === 0) {
+          counter++;
+          if (counter > 5) clearInterval(geocodingProcess);
+        }
+        const addrNumber = addressList.pop();
+        geocoder.geocode({ address: `${addrNumber} ${streetName}` }, (results, status) => {
+          if (status === "OK") {
+            withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
+            if (addressList.length === 0) {
+              clearInterval(geocodingProcess);
+              resolve(withCoordinates);
+            }
+          } else {
+            if (status === "OVER_QUERY_LIMIT") {
+              counter = 0;
+              addressList.push(addrNumber)
+              console.log('trying again')
+            } else {
+              clearInterval(geocodingProcess);
+              reject("Geocode was not successful for the following reason: " + status);
+            }
+          }
+        });
+      }, 500);
+    })
+  }
 
   const updateStreetList = e => {
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault();
-
-    // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
-    // BARE FUNCTIONALITY, PROBABLY MANY BUGS
 
     // Turns comma seperated list into array
     let numbers = currHouses.trim().split(",");
@@ -131,13 +171,8 @@ const NewRoutePanel = () => {
       }
     );
 
-    // let newHouseNums = getNewHouseNums(parsedStreet, numbers);
+    geocodeAddresses([...numbers], parsedStreet).then(newList => console.log(newList))
 
-    setStreetList(prevState => {
-      const streets = [...prevState, parsedStreet]
-      return streets.filter((street, index) => streets.indexOf(street) == index)
-    });
-    console.log(numbers)
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
     setHouseNumbers(prevState => ({
       ...prevState,
@@ -159,7 +194,6 @@ const NewRoutePanel = () => {
       }
     );
 
-    setStreetList(prevState => prevState.filter(name => name !== street));
     setHouseNumbers(prevState => {
       delete prevState[streetName];
       return prevState;
@@ -245,7 +279,7 @@ const NewRoutePanel = () => {
     if (routeName === '') {
       alert('Please enter a route name');
       return;
-    } else if (streetList.length === 0) {
+    } else if (Object.keys(houseNumbers).length === 0) {
       alert('Please enter/add a street name');
       return;
     }
@@ -274,17 +308,16 @@ const NewRoutePanel = () => {
               <DualGroupedTextField buttonLabel="ADD" buttonColor="primary"
                 label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
                 label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
-                list={streetList}
                 helperText1="Street Name Only"
                 helperText2="Comma Seperated"
                 onButtonClick={updateStreetList}
               />
-              {streetList.length > 0 ? <ChipList color="primary" list={streetList} onClick={openStreet} onDelete={removeStreet} /> : null}
+              {Object.keys(houseNumbers).length > 0 ? <ChipList color="primary" list={Object.keys(houseNumbers)} onClick={openStreet} onDelete={removeStreet} /> : null}
             </Grid>
           </Grid>
         </div>
         <div className={classes.gridMap}>
-          <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} />
+          {/* <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} /> */}
         </div>
         <div className={classes.gridOld}>
           <Grid container spacing={3}>
@@ -317,6 +350,8 @@ const NewRoutePanel = () => {
             Save
           </PillButton>
         </div>
+        {/* This is a dummy object, it's supposed to hold an invisible map */}
+        <div ref={ref} style={{ display: 'none' }}></div>
       </div>
     </div>
 
