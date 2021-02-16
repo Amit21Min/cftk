@@ -38,7 +38,15 @@ const AssignRoute = (props) => {
             emails: emailData,
             message: document.getElementById('message').value,
         }
-        //TODO: some db interaction to assign routes
+        // TODO: some db interaction to assign routes
+        // 1. generate a route UID
+        var routeID = props.routes;
+
+        // 2. copy a blank template of the route's streets to RoutesActive, store under a route UID
+        // 3. change Group collection with the "Group Name" to be assigned to a new route
+        // 4. possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
+
+        // TODO: create a button that "finishes" a route to implement the storage of a RoutesActive to a RoutesComplete
         console.log(input);
     }
 

@@ -49,13 +49,13 @@ const App = () => (
         </Route>
         <Route path={ROUTES.HOME} component={HomePage} /> 
         {/* This Admin Route should be eventually removed, but for now refer to /admin for ViewHouse and Other Admin stuff */}
-        <Route path={ROUTES.ADMIN} component={AdminPage} />
+        <Route exact path={ROUTES.ADMIN} component={AdminPage} />
         <Route path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHousePropertiesPage} />
         <Route path={ROUTES.SIGN_IN} component={SignInPage} />
         <Route path={ROUTES.ADMIN_DASHBOARD} component={AdminLayout} />
         <Route path={ROUTES.ADMIN_ROUTES} component={AdminLayout} />
         <Route path={ROUTES.ADMIN_VOLUNTEERS} component={AdminLayout} />
-        <Route path={ROUTES.VOLUNTEER} component={Volunteer} />
+        <Route exact path={ROUTES.VOLUNTEER} component={Volunteer} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
       </div>
