@@ -4,34 +4,23 @@ import { useGoogleMaps } from "react-hook-google-maps";
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useAddressLists(addresses, city) {
+function useAddressLists(addresses) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
-  const [addr, setAddr] = useState({
-    added: [],
-    removed: [],
-    current: []
-  });
+  const [markerCoords, setMarkerCoords] = useState([]);
 
   useEffect(() => {
-    let current = [];
-    const prevAddr = addr.current;
+    let temp = [];
     for (let street in addresses) {
-      for (let address of addresses[street]) {
-        current.push(`${address} ${street},${city}`);
+      for (let address in addresses[street]) {
+        temp.push(addresses[street][address]);
       }
     }
-    let added = current.filter(address => !prevAddr.includes(address));
-    let removed = prevAddr.filter(address => !current.includes(address));
 
-    setAddr({
-      added,
-      removed,
-      current
-    });
+    setMarkerCoords(temp);
 
   }, [JSON.stringify(addresses)]);
 
-  return addr
+  return markerCoords
 }
 
 function Map(props) {
@@ -43,54 +32,70 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const { added, removed, current } = useAddressLists(props.addresses, props.cityState);
-  const [markers, setMarkers] = useState({});
+  const coords = useAddressLists(props.addresses);
+  const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
 
     // Exit if the map or google objects are not yet ready
-    if (!map || !google) return;
+    if (!map || !google || coords.length === 0) return;
 
-    let newMarkers = markers;
     const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
     const parkingIcon = iconBase + 'parking_lot_maps.png';
 
     // Add only the markers that are new
-    const geocoder = new google.maps.Geocoder();
 
-    for (let address of added) {
-      geocoder.geocode({ address: address }, (results, status) => {
-        if (status === "OK") {
-          map.setCenter(results[0].geometry.location);
-          let newMarker = new google.maps.Marker({
-            map: map,
-            position: results[0].geometry.location,
-            icon: parkingIcon
-          });
-          newMarkers[address] = newMarker;
-        } else {
-          alert("Geocode was not successful for the following reason: " + status);
-        }
-      });
+    console.log(coords)
+    map.setCenter(coords[0]);
+
+    let tempMarkers = []
+    for (let address of coords) {
+      tempMarkers.push(new google.maps.Marker({
+        map: map,
+        position: address,
+        icon: parkingIcon
+      }));
     }
-    
-    // Remove all markers that are no longer there
-    for (let addr of removed) {
-      if (newMarkers[addr] && newMarkers[addr].setMap) {
-        newMarkers[addr].setMap(null);
-        delete newMarkers[addr]
+
+    return function cleanup() {
+      for (let marker of tempMarkers) {
+        marker.setMap(null);
       }
     }
 
-    // Pan to the last marker
-    let lastLocation = defaultLoc;
-    if (current.length > 0 && newMarkers[current[current.length - 1]]) lastLocation = newMarkers[current[0]].position;
-    map.setCenter(lastLocation);
-    map.panTo(lastLocation);
+    // for (let address of added) {
+    //   geocoder.geocode({ address: address }, (results, status) => {
+    //     if (status === "OK") {
+    //       map.setCenter(results[0].geometry.location);
+    //       let newMarker = new google.maps.Marker({
+    //         map: map,
+    //         position: results[0].geometry.location,
+    //         icon: parkingIcon
+    //       });
+    //       newMarkers[address] = newMarker;
+    //     } else {
+    //       alert("Geocode was not successful for the following reason: " + status);
+    //     }
+    //   });
+    // }
 
-    setMarkers(newMarkers)
+    // // Remove all markers that are no longer there
+    // for (let addr of removed) {
+    //   if (newMarkers[addr] && newMarkers[addr].setMap) {
+    //     newMarkers[addr].setMap(null);
+    //     delete newMarkers[addr]
+    //   }
+    // }
 
-  }, [added, removed, current, map, google]);
+    // // Pan to the last marker
+    // let lastLocation = defaultLoc;
+    // if (current.length > 0 && newMarkers[current[current.length - 1]]) lastLocation = newMarkers[current[0]].position;
+    // map.setCenter(lastLocation);
+    // map.panTo(lastLocation);
+
+    // setMarkers(newMarkers)
+
+  }, [coords, map, google]);
 
   // useEffect(() => {
   //   // Allows for adding markers on map click

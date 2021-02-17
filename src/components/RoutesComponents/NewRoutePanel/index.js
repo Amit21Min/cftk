@@ -172,13 +172,16 @@ const NewRoutePanel = () => {
       }
     );
 
-    geocodeAddresses([...numbers], parsedStreet, cityName).then(newList => console.log(newList))
+    geocodeAddresses([...numbers], parsedStreet, cityName).then(newList => {
+      console.log(newList)
+      setHouseNumbers(prevState => ({
+        ...prevState,
+        [parsedStreet]: newList
+      }));
+    })
 
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    setHouseNumbers(prevState => ({
-      ...prevState,
-      [parsedStreet]: numbers
-    }));
+    
 
     setCurrStreet('');
     setCurrHouses('');
@@ -269,7 +272,7 @@ const NewRoutePanel = () => {
 
   const openStreet = (street) => {
     const streetAddresses = houseNumbers[street];
-    const asString = streetAddresses ? streetAddresses.join(",") : "";
+    const asString = streetAddresses ? Object.keys(streetAddresses).join(",") : "";
     setCurrStreet(street);
     setCurrHouses(asString);
   }
@@ -318,7 +321,7 @@ const NewRoutePanel = () => {
           </Grid>
         </div>
         <div className={classes.gridMap}>
-          {/* <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} /> */}
+          <Map addresses={houseNumbers} width={'100%'} height={'500px'} cityState={`${cityName}, NC`} />
         </div>
         <div className={classes.gridOld}>
           <Grid container spacing={3}>
