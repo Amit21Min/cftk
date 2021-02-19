@@ -102,21 +102,6 @@ const App = () => {
     setSnackBar({open: false});
   };
 
-  const resetForm = () => {
-    setValues({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmedPassword: "",
-      showConfirmedPassword: false,
-      showPassword: false,
-      sms: false,
-      emailNotifications: false,
-      phone: ""
-    })
-  }
-
   const signUp = () => {
 
     // Validation -----------------------------------------------
