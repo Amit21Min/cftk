@@ -10,9 +10,14 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { Button, FilledInput, FormControl, FormHelperText } from "@material-ui/core";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-
+import Switch from '@material-ui/core/Switch';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import { auth, db } from "../Firebase/firebase";
+import { useHistory } from "react-router-dom";
+
+import '../SignUp/index.css'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -43,22 +48,32 @@ function Alert(props) {
 const App = () => {
   const classes = useStyles();
 
+  const history = useHistory();
+
   const [values, setValues] = React.useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
+    phone: "",
     confirmedPassword: "",
     showPassword: false,
     showConfirmedPassword: false,
+    emailNotifications: false,
+    sms: false
   });
 
   const[snackBar, setSnackBar] = React.useState({
     open: false,
-    message: ""
+    message: "",
+    severity: "error"
   })
 
   const handleChange = (prop) => (event) => {
+    if(prop === 'emailNotifications' || prop === 'sms') {
+      setValues({...values, [prop]: event.target.checked});
+      return;
+    }
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -87,46 +102,83 @@ const App = () => {
     setSnackBar({open: false});
   };
 
+  const resetForm = () => {
+    setValues({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmedPassword: "",
+      showConfirmedPassword: false,
+      showPassword: false,
+      sms: false,
+      emailNotifications: false,
+      phone: ""
+    })
+  }
+
   const signUp = () => {
 
     // Validation -----------------------------------------------
     if(values.email == '' || values.firstName == '' || values.lastName == '') {
-      setSnackBar({open: true, message: "Fill in the values"});
+      setSnackBar({open: true, message: "Fill in the values", severity: "error"});
       return;
     }
 
     const email_test = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     if(!email_test.test(values.email.toLowerCase())) {
-      setSnackBar({open: true, message: "Email not valid"});
+      setSnackBar({open: true, message: "Email not valid", severity: "error"});
       return;
     }
     
+    const phone_test = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/;
+
+    if(!phone_test.test(values.phone.toLowerCase())) {
+      setSnackBar({open: true, message: "Phone number not valid", severity: "error"});
+      return;
+    }
+
     if(values.password != values.confirmedPassword) {
-      setSnackBar({open: true, message: 'Passwords do not match'});
+      setSnackBar({open: true, message: 'Passwords do not match', severity: "error"});
       return;
     } 
     
     if(values.password.length <= 7) {
-      setSnackBar({open: true, message: "Password length too short"});
+      setSnackBar({open: true, message: "Password length too short", severity: "error"});
       return;
     }
 
     // End of Validation ----------------------------------------------
 
-      auth.createUserWithEmailAndPassword(values.email, values.password).then(cred => {
-        return db.collection('User').doc(cred.user.uid).set({
-          firstName: values.firstName,
-          lastName: values.lastName, 
-          email: values.email,
-          phone: null,
-          completedRoutes: [],
-          assignment: null,
-          sms: false,
-          emailNotifications: false,
-          role: 'volunteer'
-        })
+    auth.createUserWithEmailAndPassword(values.email, values.password).then(cred => {
+      return db.collection('User').doc(cred.user.uid).set({
+        firstName: values.firstName,
+        lastName: values.lastName, 
+        email: values.email,
+        phone: values.phone,
+        completedRoutes: [],
+        assignment: null,
+        sms: values.sms,
+        emailNotifications: values.emailNotifications,
+        role: 'volunteer'
       })
+    });
+
+    // Reset values and display success message
+    setSnackBar({open: true, message: "Succesfully signed-up!", severity: 'success'});
+    setValues({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmedPassword: "",
+      showConfirmedPassword: false,
+      showPassword: false,
+      sms: false,
+      emailNotifications: false,
+      phone: ""
+    })
   }
 
   const SignUpButton = withStyles({
@@ -148,7 +200,7 @@ const App = () => {
   })(Button);
 
   return (
-    <div className="main">
+    <div className="signup-main">
       <div className="signup-container">
         <h1 className="title-text">Welcome!</h1>
         <p className="subtext">Glad you could join us</p>
@@ -169,7 +221,7 @@ const App = () => {
                   autoFocus
                   helperText="Others will be able to see this"
                   onChange={handleChange('firstName')}
-                  value={values.firstName}
+                  value={values.firstName ?? ""}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -183,7 +235,7 @@ const App = () => {
                   autoComplete="lname"
                   helperText="Others will be able to see this"
                   onChange={handleChange('lastName')}
-                  value={values.lastName}
+                  value={values.lastName ?? ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -197,7 +249,21 @@ const App = () => {
                   autoComplete="email"
                   helperText="Others will not be able to see this"
                   onChange={handleChange('email')}
-                  value={values.email}
+                  value={values.email ?? ""}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="filled"
+                  required
+                  fullWidth
+                  id="phone"
+                  label="Phone Number"
+                  name="phone"
+                  autoComplete="phone"
+                  helperText="Format: ###-###-####"
+                  onChange={handleChange('phone')}
+                  value={values.phone ?? ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -212,7 +278,7 @@ const App = () => {
                   <FilledInput
                     id="standard-adornment-password"
                     type={values.showPassword ? "text" : "password"}
-                    value={values.password}
+                    value={values.password ?? ""}
                     onChange={handleChange("password")}
                     inputProps={{
                       'aria-label': 'weight',
@@ -244,7 +310,7 @@ const App = () => {
                   <FilledInput
                     id="standard-adornment-password"
                     type={values.showConfirmedPassword ? "text" : "password"}
-                    value={values.confirmedPassword}
+                    value={values.confirmedPassword ?? ""}
                     onChange={handleChange(
                       "confirmedPassword"
                     )}
@@ -268,10 +334,34 @@ const App = () => {
               </Grid>
             </Grid>
           </form>
+          <br></br>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Switch 
+                  checked={values.emailNotifications} 
+                  onChange={handleChange('emailNotifications')} 
+                  name="emailNotifications" 
+                  />
+                }
+              label="Email Notifications"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={values.sms}
+                  onChange={handleChange('sms')}
+                  name="SMS"
+                  color="primary"
+                />
+              }
+              label="SMS Notifications"
+            />
+          </FormGroup>
           <br></br><br></br>
           <SignUpButton onClick={() => signUp()} >Sign-Up</SignUpButton>
           <Snackbar open={snackBar.open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
+            <Alert onClose={handleClose} severity={snackBar.severity}>
               {snackBar.message}
             </Alert>
           </Snackbar>

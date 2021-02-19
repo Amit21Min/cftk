@@ -11,7 +11,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 
 import db, { auth, googleSignIn } from "../Firebase/firebase.js";
 import "../SignIn/index.css";
-import { Redirect, Route, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const uiConfig = {
   // Popup signin box rather than redirect
@@ -71,7 +71,7 @@ const App = () => {
 
   const signIn = () => {
     // Validation -------------------------------------------------
-    if(values.username == '' || values.password == '') {
+    if(values.username === '' || values.password === '') {
       setSnackBar({open: true, message: "Fill in values!"})
       return;
     }
@@ -87,14 +87,16 @@ const App = () => {
     auth.signInWithEmailAndPassword(values.username, values.password).then(cred => {
       db.collection('User').doc(cred.user.uid).get().then(user => {
         if(user.exists) {
-          ;let userData = user.data()
-          if(userData.role == 'admin') {
+          let userData = user.data()
+          if(userData.role === 'admin') {
             history.push('/admin/dashboard')
-          } else if(userData.role == 'volunteer') {
+          } else if(userData.role === 'volunteer') {
             history.push('/volunteer')
           }
         }
       })
+    }, (error)=> {
+      setSnackBar({open: true, message: error.message})
     })
   }
 
