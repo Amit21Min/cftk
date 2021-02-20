@@ -48,6 +48,7 @@ const AssignRoute = (props) => {
 
         // TODO: create a button that "finishes" a route to implement the storage of a RoutesActive to a RoutesComplete
         console.log(input);
+        console.log(routeID);
     }
 
     const addGroup = () => {

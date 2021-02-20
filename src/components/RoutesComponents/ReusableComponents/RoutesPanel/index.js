@@ -103,7 +103,7 @@ const RoutesPanel = () => {
     const selected = column.selected_items;
     const selectedIndex = selected.indexOf(street_key);
     let newSelected = [];
-    console.log(selected);
+    // console.log(selected);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, street_key);
     } else if (selectedIndex === 0) {
@@ -180,7 +180,7 @@ const RoutesPanel = () => {
   const routeHistory = async function(lastRoute) {
     var date;
     const routeRef = await db.collection('RouteHistory').doc('R17_12345').get();
-    console.log(routeRef.data());
+    // console.log(routeRef.data());
     // routeRef.get().then(function(doc) {
     //   if (doc.exists) {
     //     console.log(doc.data().visitDate)
@@ -201,7 +201,7 @@ const RoutesPanel = () => {
     let tabled_routes = [];
     for(let i = 0; i < raw_routes.length; i++){
       let data = raw_routes[i];
-      console.log(data);
+      // console.log(data);
 
       let name, assignment_status, months_since_assigned, total_donations, soliciting_pct, interest_pct, lastVisitDate;
       name = data.routeName;
@@ -331,7 +331,7 @@ const RoutesPanel = () => {
           routeName: route.id
         })
       });
-      console.log(allRoutes);
+      // console.log(allRoutes);
 
     
       // const routeRef = db.collection('RouteHistory').doc("R17");
@@ -348,7 +348,6 @@ const RoutesPanel = () => {
 
       setRoutes(tableTransform(allRoutes));
     });
-    console.log("hello123");
   }, []);
 
   let screen;
@@ -398,7 +397,7 @@ const RoutesPanel = () => {
     setOpen(false);
   };
   const assignRouteAction = (routeName) => {
-    console.log("assigning route:", routeName);
+    // console.log("assigning route:", routeName);
     setRoute(routeName);
     handleClickOpen();
   }
