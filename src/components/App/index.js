@@ -57,7 +57,7 @@ const App = () => (
         <Route path={ROUTES.ADMIN_ROUTES} component={AdminLayout} />
         <Route path={ROUTES.ADMIN_VOLUNTEERS} component={AdminLayout} />
         <Route path={ROUTES.VOLUNTEER} component={Volunteer} />
-        <Route path={ROUTES.VOLUNTEER} component={VolunteerAssignment} />
+        <Route path={ROUTES.VOLUNTEER_ASSIGNMENT} component={VolunteerAssignment} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
       </div>
