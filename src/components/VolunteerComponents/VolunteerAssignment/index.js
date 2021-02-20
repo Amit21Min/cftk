@@ -6,7 +6,6 @@ import { Typography, Grid, CircularProgress, Chip, TextField, Button, FormContro
 import LabelBottomNavigation from '../BottomNavigationBar';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CircularProgressBar from '../CircularProgressBar';
-  
 
 const App = () => {
   const [numHousesCompleted, setNumHousesCompleted] = useState('');
