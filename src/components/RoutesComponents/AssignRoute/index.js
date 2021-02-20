@@ -17,7 +17,7 @@ const AssignRoute = (props) => {
     const [group, setGroup] = React.useState("");
     const [phoneData, setPhoneData] = React.useState([]); // phone number list
     const [emailData, setEmailData] = React.useState([]); // email list
-    //console.log(props);
+    // console.log(props.routes);
 
     //validations
     const [inputs, setInputs] = React.useState({
@@ -133,7 +133,8 @@ const AssignRoute = (props) => {
 
     return (
         <Box maxWidth="600px" style={{ padding: 10, margin: 20 }}>
-            <h1 className="title">Assign {props.routes.length === 1 ? props.routes[0] : "Multiple Routes"}
+            <h1 className="title">Assign {props.routes}
+            {/* props.routes.length === 1 ? props.routes[0] : "Multiple Routes" */}
                 <IconButton aria-label="close" style={{ float: "right", display: "inline" }} onClick={props.close}>
                     <CloseIcon />
                 </IconButton></h1>
