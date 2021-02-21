@@ -85,6 +85,9 @@ const useStyles = makeStyles((theme) => ({
 
 const NewRoutePanel = () => {
 
+  // Final TODOS for now. Rewrite geocoder as recursion for speed optimization
+  // Figure out how to load data into Firestore
+
   // variables used in the state
   const [{ routeName, isValidName }, setRouteName] = useState({
     routeName: "",
@@ -133,24 +136,33 @@ const NewRoutePanel = () => {
           if (counter > 5) clearInterval(geocodingProcess);
         }
         const addrNumber = addressList.pop();
-        geocoder.geocode({ address: `${addrNumber} ${streetName} ${cityName}` }, (results, status) => {
-          if (status === "OK") {
-            withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
-            if (addressList.length === 0) {
-              clearInterval(geocodingProcess);
-              resolve(withCoordinates);
-            }
-          } else {
-            if (status === "OVER_QUERY_LIMIT") {
-              counter = 0;
-              addressList.push(addrNumber)
-              console.log('trying to geocode again')
-            } else {
-              clearInterval(geocodingProcess);
-              reject("Geocode was not successful for the following reason: " + status);
-            }
+        if (addrNumber && houseNumbers[streetName] && houseNumbers[streetName][addrNumber]) {
+          console.log('already existed', addrNumber);
+          withCoordinates[addrNumber] = houseNumbers[streetName][addrNumber];
+          if (addressList.length === 0) {
+            clearInterval(geocodingProcess);
+            resolve(withCoordinates);
           }
-        });
+        } else if (addrNumber) {
+          geocoder.geocode({ address: `${addrNumber} ${streetName} ${cityName}` }, (results, status) => {
+            if (status === "OK") {
+              withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
+              if (addressList.length === 0) {
+                clearInterval(geocodingProcess);
+                resolve(withCoordinates);
+              }
+            } else {
+              if (status === "OVER_QUERY_LIMIT") {
+                counter = 0;
+                addressList.push(addrNumber)
+                console.log('trying to geocode again')
+              } else {
+                clearInterval(geocodingProcess);
+                reject("Geocode was not successful for the following reason: " + status);
+              }
+            }
+          });
+        }
         // For whatever reason, the balance is once ever 500ms. I don't know why, but it just is
       }, 500);
     })
@@ -172,16 +184,16 @@ const NewRoutePanel = () => {
       }
     );
 
-    geocodeAddresses([...numbers], parsedStreet, cityName).then(newList => {
-      console.log(newList)
+    geocodeAddresses([...numbers], parsedStreet, cityName).then(newAddresses => {
+      console.log(newAddresses)
       setHouseNumbers(prevState => ({
         ...prevState,
-        [parsedStreet]: newList
+        [parsedStreet]: newAddresses
       }));
     })
 
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-    
+
 
     setCurrStreet('');
     setCurrHouses('');
