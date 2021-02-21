@@ -4,7 +4,7 @@ import { useGoogleMaps } from "react-hook-google-maps";
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useAddressLists(addresses) {
+function useFlatAddress(addresses) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
   const [markerCoords, setMarkerCoords] = useState([]);
 
@@ -32,8 +32,7 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const coords = useAddressLists(props.addresses);
-  const [markers, setMarkers] = useState([]);
+  const coords = useFlatAddress(props.addresses);
 
   useEffect(() => {
 
@@ -45,7 +44,6 @@ function Map(props) {
 
     // Add only the markers that are new
 
-    console.log(coords)
     map.setCenter(coords[0]);
 
     let tempMarkers = []
