@@ -103,7 +103,7 @@ const RoutesPanel = () => {
     const selected = column.selected_items;
     const selectedIndex = selected.indexOf(street_key);
     let newSelected = [];
-    console.log(selected);
+    // console.log(selected);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, street_key);
     } else if (selectedIndex === 0) {
@@ -180,7 +180,7 @@ const RoutesPanel = () => {
   const routeHistory = async function(lastRoute) {
     var date;
     const routeRef = await db.collection('RouteHistory').doc('R17_12345').get();
-    console.log(routeRef.data());
+    // console.log(routeRef.data());
     // routeRef.get().then(function(doc) {
     //   if (doc.exists) {
     //     console.log(doc.data().visitDate)
@@ -201,7 +201,7 @@ const RoutesPanel = () => {
     let tabled_routes = [];
     for(let i = 0; i < raw_routes.length; i++){
       let data = raw_routes[i];
-      console.log(data);
+      // console.log(data);
 
       let name, assignment_status, months_since_assigned, total_donations, soliciting_pct, interest_pct, lastVisitDate;
       name = data.routeName;
@@ -273,13 +273,13 @@ const RoutesPanel = () => {
                                     selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
                                     items={[
                                       {route: "R17", name: "Easy St", amount_collected: "$1M", assignment_status: "", months_since_assigned: "", outreach_pct: "98%", soliciting_pct: "99%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                                                  {text: "Assign",           action: overflow_actions.assignRouteAction},
+                                                                  {text: "Assign",           action: assignRouteAction},
                                                                   {text: "House Properties", action: overflow_actions.housePropertiesAction},
                                                                   {text: "Revision History", action: overflow_actions.revisionHistoryAction},
                                                                   {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
                                                                 ]}},
                                       {route: "R17", name: "Hard Knocks Alley", amount_collected: "$3.50", assignment_status: "", months_since_assigned: "", outreach_pct: "2%", soliciting_pct: "1%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                                                  {text: "Assign",           action: overflow_actions.assignRouteAction},
+                                                                  {text: "Assign",           action: assignRouteAction},
                                                                   {text: "House Properties", action: overflow_actions.housePropertiesAction},
                                                                   {text: "Revision History", action: overflow_actions.revisionHistoryAction},
                                                                   {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
@@ -305,7 +305,7 @@ const RoutesPanel = () => {
         soliciting_pct: soliciting_pct,
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
         overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(data.routeName)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                    {text: "Assign",           action: () => overflow_actions.assignRouteAction(data.routeName)},
+                                    {text: "Assign",           action: () => assignRouteAction(data.routeName)},
                                     {text: "House Properties", action: overflow_actions.housePropertiesAction},
                                     {text: "Revision History", action: overflow_actions.revisionHistoryAction},
                                     {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
@@ -331,7 +331,7 @@ const RoutesPanel = () => {
           routeName: route.id
         })
       });
-      console.log(allRoutes);
+      // console.log(allRoutes);
 
     
       // const routeRef = db.collection('RouteHistory').doc("R17");
@@ -348,7 +348,6 @@ const RoutesPanel = () => {
 
       setRoutes(tableTransform(allRoutes));
     });
-    console.log("hello123");
   }, []);
 
   let screen;
@@ -389,6 +388,7 @@ const RoutesPanel = () => {
   // ===========================================================================
   //                        Open Assign Route Dialog
   // ===========================================================================
+  const [route, setRoute] = React.useState(""); // string - the route to be assigned
   const [open, setOpen] = React.useState(false); // true/false: dialog open/close
   const handleClickOpen = () => {
     setOpen(true);
@@ -396,7 +396,11 @@ const RoutesPanel = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const route_names = ["R16"]; // TODO: save list of routes to be assigned here
+  const assignRouteAction = (routeName) => {
+    // console.log("assigning route:", routeName);
+    setRoute(routeName);
+    handleClickOpen();
+  }
   // TODO: Show a success snackbar after assigning successfully
   // ===========================================================================
 
@@ -422,7 +426,7 @@ const RoutesPanel = () => {
         </Button>
         <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
           open={open} onClose={handleClose}>
-          <AssignRoute routes={route_names} close={handleClose}/>
+          <AssignRoute routes={route} close={handleClose}/>
         </Dialog>
         {/* TODO: Show a success snackbar after assigning successfully */}
       </div>

@@ -9,7 +9,7 @@
 #sidebar-menu{
   flex-basis: 200px;
   padding: 0.2em;
-}
+} 
 
 #sidebar-panel{
   flex-basis: calc(100% - 200px);
