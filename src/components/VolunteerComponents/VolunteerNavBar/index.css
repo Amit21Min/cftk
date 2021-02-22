@@ -1,0 +1,31 @@
+.vol-nav-main {
+    align-items: center;
+    text-align: center;
+    margin-top: 15px;
+    width: 100%;
+    height: 72px;
+}
+
+.vol-nav-container {
+    margin: auto;
+    background: #0075A3;
+    height: 100%;
+}
+
+.vol-nav-selected {
+    background-color: white;
+    display: inline-block;
+    width: 154px;
+    border-radius: 10px;
+}
+
+.vol-nav-button-row {
+    margin-top: 10px;
+}
+
+.vol-nav-tab-text {
+    color:  #0075A3;
+    font-size: 14px;
+    display: inline;
+
+}

@@ -3,6 +3,7 @@ import { Button, TextField, Switch, withStyles } from "@material-ui/core";
 import PhoneIcon from '@material-ui/icons/Phone';
 import MailIcon from '@material-ui/icons/Mail';
 import "../VolunteerSettings/index.css";
+import NavBar from "../VolunteerNavBar/index.js";
 
 const App = () => {
 
@@ -40,7 +41,7 @@ const App = () => {
 
     return (
         <div className="main-container">
-            <div className="content-container">
+            <div className="vol-settings-content-container">
                 <div className="contact-container">
                     <h4 className="title-text">Contact Information</h4>
                     <form className="this-form">
@@ -78,9 +79,10 @@ const App = () => {
                     </div>
                 </div>
 
-                <SignOutButton>Sign Out</SignOutButton>
-                
+                <SignOutButton>Sign Out</SignOutButton>                
             </div>
+            
+            <NavBar tab="settings" />
             
         </div>
     );
