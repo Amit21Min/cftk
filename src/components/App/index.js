@@ -13,6 +13,8 @@ import SignUpPage from '../FirebaseComponents/SignUp/index.js';
 import ForgotPasswordPage from '../ForgotPassword/index.js';
 import HomePage from '../Home/index';
 import Volunteer from '../VolunteerComponents/Volunteer/index.js';
+import UnsavedChanges from '../VolunteerComponents/UnsavedChanges/index.js';
+
 
 import * as ROUTES from '../../constants/routes';
 
@@ -56,8 +58,11 @@ const App = () => (
         <Route path={ROUTES.ADMIN_ROUTES} component={AdminLayout} />
         <Route path={ROUTES.ADMIN_VOLUNTEERS} component={AdminLayout} />
         <Route exact path={ROUTES.VOLUNTEER} component={Volunteer} />
+        <Route exact path = {ROUTES.UNSAVED_CHANGES} component = {UnsavedChanges} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
+      
+        
       </div>
 
     </Router>
