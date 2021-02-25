@@ -120,52 +120,47 @@ const NewRoutePanel = () => {
     setValidForm(Object.keys(houseNumbers).length > 0 && routeName.length > 0 && cityName.length > 0)
   }
 
-  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)])
+  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
 
   async function geocodeAddresses(addressList, streetName, cityName) {
-    return await new Promise((resolve, reject) => {
-      let withCoordinates = {};
+
+    function geocodePromise(geocoder, address) {
+      return new Promise((resolve) => {
+        geocoder.geocode({ address: address }, (results, status) => {
+          resolve({ results, status })
+        });
+      })
+    }
+
+    const geocoder = new google.maps.Geocoder();
+    let withCoordinates = {};
+
+    const len = addressList.length;
+    for (let i = 0; i < len; i++) {
+      const addrNumber = addressList.pop();
+      if (addrNumber && houseNumbers[streetName] && houseNumbers[streetName][addrNumber]) {
+        withCoordinates[addrNumber] = houseNumbers[streetName][addrNumber];
+      } else if (addrNumber) {
+        const { results, status } = await geocodePromise(geocoder, `${addrNumber} ${streetName} ${cityName}`);
+        if (status === "OK") {
+          withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
+        } else if (status === "OVER_QUERY_LIMIT") {
+          console.log(`Over Limit @ ${i}`);
+          // Very sketchy recreation of sleep from Java
+          await new Promise(r => setTimeout(r, 2000));
+          addressList.push(addrNumber);
+          i--;
+        } else {
+          alert("Geocode was not successful for the following reason: " + status);
+          return;
+        }
+      }
       if (addressList.length === 0) {
-        resolve(withCoordinates)
-      };
-      const geocoder = new google.maps.Geocoder();
-      let counter = 0;
-      let geocodingProcess = setInterval(() => {
-        if (addressList.length === 0) {
-          counter++;
-          if (counter > 5) clearInterval(geocodingProcess);
-        }
-        const addrNumber = addressList.pop();
-        if (addrNumber && houseNumbers[streetName] && houseNumbers[streetName][addrNumber]) {
-          console.log('already existed', addrNumber);
-          withCoordinates[addrNumber] = houseNumbers[streetName][addrNumber];
-          if (addressList.length === 0) {
-            clearInterval(geocodingProcess);
-            resolve(withCoordinates);
-          }
-        } else if (addrNumber) {
-          geocoder.geocode({ address: `${addrNumber} ${streetName} ${cityName}` }, (results, status) => {
-            if (status === "OK") {
-              withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
-              if (addressList.length === 0) {
-                clearInterval(geocodingProcess);
-                resolve(withCoordinates);
-              }
-            } else {
-              if (status === "OVER_QUERY_LIMIT") {
-                counter = 0;
-                addressList.push(addrNumber)
-                console.log('trying to geocode again')
-              } else {
-                clearInterval(geocodingProcess);
-                reject("Geocode was not successful for the following reason: " + status);
-              }
-            }
-          });
-        }
-        // For whatever reason, the balance is once ever 500ms. I don't know why, but it just is
-      }, 500);
-    })
+        return withCoordinates;
+      }
+    }
+    return withCoordinates;
+
   }
 
   const updateStreetList = e => {
@@ -185,11 +180,12 @@ const NewRoutePanel = () => {
     );
 
     geocodeAddresses([...numbers], parsedStreet, cityName).then(newAddresses => {
-      console.log(newAddresses)
-      setHouseNumbers(prevState => ({
-        ...prevState,
-        [parsedStreet]: newAddresses
-      }));
+      if (newAddresses) {
+        setHouseNumbers(prevState => ({
+          ...prevState,
+          [parsedStreet]: newAddresses
+        }));
+      }
     })
 
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
@@ -209,10 +205,10 @@ const NewRoutePanel = () => {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       }
     );
-
     setHouseNumbers(prevState => {
-      delete prevState[streetName];
-      return prevState;
+      let newState = { ...prevState }
+      delete newState[streetName]
+      return newState;
     });
   }
 
