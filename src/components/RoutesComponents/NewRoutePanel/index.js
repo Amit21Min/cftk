@@ -120,8 +120,6 @@ const NewRoutePanel = () => {
     setValidForm(Object.keys(houseNumbers).length > 0 && routeName.length > 0 && cityName.length > 0)
   }
 
-  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
-
   async function geocodeAddresses(addressList, streetName, cityName) {
 
     function geocodePromise(geocoder, address) {
@@ -310,6 +308,8 @@ const NewRoutePanel = () => {
     }
     storeRouteData(routeName, houseNumbers, volNotes, cityName);
   }
+
+  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
 
   const classes = useStyles();
 
