@@ -22,6 +22,29 @@ function useFlatAddress(addresses) {
 
   return markerCoords
 }
+// To look at in the future, use snap to roads api to convert addresses to a road, but API key seems to be rejected
+// function useSnappedRoads(addresses) {
+
+//   const [roads, setRoads] = useState({});
+
+//   useEffect(() => {
+//     let snapPromises = []
+//     for (let street in addresses) {
+//       if (!roads[street] || Object.keys(addresses[street]) != Object.keys(roads[street])) {
+//         let streetCoords = []
+//         for (let address in addresses[street]) {
+//           streetCoords.push(`${addresses[street][address].lat},${addresses[street][address].lng}`)
+//         }
+//         snapPromises.push(fetch('https://roads.googleapis.com/v1/snapToRoads', {
+//           interpolate: true,
+//           key: process.env.REACT_APP_MAPS_API_KEY,
+//           path: streetCoords.join('|')
+//         }))
+//       }
+//     }
+//     Promise.all(snapPromises).then(res => console.log(res))
+//   }, [JSON.stringify(addresses)])
+// }
 
 function Map(props) {
   const defaultLoc = { lat: 35.9132, lng: -79.0558 }
@@ -33,6 +56,7 @@ function Map(props) {
     },
   );
   const coords = useFlatAddress(props.addresses);
+  // const roads = useSnappedRoads(props.addresses);
 
   useEffect(() => {
 
@@ -61,39 +85,9 @@ function Map(props) {
       }
     }
 
-    // for (let address of added) {
-    //   geocoder.geocode({ address: address }, (results, status) => {
-    //     if (status === "OK") {
-    //       map.setCenter(results[0].geometry.location);
-    //       let newMarker = new google.maps.Marker({
-    //         map: map,
-    //         position: results[0].geometry.location,
-    //         icon: parkingIcon
-    //       });
-    //       newMarkers[address] = newMarker;
-    //     } else {
-    //       alert("Geocode was not successful for the following reason: " + status);
-    //     }
-    //   });
-    // }
-
-    // // Remove all markers that are no longer there
-    // for (let addr of removed) {
-    //   if (newMarkers[addr] && newMarkers[addr].setMap) {
-    //     newMarkers[addr].setMap(null);
-    //     delete newMarkers[addr]
-    //   }
-    // }
-
-    // // Pan to the last marker
-    // let lastLocation = defaultLoc;
-    // if (current.length > 0 && newMarkers[current[current.length - 1]]) lastLocation = newMarkers[current[0]].position;
-    // map.setCenter(lastLocation);
-    // map.panTo(lastLocation);
-
-    // setMarkers(newMarkers)
-
   }, [coords, map, google]);
+
+  useEffect(() => console.log(google), [google])
 
   // useEffect(() => {
   //   // Allows for adding markers on map click
