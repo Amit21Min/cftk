@@ -136,24 +136,37 @@ const NewRoutePanel = () => {
     let withCoordinates = {};
 
     const len = addressList.length;
+    let overLimitCount = 0;
     for (let i = 0; i < len; i++) {
       const addrNumber = addressList.pop();
       if (addrNumber && houseNumbers[streetName] && houseNumbers[streetName][addrNumber]) {
+        // Check to see if this address has already been geocoded before. Makes the remove address process much much faster
         withCoordinates[addrNumber] = houseNumbers[streetName][addrNumber];
       } else if (addrNumber) {
+        // Can only move to the next address once the current one is completed
         const { results, status } = await geocodePromise(geocoder, `${addrNumber} ${streetName} ${cityName}`);
-        if (status === "OK") {
+        if (status === "OK" && results.length > 0) {
           withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
         } else if (status === "OVER_QUERY_LIMIT") {
+          // If over the query limit, try again after waiting 2 seconds
           console.log(`Over Limit @ ${i}`);
           // Very sketchy recreation of sleep from Java
           await new Promise(r => setTimeout(r, 2000));
+          // Pushes address back into the loop and the loop back
           addressList.push(addrNumber);
           i--;
+          // Increments number of times it tries again
+          overLimitCount++;
         } else {
+          // Exit the loop if there is an error not related to the query limit
           alert("Geocode was not successful for the following reason: " + status);
           return;
         }
+      }
+      if (overLimitCount > 20) {
+        // If the amount of times it tries again exceeds 20 times or if there are no more addresses left. Return the values it has already gained
+        alert("Geocoder Query Limit Exceeded 20+ times, please wait a while before trying again");
+        return withCoordinates;
       }
       if (addressList.length === 0) {
         return withCoordinates;
