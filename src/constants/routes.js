@@ -4,14 +4,14 @@ export const SIGN_IN = '/signin';
 export const HOME = '/home';
 export const ACCOUNT = '/account';
 export const ADMIN = '/admin';
-export const VIEW_HOUSE_PROPS = '/view-house-props';
 export const FORGOT_PASSWORD = '/forgot-password';
 
-// Sidebar ROUTES
+// Admin ROUTES
 export const ADMIN_DASHBOARD  = ADMIN+'/dashboard';
 export const ADMIN_ROUTES     = ADMIN+'/routes';
 export const ADMIN_ROUTES_NEW = ADMIN_ROUTES+'/new';
 export const ADMIN_VOLUNTEERS = ADMIN+'/volunteers';
+export const VIEW_HOUSE_PROPS = ADMIN + '/view-house-props';
 
 // Edit route
 export const ADMIN_ROUTES_EDIT = ADMIN_ROUTES+'/edit';

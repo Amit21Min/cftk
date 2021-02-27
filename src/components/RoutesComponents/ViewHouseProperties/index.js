@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './style.css'
 import {db} from '../../FirebaseComponents/Firebase/firebase';
+import PanelBanner from '../ReusableComponents/PanelBanner';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -21,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const ViewHouseProperties = () => {
+const ViewHouseProperties = (props) => {
+    const route = props.location.state;
    //function to get route - not yet implemented
     /*
     function getRoute(streetArray) {
@@ -79,7 +82,7 @@ const ViewHouseProperties = () => {
 
     //runs only once - sets streets based on route
     useEffect(() => {
-    db.collection("Routes").doc("R16").get().then(doc => {
+    db.collection("Routes").doc(route).get().then(doc => {
         const data = doc.data();
         setStreets(data.streets);
     })
@@ -304,8 +307,9 @@ const solicitationAllowedText = (visit_i) => {
       }
 
     return(
-   <div>
-        <h2 className="title">Route House Properties</h2>
+        
+   <div className='container'>
+        <h2 className="title">{route} House Properties</h2>
         <Grid container spacing={2}>
             <Grid item>
             <div className = "street-select">

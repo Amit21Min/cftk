@@ -16,7 +16,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { db } from '../../../FirebaseComponents/Firebase/firebase';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import * as ROUTES from '../../../../constants/routes';
 
 import "./index.css";
@@ -29,7 +29,7 @@ import {RouteColumnContext, RouteItemsContext,
         init_route_columns, init_street_columns
        } from './contexts.js';
 
-const RoutesPanel = () => {
+const RoutesPanel = (props) => {
   const [routes, setRoutes] = useState(null);
   const [routeMetrics, setRouteMetrics] = useState({
     total_assigned: "0",
@@ -306,7 +306,7 @@ const RoutesPanel = () => {
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
         overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(data.routeName)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
                                     {text: "Assign",           action: () => assignRouteAction(data.routeName)},
-                                    {text: "House Properties", action: overflow_actions.housePropertiesAction},
+                                    {text: "House Properties", action: () => onViewHouseProperties(data.routeName)},
                                     {text: "Revision History", action: overflow_actions.revisionHistoryAction},
                                     {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
                                   ],
@@ -404,6 +404,21 @@ const RoutesPanel = () => {
   // TODO: Show a success snackbar after assigning successfully
   // ===========================================================================
 
+
+
+
+  // ============================================================================
+  //                        View House Properties                                
+  // ============================================================================
+  const onViewHouseProperties = (routeName) => {
+    props.history.push({
+      pathname: '/admin/view-house-props',
+      state: routeName
+    });
+  }
+
+
+
   return(
     <div className="container">
       <PanelBanner title="Routes"/>
@@ -429,6 +444,11 @@ const RoutesPanel = () => {
           <AssignRoute routes={route} close={handleClose}/>
         </Dialog>
         {/* TODO: Show a success snackbar after assigning successfully */}
+      </div>
+      
+
+      <div>
+        
       </div>
     </div>
   );
