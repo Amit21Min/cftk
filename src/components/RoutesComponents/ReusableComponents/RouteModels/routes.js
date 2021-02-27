@@ -48,6 +48,7 @@ export const editRouteData = (routeName, streets, volNotes, city) => {
 // }
 
 function isStreetsInStore(streets, city) {
+    // Returns a Promise that will say whether or not a street of that id is already in the firestore
     return new Promise(resolve => {
         db.collection("Streets")
             .where('__name__', 'in', streets)
@@ -61,6 +62,7 @@ function isStreetsInStore(streets, city) {
 }
 
 function isRouteInStore(routeName) {
+    // Returns a Promise that will say whether or not a route of that id is already in the firestore
     return new Promise(resolve => {
         db.collection("Routes")
             .where('__name__', '==', routeName)
@@ -93,25 +95,31 @@ export const storeRouteData = async (routeName, houseNumbers, volNotes, city) =>
     //     })
     const streets = Object.keys(houseNumbers);
     const isOldRoute = await isRouteInStore(routeName);
-    if (!isOldRoute) {
-        db.collection("Routes")
-            .doc(routeName)
-            .set({
-                streets: streets,
-                assignmentStatus: false,
-                assignmentDates: {},
-                perInterest: 0.0,
-                perSoliciting: 0.0,
-                total: 0.0,
-                city: city,
-                comments: volNotes
-            });
-        for (let streetName of streets) {
-            console.log(streetName)
-            storeStreetData(streetName, houseNumbers[streetName], city)
-        }
+    if (isOldRoute) return {
+        state: 'ERROR',
+        message: `A route with the name: ${routeName} already exists. Please pick a new name.`
+    }
+    db.collection("Routes")
+        .doc(routeName)
+        .set({
+            streets: streets,
+            assignmentStatus: false,
+            assignmentDates: {},
+            perInterest: 0.0,
+            perSoliciting: 0.0,
+            total: 0.0,
+            city: city,
+            comments: volNotes
+        });
+    for (let streetName of streets) {
+        console.log(streetName)
+        storeStreetData(streetName, houseNumbers[streetName], city)
     }
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
+    return {
+        state: 'SUCCESS',
+        message: `${routeName} has been added successfully.`
+    }
 
 
 }
