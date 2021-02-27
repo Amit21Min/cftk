@@ -8,7 +8,7 @@ import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import DualGroupedTextField from '../../ReusableComponents/GroupedTextField/DualGroupedTextField';
 import ChipList from '../../ReusableComponents/ChipList';
 import PillButton from '../../ReusableComponents/PillButton';
-import Snackbar from '../../ReusableComponents/Snackbar';
+import AlertSnackbar from '../../ReusableComponents/AlertSnackbar';
 import { useGoogleMaps } from "react-hook-google-maps";
 
 import * as ROUTES from '../../../constants/routes';
@@ -390,7 +390,7 @@ const NewRoutePanel = () => {
         {/* This is a dummy object, it's supposed to hold an invisible map */}
         <div ref={ref} style={{ display: 'none' }}></div>
       </div>
-      <Snackbar severity={snackBarState.severity} message={snackBarState.message}/>
+      <AlertSnackbar severity={snackBarState.severity} message={snackBarState.message}/>
 
     </div>
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 
-function CustomSnackbar(props) {
+function AlertSnackbar(props) {
     // Intakes 2 props, the severity
     const [snackBar, setSnackBar] = useState({
         open: false,
@@ -37,9 +37,9 @@ function CustomSnackbar(props) {
     </Snackbar>
 }
 
-CustomSnackbar.propTypes = {
+AlertSnackbar.propTypes = {
     severity: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
     message: PropTypes.string
 }
 
-export default CustomSnackbar;
+export default AlertSnackbar;
