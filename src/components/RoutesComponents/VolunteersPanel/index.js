@@ -12,8 +12,8 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
-
-
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Add from '@material-ui/icons/Add';
 import Map from '../Map';
 
 import Dialog from '@material-ui/core/Dialog';
@@ -22,6 +22,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TrainRounded } from '@material-ui/icons';
+import ImportCSVDialog from '../VolunteersPanel/dialog';
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -128,11 +131,12 @@ const VolunteersPanel = () => {
   const anchorRef = React.useRef(null);
   const [formDialog, setFormDialog] = useState(false);
   const onOpen = () => setOpen(true);
-
+  const [clicked, setClicked] = useState(false)
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+  
 
   //const handleClose = (event) => {
   //  if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -154,7 +158,7 @@ const VolunteersPanel = () => {
   }
 
   const handleClose = () => {
-    setQuestOpen(false);
+    setOpen(false);
   };
 
   const handleMenuItemClick = (event, index) => {
@@ -164,11 +168,11 @@ const VolunteersPanel = () => {
     //setAnchorEl(null);
   };
 
-  const handleClickOpen = () => {
-    setQuestOpen(true);
+  const handleClick = (id) => {
+    setClicked(true);
   };
 
-
+ 
 
   return (
     <div className={classes.root}>
@@ -181,13 +185,13 @@ const VolunteersPanel = () => {
         
         
       </div>
-    
+
+
       <div className={classes.fab}>
-        <Fab ref={anchorRef} color="primary" aria-label="Add" aria-controls={open ? 'menu-list-grow' : undefined}
+        <Fab ref={anchorRef} color="primary"  aria-label='add' aria-controls={open ? 'menu-list-grow' : undefined}
           aria-haspopup="true"
           onClick={handleToggle}>
-          <AddIcon />
-
+          <AddIcon/>
           <Popper align='left' open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
             {({ TransitionProps, placement }) => (
               <Grow
@@ -200,10 +204,15 @@ const VolunteersPanel = () => {
                       <ListItem onClick={(event) => handleMenuItemClick(event)} button>
                         <ListItemText primary="Custom Group" />
                       </ListItem>
-                      <ListItem button >
-                        <ListItemText primary={"Import CSV"} onClick={handleOpen} />
+                      <ListItem onClick={(event) => handleMenuItemClick(event)} button>
+                        <ListItemText>Import CSV</ListItemText>
+                        <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
+                          open={open} onClose={handleClose}> 
+                          <ImportCSVDialog close={handleClose}/>
+                        </Dialog>
                       </ListItem>
                     </List>
+                    
                   </ClickAwayListener>
                 </Paper>
               </Grow>
@@ -211,6 +220,8 @@ const VolunteersPanel = () => {
           </Popper>
         </Fab>
       </div>
+
+      
     </div >
 
   );
