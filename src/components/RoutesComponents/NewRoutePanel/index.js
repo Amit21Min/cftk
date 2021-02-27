@@ -8,6 +8,7 @@ import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import DualGroupedTextField from '../../ReusableComponents/GroupedTextField/DualGroupedTextField';
 import ChipList from '../../ReusableComponents/ChipList';
 import PillButton from '../../ReusableComponents/PillButton';
+import Snackbar from '../../ReusableComponents/Snackbar';
 import { useGoogleMaps } from "react-hook-google-maps";
 
 import * as ROUTES from '../../../constants/routes';
@@ -107,6 +108,10 @@ const NewRoutePanel = () => {
 
   const [validForm, setValidForm] = useState(false);
   // const [validForm, setValidForm] = useState(true);
+  const [snackBarState, setSnackBarState] = useState({
+    severity: "",
+    message: ""
+  })
 
 
   const defaultLoc = { lat: 35.9132, lng: -79.0558 }
@@ -308,7 +313,12 @@ const NewRoutePanel = () => {
       alert('Please enter/add a street name');
       return;
     }
-    storeRouteData(routeName, houseNumbers, volNotes, cityName);
+    storeRouteData(routeName, houseNumbers, volNotes, cityName).then(msg => {
+      setSnackBarState({
+        severity: msg.state.toLowerCase(),
+        message: msg.message
+      })
+    });
   }
 
   useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
@@ -380,6 +390,8 @@ const NewRoutePanel = () => {
         {/* This is a dummy object, it's supposed to hold an invisible map */}
         <div ref={ref} style={{ display: 'none' }}></div>
       </div>
+      <Snackbar severity={snackBarState.severity} message={snackBarState.message}/>
+
     </div>
 
   );
