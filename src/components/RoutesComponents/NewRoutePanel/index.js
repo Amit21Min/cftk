@@ -106,6 +106,8 @@ const NewRoutePanel = () => {
   const [volNotes, setVolNotes] = useState([]);
 
   const [validForm, setValidForm] = useState(false);
+  // const [validForm, setValidForm] = useState(true);
+
 
   const defaultLoc = { lat: 35.9132, lng: -79.0558 }
   const { ref, google } = useGoogleMaps(
@@ -147,7 +149,7 @@ const NewRoutePanel = () => {
           withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
         } else if (status === "OVER_QUERY_LIMIT") {
           // If over the query limit, try again after waiting 2 seconds
-          console.log(`Over Limit @ ${i}`);
+          console.log(`Over Query Limit @ ${i}`);
           // Very sketchy recreation of sleep from Java
           await new Promise(r => setTimeout(r, 2000));
           // Pushes address back into the loop and the loop back
