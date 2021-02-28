@@ -16,7 +16,7 @@ function AlertSnackbar(props) {
     // }
 
     return <Snackbar {...props}>
-        <Alert variant="filled" elevation={3} style={{ borderRadius: '5em'}} {...props}>
+        <Alert variant="filled" elevation={3} style={{ borderRadius: '5em'}} onClose={props.handleClose} severity={props.severity}>
             {props.children}
         </Alert>
     </Snackbar>
@@ -24,7 +24,7 @@ function AlertSnackbar(props) {
 
 AlertSnackbar.propTypes = {
     open: PropTypes.bool,
-    severity: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
+    severity: PropTypes.oneOf(['error', 'warning', 'info', 'success', '']),
     children: PropTypes.string, // The message to shown in the alert
     onClose: PropTypes.func, // Called to close the snackbar
     autoHideDuration: PropTypes.number // Number of milliseconds before the snackbar auto closes
