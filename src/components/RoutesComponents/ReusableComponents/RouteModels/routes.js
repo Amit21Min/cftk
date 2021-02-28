@@ -1,4 +1,5 @@
 import db from '../../../FirebaseComponents/Firebase/firebase.js';
+import { validationStates } from './routeConstants';
 
 const toStreet = (streetNames) => {
     var i;
@@ -96,7 +97,7 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
     const streets = Object.keys(houseNumbers);
     const isOldRoute = await isRouteInStore(routeName);
     if (isOldRoute) return {
-        state: 'ERROR',
+        state: validationStates.ERROR,
         message: `A route with the name: ${routeName} already exists. Please pick a new name.`
     }
 
@@ -123,7 +124,7 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
     }
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
     return {
-        state: 'SUCCESS',
+        state: validationStates.SUCCESS,
         message: `${routeName} has been added successfully.`
     }
 
