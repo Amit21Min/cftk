@@ -46,16 +46,16 @@ const App = () => {
                     <h4 className="title-text">Contact Information</h4>
                     <form className="this-form">
                         <div className="text-boxes">
-                            <TextField id="filled-helperText" label="First name" defaultValue={firstName} variant="filled" margin="normal" fullWidth="true"/>
+                            <TextField id="filled-helperText" label="First name" defaultValue={firstName} variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                         <div className="text-boxes">
-                            <TextField id="filled-helperText" label="Last name" defaultValue={lastName} variant="filled" margin="normal" fullWidth="true"/>
+                            <TextField id="filled-helperText" label="Last name" defaultValue={lastName} variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                         <div className="text-boxes">
-                            <TextField id="filled-helperText" label="Email address" defaultValue="john.doe@gmail.com" helperText="Others will not be able to see this." defaultValue="" variant="filled" margin="normal" fullWidth="true"/>
+                            <TextField id="filled-helperText" label="Email address" defaultValue="john.doe@gmail.com" helperText="Others will not be able to see this." defaultValue="" variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                         <div className="text-boxes">
-                        <TextField id="filled-helperText" label="Phone number" defaultValue="(919) 342 - 3461" helperText="Others will not be able to see this." defaultValue="" variant="filled" margin="normal" fullWidth="true"/>
+                        <TextField id="filled-helperText" label="Phone number" defaultValue="(919) 342 - 3461" helperText="Others will not be able to see this." defaultValue="" variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                     </form>
                 </div>

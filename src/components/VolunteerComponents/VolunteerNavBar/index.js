@@ -5,7 +5,15 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import NearMeOutlinedIcon from '@material-ui/icons/NearMeOutlined';
 import { Button, IconButton } from '@material-ui/core';
 import "../VolunteerNavBar/index.css";
+import { indigo } from '@material-ui/core/colors';
+import { Link } from 'react-router-dom';
+import * as ROUTES from '../../../constants/routes';
 
+/*======= When using the NavBar, use a tab prop with either 'settings', 'messages', 'progress'
+
+or 'route-map' as its value.
+
+========= */
 
 const NavBar = (props) => {
 
@@ -15,11 +23,19 @@ const NavBar = (props) => {
         if (tab == "settings") {
             return (
                 <div className="vol-nav-button-row">
-                    <IconButton><TrendingUpIcon/></IconButton>
-                    <IconButton><NearMeOutlinedIcon /></IconButton>
-                    <IconButton><ChatIcon /></IconButton>
+                    <Link to={ROUTES.VOLUNTEER_PROGRESS}>
+                        <Button><TrendingUpIcon style={{color: indigo[50]}}></TrendingUpIcon></Button>
+                    </Link>
+
+                    <Link to={ROUTES.VOLUNTEER_MAP}>
+                        <Button><NearMeOutlinedIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
+
+                    <Link to={ROUTES.VOLUNTEER_MESSAGES}>
+                        <Button><ChatIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
                     <div className="vol-nav-selected">
-                        <IconButton><SettingsIcon color="primary"/></IconButton>
+                        <Button><SettingsIcon color="primary"/></Button>
                         <p className="vol-nav-tab-text">SETTINGS</p>
                     </div>
                 </div>
@@ -28,13 +44,21 @@ const NavBar = (props) => {
         else if (tab == "messages") {
             return (
                 <div className="vol-nav-button-row">
-                    <Button font-><TrendingUpIcon/></Button>
-                    <Button><NearMeOutlinedIcon /></Button>
+                    <Link to={ROUTES.VOLUNTEER_PROGRESS}>
+                        <Button><TrendingUpIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
+
+                    <Link to={ROUTES.VOLUNTEER_MAP}>
+                        <Button><NearMeOutlinedIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
+
                     <div className="vol-nav-selected">
                         <Button><ChatIcon color="primary"/></Button>
                         <p className="vol-nav-tab-text">MESSAGES</p>
                     </div>
-                    <Button><SettingsIcon/></Button>
+                    <Link to={ROUTES.VOLUNTEER_SETTINGS}> 
+                        <Button><SettingsIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
                 </div>
             );
         }
@@ -46,23 +70,35 @@ const NavBar = (props) => {
                         <Button><TrendingUpIcon color="primary"/></Button>
                         <p className="vol-nav-tab-text">PROGRESS</p>
                     </div>
-                    <Button><NearMeOutlinedIcon /></Button>
-                    <Button><ChatIcon /></Button>
-                    <Button><SettingsIcon/></Button>
+                    <Link to={ROUTES.VOLUNTEER_MAP}>
+                        <Button><NearMeOutlinedIcon style={{color: indigo[50]}} /></Button>
+                    </Link>
+                    <Link to={ROUTES.VOLUNTEER_MESSAGES}>
+                        <Button><ChatIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
+                    <Link to={ROUTES.VOLUNTEER_SETTINGS}>
+                        <Button><SettingsIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
                 </div>
             );
         }
 
-        else  {
+        else if (tab== "route-map") {
             return (
                 <div className="vol-nav-button-row">
-                    <Button><TrendingUpIcon/></Button>
+                    <Link to={ROUTES.VOLUNTEER_PROGRESS}>
+                        <Button><TrendingUpIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
                     <div className="vol-nav-selected">
                         <Button><NearMeOutlinedIcon color="primary" /></Button>
                         <p className="vol-nav-tab-text">ROUTE MAP</p>
                     </div>
-                    <Button><ChatIcon /></Button>
-                    <Button><SettingsIcon/></Button>
+                    <Link to={ROUTES.VOLUNTEER_MESSAGES}>
+                        <Button><ChatIcon style={{color: indigo[50]}} /></Button>
+                    </Link>
+                    <Link to={ROUTES.VOLUNTEER_SETTINGS}>
+                        <Button><SettingsIcon style={{color: indigo[50]}}/></Button>
+                    </Link>
                 </div>
             );
 
@@ -73,10 +109,8 @@ const NavBar = (props) => {
         <div className="vol-nav-main">
             <div className="vol-nav-container">
                 {selectedTab()}
-               
             </div>
         </div>
-
     );
 
 }
