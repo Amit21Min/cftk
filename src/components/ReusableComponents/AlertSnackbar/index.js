@@ -1,49 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab'
+import { Alert } from '@material-ui/lab';
+
 
 function AlertSnackbar(props) {
-    // Intakes 2 props, the severity, and the message. 
-    // When either changes, the dialogue will automatically show if the message length is longer than 0 characters
-    // onClose/handleClose is built into this component because personally I don't believe outer components need to worry about closing the dialogue
+    // Combines the Snackbar and alert components together into one element and rounds the corners. Uses similar structure to default mui implementation
 
-    const [snackBar, setSnackBar] = useState({
-        open: false,
-        severity: "",
-        message: "",
-    });
+    // onClose Example
+    // function handleClose(event, reason) {
+        // if (reason === 'clickaway') {
+        //     return;
+        //   }
+        // setOpen(false);
+    // }
 
-    function handleClose(event, reason) {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackBar(prevState => ({
-            ...prevState,
-            open: false
-        }));
-    }
-
-    useEffect(() => {
-        // Update the state whenever the severity or message changes
-        const isMessage = !!props.message && props.message.length > 0;
-        setSnackBar({
-            open: isMessage,
-            severity: props.severity,
-            message: isMessage ? props.message : ""
-        })
-    }, [props.message, props.severity]);
-
-    return <Snackbar open={snackBar.open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert variant="filled" elevation={3} severity={snackBar.severity} onClose={handleClose} style={{ borderRadius: '5em'}}>
-            {snackBar.message}
+    return <Snackbar {...props}>
+        <Alert variant="filled" elevation={3} style={{ borderRadius: '5em'}} {...props}>
+            {props.children}
         </Alert>
     </Snackbar>
 }
 
 AlertSnackbar.propTypes = {
+    open: PropTypes.bool,
     severity: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
-    message: PropTypes.string
+    children: PropTypes.string,
+    onClose: PropTypes.func,
+    autoHideDuration: PropTypes.number
 }
 
 export default AlertSnackbar;

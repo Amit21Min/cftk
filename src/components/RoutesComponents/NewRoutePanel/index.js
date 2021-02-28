@@ -109,6 +109,7 @@ const NewRoutePanel = () => {
   const [validForm, setValidForm] = useState(false);
   // const [validForm, setValidForm] = useState(true);
   const [snackBarState, setSnackBarState] = useState({
+    open: false,
     severity: "",
     message: ""
   })
@@ -303,6 +304,16 @@ const NewRoutePanel = () => {
     setCurrHouses(asString);
   }
 
+  function handleSnackBarClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackBarState(prevState => ({
+      ...prevState,
+      open: false
+    }));
+  }
+
   const saveForm = _ => {
     // Executes when save button is clicked.
     // Alerts and doesn't save if required inputs are not filled (Placeholder)
@@ -315,6 +326,7 @@ const NewRoutePanel = () => {
     }
     storeRouteData(routeName, houseNumbers, volNotes, cityName).then(msg => {
       setSnackBarState({
+        open: true,
         severity: msg.state.toLowerCase(),
         message: msg.message
       })
@@ -390,7 +402,13 @@ const NewRoutePanel = () => {
         {/* This is a dummy object, it's supposed to hold an invisible map */}
         <div ref={ref} style={{ display: 'none' }}></div>
       </div>
-      <AlertSnackbar severity={snackBarState.severity} message={snackBarState.message}/>
+      <AlertSnackbar
+        open={snackBarState.open}
+        severity={snackBarState.severity}
+        autoHideDuration={6000}
+        onClose={handleSnackBarClose}>
+        {snackBarState.message}
+      </AlertSnackbar>
 
     </div>
 
