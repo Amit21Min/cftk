@@ -3,6 +3,7 @@ import "./style.css";
 import { db } from "../../FirebaseComponents/Firebase/firebase";
 import PanelBanner from "../ReusableComponents/PanelBanner";
 
+import {withStyles} from "@material-ui/core/styles"
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -12,6 +13,7 @@ import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import { CardContent } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -21,7 +23,40 @@ const useStyles = makeStyles((theme) => ({
   houseList: {
     maxWidth: 300,
   },
+  vhpCard: {
+    backgroundColor: "#F1F3F5",
+    borderRadius: "24px",
+    width: "248px",
+    height: '320px'
+  },
+  vhpCardTitle: {
+    fontWeight: 600,
+    fontSize: "20px",
+    font: "Raleway",
+  },
+  cardActions: {
+    display: "flex",
+    justifyContent: "flex-end",
+  }
 }));
+
+const SaveButton = withStyles({
+  root: {
+    background: '#0075A3',
+    color: 'white',
+    borderRadius: '19px',
+    fontSize: '14px',
+    lineHeight: '19px',
+    fontWeight: '300',
+    width: '88px',
+    height: '36px',
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.14)",
+    '&:hover': {
+      background: '#0075A3',
+      color: 'white',
+    }
+  }
+})(Button);
 
 const ViewHouseProperties = (props) => {
   const route = props.location.state;
@@ -220,11 +255,17 @@ const ViewHouseProperties = (props) => {
     }
 
     return (
-      <Grid container direction="row" spacing={3}>
-        <Grid item xs={6}>
-          <Card>
+      <div className="house-props-cards">
+          <Card className={classes.vhpCard}>
             <CardContent>
-              <strong>Solicitation</strong>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                className={classes.vhpCardTitle}
+              >
+                Solicitations
+              </Typography>
               <div>
                 <h6>{solicitationAllowedText(0)}</h6>
                 <small>
@@ -246,16 +287,21 @@ const ViewHouseProperties = (props) => {
                 </small>
               </div>
             </CardContent>
-            <CardActions>
-              <Button size="small">View More</Button>
+            <CardActions className={classes.cardActions}>
+              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
             </CardActions>
           </Card>
-        </Grid>
 
-        <Grid item xs={6}>
-          <Card>
+          <Card className={classes.vhpCard}>
             <CardContent>
-              <strong>Donations</strong>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                className={classes.vhpCardTitle}
+              >
+                Donations
+              </Typography>
               <div>
                 <h6>${getDonation(0)}</h6>
                 <small>
@@ -277,16 +323,21 @@ const ViewHouseProperties = (props) => {
                 </small>
               </div>
             </CardContent>
-            <CardActions>
-              <Button size="small">View More</Button>
+            <CardActions className={classes.cardActions}>
+              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
             </CardActions>
           </Card>
-        </Grid>
 
-        <Grid item xs={6}>
-          <Card>
+          <Card className={classes.vhpCard}>
             <CardContent>
-              <strong>Volunteer Comments</strong>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                className={classes.vhpCardTitle}
+              >
+                Volunteer Comments
+              </Typography>
               <div>
                 <h6>{getComment(0)}</h6>
                 <small>
@@ -308,16 +359,21 @@ const ViewHouseProperties = (props) => {
                 </small>
               </div>
             </CardContent>
-            <CardActions>
-              <Button size="small">View More</Button>
+            <CardActions className={classes.cardActions}>
+              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
             </CardActions>
           </Card>
-        </Grid>
 
-        <Grid item xs={6}>
-          <Card>
+          <Card className={classes.vhpCard}>
             <CardContent>
-              <strong>Interested in Learning More</strong>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                className={classes.vhpCardTitle}
+              >
+                Interested in Learning More
+              </Typography>
               <div>
                 <h6>{learnMoreText(0)}</h6>
                 <small>
@@ -339,20 +395,19 @@ const ViewHouseProperties = (props) => {
                 </small>
               </div>
             </CardContent>
-            <CardActions>
-              <Button size="small">View More</Button>
+            <CardActions className={classes.cardActions}>
+              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
             </CardActions>
           </Card>
-        </Grid>
-      </Grid>
+        </div>
     );
   }
 
   return (
-    <div className="vhp-container">
+    <div>
       <h2 className="title">{route} House Properties</h2>
-      <Grid container>
-        <Grid item xs>
+      <div className="vhp-container">
+        <div classsName="left-container">
           <div className="selection-items">
             <div className="street-select">
               <Autocomplete
@@ -383,7 +438,7 @@ const ViewHouseProperties = (props) => {
                   <TextField
                     {...params}
                     label="House number"
-                    variant="outlined"
+                    variant="filled"
                     disabled={!street_selected}
                   />
                 )}
@@ -393,23 +448,26 @@ const ViewHouseProperties = (props) => {
           <div className="google_map">
             <iframe
               title="viewHouse"
-              width="600"
-              height="450"
+              width="570"
+              height="460"
               frameBorder="0"
               styles="border:0"
               src={source}
               allowFullScreen
             ></iframe>
           </div>
-        </Grid>
-        {/* <Divider orientation="vertical" flexItem /> */}
-        <Grid item xs>
+        </div>
+        <Divider orientation="vertical" flexItem />
+        <div className="right-container">
           <div className="house-properties">
             <HouseProperties house={house_selected} />
-            <div className="clearfix"></div>
           </div>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
+      <div className="vhp-buttons">
+        <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>Cancel</Button>
+        <SaveButton>Save</SaveButton>
+      </div>
     </div>
   );
 };
