@@ -15,6 +15,10 @@ const App = () => (
     </li>
     <li>
       <Link to = {ROUTES.UNSAVED_CHANGES}>Unsaved Changes</Link>
+      
+      </li>
+      <li>
+      <Link to = {ROUTES.CARDS}>Cards</Link>
       </li>
   </div>
 );

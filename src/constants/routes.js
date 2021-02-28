@@ -23,3 +23,4 @@ export const ADMIN_ROUTES_DEL = ADMIN+'/delete'
 // Volunteer UI
 export const VOLUNTEER = '/volunteer';
 export const UNSAVED_CHANGES = VOLUNTEER + '/unsaved_changes';
+export const CARDS = VOLUNTEER + '/cards';
