@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
-import { storeRouteData } from '../ReusableComponents/RouteModels/routes';
+import { storeNewRouteData } from '../ReusableComponents/RouteModels/routes';
 import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -286,7 +286,7 @@ const NewRoutePanel = () => {
   }
 
   const handleDonated = (e) => {
-    setNumDonated(e.target.value.replace(/[^0-9]/g, ''))
+    setNumDonated(e.target.value.replace(/[^0-9.]/g, ''))
   }
 
   const handleDates = (e) => {
@@ -324,7 +324,7 @@ const NewRoutePanel = () => {
       alert('Please enter/add a street name');
       return;
     }
-    storeRouteData(routeName, houseNumbers, volNotes, cityName).then(msg => {
+    storeNewRouteData(routeName, houseNumbers, volNotes, cityName, canningDate, numDonated).then(msg => {
       setSnackBarState({
         open: true,
         severity: msg.state.toLowerCase(),

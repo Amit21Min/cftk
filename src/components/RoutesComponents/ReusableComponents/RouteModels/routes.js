@@ -74,7 +74,7 @@ function isRouteInStore(routeName) {
     })
 }
 
-export const storeRouteData = async (routeName, houseNumbers, volNotes, city) => {
+export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city, canningDate, numDonated) => {
     // Store each street as a document in FireStore
     // var streets = []
     // for (var street in houseNumbers) {
@@ -99,12 +99,18 @@ export const storeRouteData = async (routeName, houseNumbers, volNotes, city) =>
         state: 'ERROR',
         message: `A route with the name: ${routeName} already exists. Please pick a new name.`
     }
+
     db.collection("Routes")
         .doc(routeName)
         .set({
             streets: streets,
             assignmentStatus: false,
-            assignmentDates: {},
+            // assignmentDates: canningDate.length > 0 && numDonated.length > 0 ? {
+            //     [canningDate]: {
+            //         amountDonated: parseFloat(numDonated)
+            //     }
+            // } : {},
+            assingmentDates: {},
             perInterest: 0.0,
             perSoliciting: 0.0,
             total: 0.0,
