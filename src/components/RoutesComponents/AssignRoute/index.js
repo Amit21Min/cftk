@@ -7,6 +7,7 @@ import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import { db } from '../../FirebaseComponents/Firebase/firebase';
 // https://www.npmjs.com/package/material-ui-chip-input
 // npm i --save material-ui-chip-input@next
 // import ChipInput from 'material-ui-chip-input' // not working well - hard to style
@@ -29,26 +30,97 @@ const AssignRoute = (props) => {
         complete: false
     });
 
+    const getHouses = (item_ids, callback) => {
+        let itemRefs = item_ids.map(id => {
+          return db.collection('Streets').doc(id).get();
+        });
+
+        Promise.all(itemRefs)
+        .then(docs => {
+          let items = docs.map(doc => doc.data());
+          callback(items);
+        })
+        .catch(error => console.log(error))
+      }
+
+    const setActiveRoute = function(streets, houses, users, city) {
+        var today = new Date();
+        var routeHistory = {
+            assignedTo : null,
+            housesCompleted: 0,
+            housesTotal: 0,
+            streets: {},
+            visitDate: String(parseInt(today.getMonth())+1) + '/' + today.getDate()  + '/' + today.getFullYear(),
+            city: city
+        }
+        for (let i in streets) {
+            var gatherHouses = [];
+            let houseInfo = {
+                donationAmt: null,
+                learnMore: null,
+                solicitation: null,
+                volunteerComments: null
+            };
+            Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
+                routeHistory.housesTotal += 1;
+                gatherHouses.push({
+                    [houseNumber] : houseInfo
+                });
+            });
+            routeHistory.streets[streets[i]] = gatherHouses;
+        }
+        const ref = db.collection('your_collection_name').doc();
+        const id = ref.id;
+        let routeUID = props.routes + '_' + id;
+
+        const res = db.collection('RoutesActive').doc(routeUID).set(routeHistory);
+
+    };
+
+    const groupExists = async function(groupName) {
+        console.log('do something with groupname')
+    }
+
+    const setGroupAssignment = function() {
+        const groupName = document.getElementById('group').value
+        console.log(groupName);
+        if (groupExists(groupName)) {
+            console.log('group exists');
+        } else {
+            console.log('group doesnt exist --- PLACEHOLDER for popup')
+        }
+    }
+    
+    // async func for fetching all streets within a route, then fetching all street information and building the route object to store in "routeHistory"
+    const getStreets = async function(routeName) {
+        const routeRef = db.collection('Routes').doc(routeName);
+        const doc = await routeRef.get();
+        if (!doc.exists) {
+            console.log('No such document!');
+        } else {
+            let city = doc.data().city;
+            let streets = doc.data().streets;
+            getHouses(streets, houses => setActiveRoute(streets, houses, "placeholder users", city)); // getHouses grabs all of the houses with a Promise.all -> when resolved, it callbacks to houses() to set the route as active
+            setGroupAssignment();
+        }
+    }
+
     //submit assign
     const assign = () => {
         let input = {
+            routeID: props.routes,
             group: document.getElementById('group').value,
             link: document.getElementById('link').value,
             phone_numbers: phoneData,
             emails: emailData,
             message: document.getElementById('message').value,
         }
-        // TODO: some db interaction to assign routes
-        // 1. generate a route UID
-        var routeID = props.routes;
+        getStreets(input.routeID);
 
-        // 2. copy a blank template of the route's streets to RoutesActive, store under a route UID
-        // 3. change Group collection with the "Group Name" to be assigned to a new route
+        // 3. Deisgn unassign button to cache the active rouets (admin side, later to be used for volunteer UI "completing" a route")
         // 4. possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
 
         // TODO: create a button that "finishes" a route to implement the storage of a RoutesActive to a RoutesComplete
-        console.log(input);
-        console.log(routeID);
     }
 
     const addGroup = () => {
@@ -245,7 +317,8 @@ const AssignRoute = (props) => {
                 <p>&nbsp;&nbsp;&nbsp;</p>
                 <Button variant="contained" ml={50} style={{ borderRadius: 50 }} color="primary"
                     onClick={function (event) { assign(); props.close(); }}
-                    disabled={(phoneData.length == 0 && emailData.length == 0) || group === ""}>
+                    // disabled={(phoneData.length == 0 && emailData.length == 0) || group === ""}
+                    >
                     ASSIGN</Button>
             </Grid>
         </Box>
