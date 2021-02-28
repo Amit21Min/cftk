@@ -119,7 +119,6 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
             comments: volNotes
         });
     for (let streetName of streets) {
-        console.log(streetName)
         storeStreetData(streetName, houseNumbers[streetName], city)
     }
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
