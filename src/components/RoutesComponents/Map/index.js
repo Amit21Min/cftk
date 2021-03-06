@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
-import houseCompleteSelected from "../../../assets/images/MapIcons/houseCompleteSelected.svg";
+import houseCompleteSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
 
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
