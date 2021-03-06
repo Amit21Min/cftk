@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
-import houseCompleteSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
+import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
 
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
@@ -63,7 +63,7 @@ function Map(props) {
   function createMarkerListeners(marker) {
     const markerIn = marker.addListener('mouseover', function() {
       // Action on the way in
-      marker.setIcon(houseCompleteSelected)
+      marker.setIcon(houseDefaultSelected)
     });
     const markerOut = marker.addListener('mouseout', function() {
       // Reset on the way out
