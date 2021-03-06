@@ -24,3 +24,5 @@ export const ADMIN_ROUTES_DEL = ADMIN+'/delete'
 export const VOLUNTEER = '/volunteer';
 export const UNSAVED_CHANGES = VOLUNTEER + '/unsaved_changes';
 export const CARDS = VOLUNTEER + '/cards';
+export const STEPPER = VOLUNTEER + '/stepper';
+export const COMMENTS = VOLUNTEER + '/comments';

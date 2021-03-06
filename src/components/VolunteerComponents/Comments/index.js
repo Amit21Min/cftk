@@ -10,6 +10,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import { TextField } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) =>
@@ -40,36 +41,19 @@ export default function CenteredGrid() {
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>
         </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'>Was solicitation allowed?</Typography>
-        </Grid>
-        <Grid item xs={6} justify ='right' align = 'right'>
-        <Button style={{ "min-height": "150px", width: "40%" }}
-        variant="outlined"
-  color="black" align = 'center'
->
-  No
-</Button>
-        </Grid>
-        <Grid item xs={6} justify ='left' align = 'left'>
-        <Button style={{ "min-height": "150px", width: "40%" }}
-        variant="outlined"
-  color="black" align = 'center'
->
-  Yes
-</Button>
-        </Grid>
+        
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>
         </Grid>
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>
         </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
+        <Grid container direction = 'column' alignItems = 'center' justify = 'center' >
+        <TextField id="filled-basic" label="Comments" variant="filled" style = {{marginBottom: '5em'}} rows={4}  /> 
         </Grid>
         <Grid item xs={3}>
         </Grid>
+        
         <Grid item xs={3} justify = 'left' align ='left'>
         <Button className={classes.button}>CLEAR ALL</Button> 
         </Grid>
@@ -79,6 +63,18 @@ export default function CenteredGrid() {
       </Fab>  
         </Grid>
         <Grid item xs={3}>
+        </Grid>
+        <Grid item xs={12}>
+        <Typography variant="h6" align = 'center'></Typography>
+        </Grid>
+        <Grid item xs={12}>
+        <Typography variant="h6" align = 'center'></Typography>
+        </Grid>
+        <Grid item xs={12}>
+        <Typography variant="h6" align = 'center'></Typography>
+        </Grid>
+        <Grid item xs={12}>
+        <Typography variant="h6" align = 'center'></Typography>
         </Grid>
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>

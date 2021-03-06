@@ -15,11 +15,11 @@ const App = () => (
     </li>
     <li>
       <Link to = {ROUTES.UNSAVED_CHANGES}>Unsaved Changes</Link>
-      
-      </li>
+    </li>
       <li>
-      <Link to = {ROUTES.CARDS}>Cards</Link>
+      <Link to = {ROUTES.STEPPER}>CRUD House Data</Link>
       </li>
+
   </div>
 );
  
