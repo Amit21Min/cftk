@@ -237,30 +237,7 @@ const RoutesPanel = () => {
       if (typeof soliciting_pct == 'undefined') {
         soliciting_pct = "No History";
       }
-      // Once data models are set in stone, we can pick a better pattern for data validation, but for now, nested ifs seem okay.
-      // for now, we need this to validate each route
 
-        /*
-        if(raw_routes[i].canningData){
-          if(raw_routes[i].canningData.lastCanned){
-            // Example calculation for months_since_assigned
-            let now = new Date();
-            let last_assigned = new Date(raw_routes[i].canningData.lastCanned.toDate());
-            let years_since_assigned = now.getFullYear() - last_assigned.getFullYear();
-            months_since_assigned = ((years_since_assigned * 12) + (now.getMonth() - last_assigned.getMonth())).toString();
-          }
-          if(raw_routes[i].canningData.totalDonations){
-              total_donations = "$" + (raw_routes[i].canningData.totalDonations.toString() || "0");
-          } else {
-            months_since_assigned = "N/A";
-            total_donations = "N/A";
-          }
-        }
-        if(raw_routes[i].streets){
-
-        }
-
-        */
         // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
         // Right now this is hardcoded as an example while the data model for streets is worked out.
       var street_contents =
@@ -306,6 +283,7 @@ const RoutesPanel = () => {
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
         overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(data.routeName)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
                                     {text: "Assign",           action: () => assignRouteAction(data.routeName)},
+                                    {text: "Unassign",         action: () => overflow_actions.unassignRouteAction(data.routeName)},
                                     {text: "House Properties", action: overflow_actions.housePropertiesAction},
                                     {text: "Revision History", action: overflow_actions.revisionHistoryAction},
                                     {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
