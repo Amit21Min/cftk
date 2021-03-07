@@ -3,50 +3,30 @@ import React, { useState, useEffect } from "react";
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
+import { getMapAddresses } from '../ReusableComponents/RouteModels/routes';
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useFlatAddress(addresses) {
+function useFirebaseStreetInfo(routeName) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
-  const [markerCoords, setMarkerCoords] = useState([]);
+  const [streetInfo, setStreetInfo] = useState({});
 
   useEffect(() => {
-    let temp = [];
-    for (let street in addresses) {
-      for (let address in addresses[street]) {
-        temp.push(addresses[street][address]);
-      }
-    }
 
-    setMarkerCoords(temp);
+    getMapAddresses(routeName).then(newInfo => {
+      console.log(newInfo)
+      setStreetInfo({
+        routeName,
+        streetData: newInfo
+      })
+    })
 
-  }, [JSON.stringify(addresses)]);
 
-  return markerCoords
+  }, []);
+
+  return streetInfo
 }
-// To look at in the future, use snap to roads api to convert addresses to a road, but API key seems to be rejected
-// function useSnappedRoads(addresses) {
 
-//   const [roads, setRoads] = useState({});
-
-//   useEffect(() => {
-//     let snapPromises = []
-//     for (let street in addresses) {
-//       if (!roads[street] || Object.keys(addresses[street]) != Object.keys(roads[street])) {
-//         let streetCoords = []
-//         for (let address in addresses[street]) {
-//           streetCoords.push(`${addresses[street][address].lat},${addresses[street][address].lng}`)
-//         }
-//         snapPromises.push(fetch('https://roads.googleapis.com/v1/snapToRoads', {
-//           interpolate: true,
-//           key: process.env.REACT_APP_MAPS_API_KEY,
-//           path: streetCoords.join('|')
-//         }))
-//       }
-//     }
-//     Promise.all(snapPromises).then(res => console.log(res))
-//   }, [JSON.stringify(addresses)])
-// }
 
 function Map(props) {
   const defaultLoc = { lat: 35.9132, lng: -79.0558 }
@@ -57,7 +37,7 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const coords = useFlatAddress(props.addresses);
+  const { routeName, streetData } = useFirebaseStreetInfo(props.routeId || "Lucas1");
   // const roads = useSnappedRoads(props.addresses);
   function createMarkerListeners(marker) {
     const markerIn = marker.addListener('mouseover', function() {
@@ -78,19 +58,32 @@ function Map(props) {
   useEffect(() => {
 
     // Exit if the map or google objects are not yet ready
-    if (!map || !google || coords.length === 0) return;
+    if (!map || !google || !streetData || streetData.length === 0) return;
 
-
-    let tempMarkers = []
-    for (let address of coords) {
-      const marker = new google.maps.Marker({
-        map: map,
-        position: address,
-        icon: houseDefault
-      });
-      createMarkerListeners(marker);
-      tempMarkers.push(marker);
+    let tempMarkers = [];
+    for (let street of streetData) {
+      for (let [key, value] of Object.entries(street.addresses)) {
+        console.log(`${key} ${street.name}, ${street.city}`);
+        const marker = new google.maps.Marker({
+          map: map,
+          position: value,
+          icon: houseDefault
+        });
+        createMarkerListeners(marker);
+        tempMarkers.push(marker);
+      }
     }
+
+    // let tempMarkers = []
+    // for (let address of streetInfo) {
+    //   const marker = new google.maps.Marker({
+    //     map: map,
+    //     position: address,
+    //     icon: houseDefault
+    //   });
+    //   createMarkerListeners(marker);
+    //   tempMarkers.push(marker);
+    // }
 
     return function cleanup() {
       for (let marker of tempMarkers) {
@@ -98,7 +91,7 @@ function Map(props) {
       }
     }
 
-  }, [coords, map, google]);
+  }, [streetData, map, google, routeName]);
 
   useEffect(() => {
 

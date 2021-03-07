@@ -131,7 +131,6 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
 }
 
 export const storeStreetData = (streetName, streetData, city) => {
-    console.log(streetData)
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]
         let house = {
@@ -160,3 +159,49 @@ export const storeStreetData = (streetName, streetData, city) => {
     return
 }
 
+export const getMapAddresses = async (routeId) => {
+    try {
+        let streetNames = await new Promise((resolve, reject) => {
+            db.collection("Routes")
+                .doc("Lucas1")
+                .get()
+                .then(doc => {
+                    if (doc.exists) {
+                        resolve(doc.data().streets || [])
+                    } else {
+                        reject("Route does not exist")
+                    }
+                })
+        });
+        
+        let streetPromises = [];
+        for (let street in streetNames) {
+            const streetName = streetNames[street];
+            streetPromises.push(new Promise((resolve, reject) => {
+                db.collection("Streets")
+                .doc(streetName)
+                .get()
+                .then(doc => {
+                    if (!doc.exists) reject(`The data for the street ${streetName} cannot be found`);
+                    let simplifiedStreet = {
+                        name: streetName,
+                        addresses: {}
+                    };
+                    for (const [key, value] of Object.entries(doc.data())) {
+                        if (key === 'city') {
+                            simplifiedStreet[key] = value;
+                        } else if ( key !== 'completed') {
+                            simplifiedStreet.addresses[key] = value.coordinates
+                        }
+                    }
+                    resolve(simplifiedStreet)
+                })
+            }))
+        }
+    
+        return await Promise.all(streetPromises);
+    } catch (error) {
+        alert(error);
+        return [];
+    }
+}
