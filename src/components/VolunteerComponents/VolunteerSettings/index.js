@@ -4,13 +4,19 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import MailIcon from '@material-ui/icons/Mail';
 import "../VolunteerSettings/index.css";
 import NavBar from "../VolunteerNavBar/index.js";
+import { auth, db } from "../../FirebaseComponents/Firebase/firebase"; // use auth using userID
 
 const App = () => {
 
     const [textState, setTextState] = React.useState(true);
     const [emailState, setEmailState] = React.useState(false);
-    const [firstName, setFirstName] = React.useState("Sameer");
-    const [lastName, setLastName] = React.useState("Rao");
+    const [firstName, setFirstName] = React.useState("");
+    const [lastName, setLastName] = React.useState("");
+    const [userEmail, setUserEmail] = React.useState("");
+    const [phone, setPhone] = React.useState("");
+
+    const user = auth.currentUser; // use this to get the user's userID when we add login functionality
+    
 
     const handleTextChange = () => {
         setTextState(!textState);
@@ -19,6 +25,47 @@ const App = () => {
     const handleEmailChange = () => {
         setEmailState(!emailState);
     }
+
+    const fetchEmail = async function() {   
+        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+        let userDoc = await userRef.get();
+        setUserEmail(userDoc.data().email);
+    }
+
+    const fetchFName = async function() {
+        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+        let userDoc = await userRef.get();
+        setFirstName(userDoc.data().firstName);
+    }
+
+    const fetchLName = async function() {
+        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+        let userDoc = await userRef.get();
+        setLastName(userDoc.data().lastName);
+    }
+
+    const fetchPhone = async function() {
+        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+        let userDoc = await userRef.get();
+        setPhone(userDoc.data().phone);
+    }
+
+    React.useEffect(function () {
+        fetchEmail();
+    }, []);
+
+    React.useEffect(function () {
+        fetchFName();
+    }, []);
+
+    React.useEffect(function () {
+        fetchLName();
+    }, []);
+
+    React.useEffect(function () {
+        fetchPhone();
+    }, []);
+    
 
     const SignOutButton = withStyles({
         root: {
@@ -40,22 +87,23 @@ const App = () => {
       })(Button);
 
     return (
+
         <div className="main-container">
             <div className="vol-settings-content-container">
                 <div className="contact-container">
                     <h4 className="title-text">Contact Information</h4>
                     <form className="this-form">
                         <div className="text-boxes">
-                            <TextField id="filled-helperText" label="First name" defaultValue={firstName} variant="filled" margin="normal" fullWidth={true}/>
+                            <TextField id="filled-helperText-1" label="First name" value={firstName} variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                         <div className="text-boxes">
-                            <TextField id="filled-helperText" label="Last name" defaultValue={lastName} variant="filled" margin="normal" fullWidth={true}/>
+                            <TextField id="filled-helperText-2" label="Last name" value={lastName} variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                         <div className="text-boxes">
-                            <TextField id="filled-helperText" label="Email address" defaultValue="john.doe@gmail.com" helperText="Others will not be able to see this." defaultValue="" variant="filled" margin="normal" fullWidth={true}/>
+                            <TextField id="filled-helperText-3" label="Email address" value={userEmail} helperText="Others will not be able to see this." variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                         <div className="text-boxes">
-                        <TextField id="filled-helperText" label="Phone number" defaultValue="(919) 342 - 3461" helperText="Others will not be able to see this." defaultValue="" variant="filled" margin="normal" fullWidth={true}/>
+                        <TextField id="filled-helperText-4" label="Phone number" value={phone} helperText="Others will not be able to see this." variant="filled" margin="normal" fullWidth={true}/>
                         </div>
                     </form>
                 </div>

@@ -11,7 +11,9 @@ import * as ROUTES from '../../../constants/routes';
 
 /*======= When using the NavBar, use a tab prop with either 'settings', 'messages', 'progress'
 
-or 'route-map' as its value.
+or 'route-map' as its value. When using the NavBar, the parent element should be the full height.
+
+I suggest using a container div and setting its height to 100vh.
 
 ========= */
 
