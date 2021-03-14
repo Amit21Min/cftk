@@ -14,7 +14,6 @@ function useFirebaseStreetInfo(routeName) {
   useEffect(() => {
 
     getMapAddresses(routeName).then(newInfo => {
-      console.log(newInfo)
       setStreetInfo({
         routeName,
         streetData: newInfo
@@ -22,7 +21,7 @@ function useFirebaseStreetInfo(routeName) {
     })
 
 
-  }, []);
+  }, [routeName]);
 
   return streetInfo
 }
@@ -40,15 +39,15 @@ function Map(props) {
   const { routeName, streetData } = useFirebaseStreetInfo(props.routeId || "Lucas1");
   // const roads = useSnappedRoads(props.addresses);
   function createMarkerListeners(marker) {
-    const markerIn = marker.addListener('mouseover', function() {
+    const markerIn = marker.addListener('mouseover', function () {
       // Action on the way in
       marker.setIcon(houseDefaultSelected)
     });
-    const markerOut = marker.addListener('mouseout', function() {
+    const markerOut = marker.addListener('mouseout', function () {
       // Reset on the way out
       marker.setIcon(houseDefault)
     });
-    const markerClick = marker.addListener('click', function() {
+    const markerClick = marker.addListener('click', function () {
       // Action on click
       console.log('click');
     })
@@ -101,7 +100,7 @@ function Map(props) {
       if (!navigator.geolocation) {
         return onError(new Error('Geolocation is not supported by your browser.'));
       }
-    
+
       // Use watchPosition instead.
       return navigator.geolocation.watchPosition(onSuccess, onError);
     };
@@ -121,7 +120,15 @@ function Map(props) {
 
     const marker = new google.maps.Marker({
       map: map,
-      position: defaultLoc
+      position: defaultLoc,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 10,
+        fillColor: "#0075A3",
+        strokeColor: "#FFFFFF",
+        fillOpacity: 1,
+        strokeWeight: 3
+      },
     });
 
     const tracker = trackLocation({
@@ -134,7 +141,7 @@ function Map(props) {
     });
 
     return function cleanup() {
-        if (navigator.geolocation) navigator.geolocation.clearWatch(tracker)
+      if (navigator.geolocation) navigator.geolocation.clearWatch(tracker)
     }
 
   }, [google, map])
