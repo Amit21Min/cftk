@@ -26,3 +26,5 @@ export const VOLUNTEER_SETTINGS = VOLUNTEER + '/settings';
 export const VOLUNTEER_MAP = VOLUNTEER + '/map';
 export const VOLUNTEER_PROGRESS = VOLUNTEER + '/progress';
 export const VOLUNTEER_MESSAGES = VOLUNTEER + '/messages';
+
+export const VOLUNTEER_HOUSE_DATA = VOLUNTEER + '/house-data';

@@ -15,6 +15,9 @@ const App = () => (
     <li>
         <Link to={ROUTES.VOLUNTEER_SETTINGS}>Volunteer Settings</Link>
     </li>
+    <li>
+        <Link to={ROUTES.VOLUNTEER_HOUSE_DATA}>Volunteer CRUD House Data</Link>
+    </li>
 
   </div>
 );
