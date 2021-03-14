@@ -32,7 +32,7 @@ function VolunteerRoute() {
                         value={input}
                         onChange={handleInput}
                         InputProps={{
-                            endAdornment: <InputAdornment><IconButton><SearchIcon onClick={handleSearch}></SearchIcon></IconButton></InputAdornment>
+                            endAdornment: <InputAdornment><IconButton onClick={handleSearch}><SearchIcon></SearchIcon></IconButton></InputAdornment>
                         }}
                     ></TextField>
                 </Paper>
