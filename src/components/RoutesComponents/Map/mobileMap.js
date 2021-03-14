@@ -144,10 +144,12 @@ function Map(props) {
       if (navigator.geolocation) navigator.geolocation.clearWatch(tracker)
     }
 
-  }, [google, map])
+  }, [google, map]);
+
+  const innerStyle = props.innerStyle ? props.innerStyle : { bottom: '0px' };
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {/* <span>
             Example from{" "}
             <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
@@ -155,6 +157,9 @@ function Map(props) {
             </a>
           </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
+      <div style={{ position: 'absolute', ...innerStyle }}>
+        {props.children}
+      </div>
     </div>
   );
 }
