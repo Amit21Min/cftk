@@ -163,7 +163,7 @@ export const getMapAddresses = async (routeId) => {
     try {
         let streetNames = await new Promise((resolve, reject) => {
             db.collection("Routes")
-                .doc("Lucas1")
+                .doc(routeId)
                 .get()
                 .then(doc => {
                     if (doc.exists) {
