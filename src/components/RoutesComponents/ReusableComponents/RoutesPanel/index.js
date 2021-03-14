@@ -31,11 +31,11 @@ import {RouteColumnContext, RouteItemsContext,
 
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
-  const [routeMetrics, setRouteMetrics] = useState({
-    total_assigned: "0",
-    ready_to_be_assigned: "1",
+  const [routeMetrics, setRouteMetrics] = useState({ // hook up to firebase
+    total_assigned: "12",
+    ready_to_be_assigned: "5",
     donations_this_year: "$300",
-    delta_from_last_canning: "N/A"
+    delta_from_last_canning: "$124"
   });
 
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.

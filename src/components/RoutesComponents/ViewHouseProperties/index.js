@@ -79,7 +79,7 @@ const ViewHouseProperties = () => {
 
     //runs only once - sets streets based on route
     useEffect(() => {
-    db.collection("Routes").doc("R16").get().then(doc => {
+    db.collection("Routes").doc("R16").get().then(doc => { // add R16 to firebase
         const data = doc.data();
         setStreets(data.streets);
     })
