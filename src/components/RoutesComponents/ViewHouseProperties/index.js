@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import { db } from "../../FirebaseComponents/Firebase/firebase";
-import PanelBanner from "../ReusableComponents/PanelBanner";
 
-import {withStyles} from "@material-ui/core/styles"
+import { withStyles } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -11,9 +10,16 @@ import Button from "@material-ui/core/Button";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
 import { CardContent } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -27,39 +33,62 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#F1F3F5",
     borderRadius: "24px",
     width: "248px",
-    height: '320px'
+    height: "320px",
+    color: "#051820"
   },
   vhpCardTitle: {
     fontWeight: 600,
     fontSize: "20px",
     font: "Raleway",
+    marginBottom: "32px"
   },
   cardActions: {
     display: "flex",
     justifyContent: "flex-end",
+  },
+  cardSmallText: {
+    fontSize: "11px",
+  },
+  dialogPaper: {
+    maxHeight: '721px',
+    width: '436px',
+    textAlign: 'center'
+  },
+  dialogListContainer: {
+    textAlign: 'left',
+    margin: '20px'
+  },
+  dialogSmallText: {
+    fontSize: "11px",
+    color: "#6D6E71"
+  },
+  dialogSelect: {
+    margin: "0px 32px",
+    textAlign: 'left'
   }
 }));
 
 const SaveButton = withStyles({
   root: {
-    background: '#0075A3',
-    color: 'white',
-    borderRadius: '19px',
-    fontSize: '14px',
-    lineHeight: '19px',
-    fontWeight: '300',
-    width: '88px',
-    height: '36px',
+    background: "#0075A3",
+    color: "white",
+    borderRadius: "19px",
+    fontSize: "14px",
+    lineHeight: "19px",
+    fontWeight: "300",
+    width: "88px",
+    height: "36px",
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.14)",
-    '&:hover': {
-      background: '#0075A3',
-      color: 'white',
-    }
-  }
+    "&:hover": {
+      background: "#0075A3",
+      color: "white",
+    },
+  },
 })(Button);
 
 const ViewHouseProperties = (props) => {
   const route = props.location.state;
+
   //function to get route - not yet implemented
   /*
     function getRoute(streetArray) {
@@ -93,6 +122,24 @@ const ViewHouseProperties = (props) => {
   const [house_selected, setHouseSelected] = useState(false);
 
   const [source, setSource] = useState();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+
+  const [filter, setFilter] = useState(60);
+
+  const handleDialogOpen = (_title) => {
+    setDialogTitle(_title);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const filterChange = (event) => {
+    setFilter(event.target.value);
+  }
 
   const classes = useStyles();
 
@@ -256,150 +303,143 @@ const ViewHouseProperties = (props) => {
 
     return (
       <div className="house-props-cards">
-          <Card className={classes.vhpCard}>
-            <CardContent>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="h2"
-                className={classes.vhpCardTitle}
-              >
-                Solicitations
-              </Typography>
-              <div>
-                <h6>{solicitationAllowedText(0)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
+        <Card className={classes.vhpCard}>
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              className={classes.vhpCardTitle}
+            >
+              Solicitations
+            </Typography>
+            {data.solicitation.slice(0,3).map((item , index) =>  {
+              return (
+              <div key={index}>
+                <h6>{item.allowed ? "Allowed": "Not Allowed"}</h6>
+                <small className={classes.cardSmallText}>
+                  Group {getGroup(0)} | {item.date}
                 </small>
+                <Divider style={{marginTop: "10px"}}/>
               </div>
-              <Divider />
-              <div>
-                <h6>{solicitationAllowedText(1)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-              <Divider />
-              <div>
-                <h6>{solicitationAllowedText(2)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-            </CardContent>
-            <CardActions className={classes.cardActions}>
-              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
-            </CardActions>
-          </Card>
+              )
+            })}
+          </CardContent>
+          <CardActions className={classes.cardActions}>
+            <Button
+              size="small"
+              color="primary"
+              style={{ fontWeight: 600, fontSize: "16px" }}
+              onClick={() => handleDialogOpen('Solicitations')}
+            >
+              View All
+            </Button>
+          </CardActions>
+        </Card>
 
-          <Card className={classes.vhpCard}>
-            <CardContent>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="h2"
-                className={classes.vhpCardTitle}
-              >
-                Donations
-              </Typography>
-              <div>
-                <h6>${getDonation(0)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
+        <Card className={classes.vhpCard}>
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              className={classes.vhpCardTitle}
+            >
+              Donations
+            </Typography>
+            {data.donations.slice(0,3).map((item, index) =>  {
+              return (
+              <div key={index}>
+                <h6>${item.amount}</h6>
+                <small className={classes.cardSmallText}>
+                  Group {getGroup(0)} | {item.date}
                 </small>
+                <Divider style={{marginTop: "10px"}}/>
               </div>
-              <Divider />
-              <div>
-                <h6>${getDonation(1)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-              <Divider />
-              <div>
-                <h6>${getDonation(2)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-            </CardContent>
-            <CardActions className={classes.cardActions}>
-              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
-            </CardActions>
-          </Card>
+              )
+            })}
+          </CardContent>
+          <CardActions className={classes.cardActions}>
+            <Button
+              size="small"
+              color="primary"
+              style={{ fontWeight: 600, fontSize: "16px" }}
+              onClick={() => handleDialogOpen('Donations')}
+            >
+              View All
+            </Button>
+          </CardActions>
+        </Card>
 
-          <Card className={classes.vhpCard}>
-            <CardContent>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="h2"
-                className={classes.vhpCardTitle}
-              >
-                Volunteer Comments
-              </Typography>
-              <div>
-                <h6>{getComment(0)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
+        <Card className={classes.vhpCard}>
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              className={classes.vhpCardTitle}
+            >
+              Volunteer Comments
+            </Typography>
+            {data.comments.slice(0,3).map((item, index) =>  {
+              return (
+              <div key={index}>
+                <h6>{item.comment}</h6>
+                <small className={classes.cardSmallText}>
+                  Group {getGroup(0)} | {item.date}
                 </small>
+                <Divider style={{marginTop: "10px"}}/>
               </div>
-              <Divider />
-              <div>
-                <h6>{getComment(1)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-              <Divider />
-              <div>
-                <h6>{getComment(2)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-            </CardContent>
-            <CardActions className={classes.cardActions}>
-              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
-            </CardActions>
-          </Card>
+              )
+            })}
+          </CardContent>
+          <CardActions className={classes.cardActions}>
+            <Button
+              size="small"
+              color="primary"
+              style={{ fontWeight: 600, fontSize: "16px" }}
+              onClick={() => handleDialogOpen('Volunteer Comments')}
+            >
+              View All
+            </Button>
+          </CardActions>
+        </Card>
 
-          <Card className={classes.vhpCard}>
-            <CardContent>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="h2"
-                className={classes.vhpCardTitle}
-              >
-                Interested in Learning More
-              </Typography>
-              <div>
-                <h6>{learnMoreText(0)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
+        <Card className={classes.vhpCard}>
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              className={classes.vhpCardTitle}
+              style={{marginBottom: "8px"}}
+            >
+              Interested in Learning More
+            </Typography>
+            {data.learnMore.slice(0,3).map((item, index) =>  {
+              return (
+              <div key={index}>
+                <h6>{item.learn ? "Yes": "No"}</h6>
+                <small className={classes.cardSmallText}>
+                  Group {getGroup(0)} | {item.date}
                 </small>
+                <Divider style={{marginTop: "10px"}}/>
               </div>
-              <Divider />
-              <div>
-                <h6>{learnMoreText(1)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-              <Divider />
-              <div>
-                <h6>{learnMoreText(2)}</h6>
-                <small>
-                  Group {getGroup(0)} | {getDate(0)}
-                </small>
-              </div>
-            </CardContent>
-            <CardActions className={classes.cardActions}>
-              <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>View All</Button>
-            </CardActions>
-          </Card>
-        </div>
+              )
+            })}
+          </CardContent>
+          <CardActions className={classes.cardActions}>
+            <Button
+              size="small"
+              color="primary"
+              style={{ fontWeight: 600, fontSize: "16px" }}
+              onClick={() => handleDialogOpen('Learn More')}
+            >
+              View All
+            </Button>
+          </CardActions>
+        </Card>
+      </div>
     );
   }
 
@@ -465,9 +505,96 @@ const ViewHouseProperties = (props) => {
         </div>
       </div>
       <div className="vhp-buttons">
-        <Button size="small" color="primary" style={{fontWeight:600, fontSize:'16px'}}>Cancel</Button>
+        <Button
+          size="small"
+          color="primary"
+          style={{ fontWeight: 600, fontSize: "16px" }}
+        >
+          Cancel
+        </Button>
         <SaveButton>Save</SaveButton>
       </div>
+      <Dialog
+          open={dialogOpen}
+          onClose={handleDialogClose}
+          classes={{paper: classes.dialogPaper}}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title" className={classes.vhpCardTitle}>
+            {dialogTitle}
+          </DialogTitle>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={filter}
+            onChange={filterChange}
+            className={classes.dialogSelect}
+          >
+            <MenuItem value={10}>Custom</MenuItem>
+            <MenuItem value={20}>Last 30 days</MenuItem>
+            <MenuItem value={30}>Last 6 months</MenuItem>
+            <MenuItem value={40}>Last year</MenuItem>
+            <MenuItem value={50}>Last 5 years</MenuItem>
+            <MenuItem value={60}>All time</MenuItem>
+          </Select>
+          <DialogContent>
+            {dialogTitle == 'Volunteer Comments' &&
+              <div className={classes.dialogListContainer}>
+                {data.comments.map((value, index) => {
+                  return <div key={index}>
+                    <h6>{value.comment}</h6>
+                    <small className={classes.dialogSmallText}>Group | {value.date}</small>
+                  </div>
+                })}
+              </div>
+            }
+            {dialogTitle == 'Solicitations' &&
+              <div className={classes.dialogListContainer}>
+                {data.solicitation.map((value, index) => {
+                  return <div key={index}>
+                  <h6>{value.allowed ? "Allowed" : "Not Allowed"}</h6>
+                  <small className={classes.dialogSmallText}>
+                    Group  | {value.date}
+                  </small>
+                  </div>
+                })
+                }
+             </div>
+            }
+            {dialogTitle == 'Donations' &&
+              <div className={classes.dialogListContainer}>
+                {data.donations.map((value, index) => {
+                  return <div key={index}>
+                    <h6>${value.amount}</h6>
+                    <small className={classes.dialogSmallText}>
+                      Group  | {value.date}
+                    </small>
+                  </div>
+                })
+                }
+              </div>
+            }
+            {dialogTitle == 'Learn More' &&
+              <div className={classes.dialogListContainer}>
+                {data.learnMore.map((value, index) => {
+                  return <div  key={index}>
+                    <h6>{value.learn}</h6>
+                    <small className={classes.dialogSmallText}>
+                      Group  | {value.date}
+                    </small>
+                  </div>
+                })
+                }
+              </div>
+            }
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary" autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
     </div>
   );
 };

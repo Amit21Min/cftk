@@ -57,7 +57,7 @@
 } */
 
 .vhp-container {
-    margin: 20px;
+    margin: 32px;
     display: inline-grid;
     grid-template-columns: auto auto auto;
     grid-column-gap: 20px
@@ -91,4 +91,9 @@
     justify-content: flex-end;
     gap: 33px;
     margin: 40px 160px 40px 0px
+}
+
+.title {
+    margin-left: 32px;
+    margin-top: 28px;
 }
