@@ -24,3 +24,7 @@ export const ADMIN_ROUTES_DEL = ADMIN+'/delete'
 export const VOLUNTEER = '/volunteer';
 
 export const VOLUNTEER_ASSIGNMENT = VOLUNTEER + '/assignment';
+export const VOLUNTEER_SETTINGS = VOLUNTEER + '/settings';
+export const VOLUNTEER_MAP = VOLUNTEER + '/map';
+export const VOLUNTEER_PROGRESS = VOLUNTEER + '/progress';
+export const VOLUNTEER_MESSAGES = VOLUNTEER + '/messages';
