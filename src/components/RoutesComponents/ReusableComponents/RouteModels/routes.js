@@ -160,7 +160,12 @@ export const storeStreetData = (streetName, streetData, city) => {
 }
 
 export const getMapAddresses = async (routeId) => {
-    if (!routeId || routeId === "") return;
+    let returnObj = {
+        streetData: [],
+        error: ""
+    }
+
+    if (!routeId || routeId === "") return returnObj;
     try {
         let streetNames = await new Promise((resolve, reject) => {
             db.collection("Routes")
@@ -199,10 +204,15 @@ export const getMapAddresses = async (routeId) => {
                 })
             }))
         }
-    
-        return await Promise.all(streetPromises);
+
+        const newData = await Promise.all(streetPromises);
+        returnObj.streetData = newData;
+        return returnObj;
     } catch (error) {
-        alert(error);
-        return [];
+        returnObj = {
+            streetData: [],
+            error: error
+        }
+        return returnObj;
     }
 }

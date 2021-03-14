@@ -1,9 +1,11 @@
 // import { AddCircle } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
 import { getMapAddresses } from '../ReusableComponents/RouteModels/routes';
+import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
@@ -15,7 +17,7 @@ function useFirebaseStreetInfo(routeName) {
     getMapAddresses(routeName).then(newInfo => {
       setStreetInfo({
         routeName,
-        streetData: newInfo
+        ...newInfo
       })
     })
   }, [routeName]);
@@ -33,9 +35,13 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const { routeName, streetData } = useFirebaseStreetInfo(props.routeId || "Lucas1");
+  const { routeName, streetData, error } = useFirebaseStreetInfo(props.routeId);
+  const [snackBarState, setSnackBarState] = useState({
+    open: false,
+    message: ""
+  })
   // const roads = useSnappedRoads(props.addresses);
-  function createMarkerListeners(marker) {
+  function createMarkerListeners(marker, streetData) {
     const markerIn = marker.addListener('mouseover', function () {
       // Action on the way in
       marker.setIcon(houseDefaultSelected)
@@ -46,7 +52,7 @@ function Map(props) {
     });
     const markerClick = marker.addListener('click', function () {
       // Action on click
-      console.log('click');
+      console.log('click', streetData);
     })
     return [markerIn, markerOut, markerClick]
   }
@@ -65,7 +71,7 @@ function Map(props) {
           position: value,
           icon: houseDefault
         });
-        createMarkerListeners(marker);
+        createMarkerListeners(marker, { key, steet: street.name, city: street.city });
         tempMarkers.push(marker);
       }
     }
@@ -105,7 +111,7 @@ function Map(props) {
     function getPositionErrorMessage(code) {
       switch (code) {
         case 1:
-          return 'Permission denied.';
+          return 'Location Permission denied.';
         case 2:
           return 'Position unavailable.';
         case 3:
@@ -134,7 +140,11 @@ function Map(props) {
         map.panTo({ lat, lng });
       },
       onError: err =>
-        alert(`Error: ${getPositionErrorMessage(err.code) || err.message}`)
+        setSnackBarState({
+          open: true,
+          message: `${getPositionErrorMessage(err.code) || err.message}`
+        })
+      // alert(`Error: ${getPositionErrorMessage(err.code) || err.message}`)
     });
 
     return function cleanup() {
@@ -142,6 +152,36 @@ function Map(props) {
     }
 
   }, [google, map]);
+
+  useEffect(() => {
+    if (error === "") {
+      setSnackBarState({
+        open: false,
+        message: error
+      })
+    } else {
+      setSnackBarState({
+        open: true,
+        message: error
+      })
+    }
+    return function close() {
+      setSnackBarState({
+        open: false,
+        message: ""
+      })
+    }
+  }, [error]);
+
+  function handleSnackBarClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackBarState({
+      open: false,
+      message: ""
+    });
+  }
 
   const innerStyle = props.innerStyle ? props.innerStyle : { bottom: '0px' };
 
@@ -157,8 +197,22 @@ function Map(props) {
       {props.children ? <div style={{ position: 'absolute', ...innerStyle }}>
         {props.children}
       </div> : null}
+      {!snackBarState.message || snackBarState.message === "" ? null : <AlertSnackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={snackBarState.open}
+        severity={"error"}
+        autoHideDuration={6000}
+        onClose={handleSnackBarClose}>
+        {snackBarState.message}
+      </AlertSnackbar>}
     </div>
   );
+}
+
+Map.propTypes = {
+  routeId: PropTypes.string,
+  innerStyle: PropTypes.object,
+  children: PropTypes.node
 }
 
 export default Map;
