@@ -12,15 +12,12 @@ function useFirebaseStreetInfo(routeName) {
   const [streetInfo, setStreetInfo] = useState({});
 
   useEffect(() => {
-
     getMapAddresses(routeName).then(newInfo => {
       setStreetInfo({
         routeName,
         streetData: newInfo
       })
     })
-
-
   }, [routeName]);
 
   return streetInfo
@@ -62,7 +59,7 @@ function Map(props) {
     let tempMarkers = [];
     for (let street of streetData) {
       for (let [key, value] of Object.entries(street.addresses)) {
-        console.log(`${key} ${street.name}, ${street.city}`);
+        // console.log(`${key} ${street.name}, ${street.city}`);
         const marker = new google.maps.Marker({
           map: map,
           position: value,
@@ -157,9 +154,9 @@ function Map(props) {
             </a>
           </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
-      <div style={{ position: 'absolute', ...innerStyle }}>
+      {props.children ? <div style={{ position: 'absolute', ...innerStyle }}>
         {props.children}
-      </div>
+      </div> : null}
     </div>
   );
 }

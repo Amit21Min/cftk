@@ -160,6 +160,7 @@ export const storeStreetData = (streetName, streetData, city) => {
 }
 
 export const getMapAddresses = async (routeId) => {
+    if (!routeId || routeId === "") return;
     try {
         let streetNames = await new Promise((resolve, reject) => {
             db.collection("Routes")

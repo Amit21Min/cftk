@@ -13,7 +13,7 @@ import { useGoogleMaps } from "react-hook-google-maps";
 
 import * as ROUTES from '../../../constants/routes';
 
-import Map from '../Map/mobileMap';
+import Map from '../Map/';
 
 // TODO: Implement revision history and modified by (Feature from figma, but rather weird for creating a route)
 // TODO: Deal with google map implementation (the map doesn't update properly after the inital adding of addresses)
