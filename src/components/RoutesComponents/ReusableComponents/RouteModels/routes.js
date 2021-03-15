@@ -94,12 +94,18 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
     //         city: city,
     //         comments: volNotes
     //     })
-    const streets = Object.keys(houseNumbers);
+    var streets = Object.keys(houseNumbers);
     const isOldRoute = await isRouteInStore(routeName);
     if (isOldRoute) return {
         state: validationStates.ERROR,
         message: `A route with the name: ${routeName} already exists. Please pick a new name.`
     }
+
+    streets = streets.map((road) => {
+        return (streets + '_' + routeName);
+    });
+    // console.log(routeName)
+    console.log(streets);
 
     db.collection("Routes")
         .doc(routeName)
@@ -119,7 +125,8 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
             comments: volNotes
         });
     for (let streetName of streets) {
-        storeStreetData(streetName, houseNumbers[streetName], city)
+        console.log(streetName);
+        storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city)
     }
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
     return {
