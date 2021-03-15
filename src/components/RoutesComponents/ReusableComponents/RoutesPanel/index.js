@@ -292,7 +292,7 @@ const RoutesPanel = () => {
                   }
       });
     }
-
+    console.log(tabled_routes);
     return tabled_routes;
   }
 
@@ -300,8 +300,29 @@ const RoutesPanel = () => {
     console.log("Creating a new route!");
   }
 
+  const fetchRoads = async (allRoads) => {
+    var allRoadsData = [];
+    var roadsRef = db.collection('Streets');
+    var roadsDoc = await roadsRef.get();
+    var obj = {};
+    var test = [];
+    roadsDoc.forEach(doc => {
+      // console.log(doc.id, doc.data());
+      test.push({
+        [doc.id] : doc.data()
+      })
+    });
+    console.log(test);
+    // var test = roadsDoc.docs.map(doc => {
+    //   var streetName = doc.id;
+    //   obj[streetName] = doc.data();
+    //   return obj;
+    // });
+    console.log(test);
+  }
+
   useEffect(() => {
-    db.collection('Routes').onSnapshot(snapshot => {
+    db.collection('Routes').onSnapshot(async snapshot => {
       const allRoutes = snapshot.docs.map((route) => {
         // TODO - fetch route visit date
         return({
@@ -309,20 +330,12 @@ const RoutesPanel = () => {
           routeName: route.id
         })
       });
-      // console.log(allRoutes);
 
-    
-      // const routeRef = db.collection('RouteHistory').doc("R17");
-      // var visitDate;
-      // routeRef.get().then(function(doc) {
-      //   if (doc.exists) {
-      //     console.log(doc.data().visitDate)
-      //     visitDate = doc.data().visitDate;
-      //   } else {
-      //     console.log('failed to fetch');
-      //   }
-      //   console.log(visitDate);
-      // });
+      var allRoads = [];
+      allRoutes.forEach((route) => {
+        allRoads.push(route.streets);
+      });
+      var roadData = await fetchRoads(allRoads);
 
       setRoutes(tableTransform(allRoutes));
     });

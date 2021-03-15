@@ -123,10 +123,7 @@ const AssignRoute = (props) => {
         }
         getStreets(input);
 
-        // 3. Deisgn unassign button to cache the active rouets (admin side, later to be used for volunteer UI "completing" a route")
-        // 4. possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
-
-        // TODO: create a button that "finishes" a route to implement the storage of a RoutesActive to a RoutesComplete
+        // TODO possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
     }
 
     const addGroup = () => {
