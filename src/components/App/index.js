@@ -13,7 +13,6 @@ import SignUpPage from '../FirebaseComponents/SignUp/index.js';
 import ForgotPasswordPage from '../ForgotPassword/index.js';
 import HomePage from '../Home/index';
 import Volunteer from '../VolunteerComponents/Volunteer/index.js';
-<<<<<<< HEAD
 import UnsavedChanges from '../VolunteerComponents/UnsavedChanges/index.js';
 import Cards from '../VolunteerComponents/Cards/index.js';
 import Stepper from '../VolunteerComponents/Stepper/index.js';
@@ -21,13 +20,12 @@ import Comments from '../VolunteerComponents/Comments/index.js';
 import Interest from '../VolunteerComponents/Interest/index.js';
 import Donation from '../VolunteerComponents/Donation/index.js';
 
-=======
+
 import VolunteerSettings from '../VolunteerComponents/VolunteerSettings/index.js';
-<<<<<<< HEAD
->>>>>>> master
-=======
+
+
 import VolunteerHouseData from '../VolunteerComponents/VolunteerHouseData/index.js';
->>>>>>> liyu-housedata
+
 
 import * as ROUTES from '../../constants/routes';
 
@@ -71,7 +69,7 @@ const App = () => (
         <Route path={ROUTES.ADMIN_ROUTES} component={AdminLayout} />
         <Route path={ROUTES.ADMIN_VOLUNTEERS} component={AdminLayout} />
         <Route exact path={ROUTES.VOLUNTEER} component={Volunteer} />
-<<<<<<< HEAD
+
         <Route exact path = {ROUTES.UNSAVED_CHANGES} component = {UnsavedChanges} />
         <Route exact path = {ROUTES.CARDS} component = {Cards} />
         <Route exact path = {ROUTES.STEPPER} component = {Stepper} />
@@ -81,12 +79,12 @@ const App = () => (
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
       
-=======
+
         <Route path={ROUTES.VOLUNTEER_SETTINGS} component={VolunteerSettings} />
         <Route path={ROUTES.VOLUNTEER_HOUSE_DATA} component={VolunteerHouseData} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
->>>>>>> master
+
         
       </div>
 
