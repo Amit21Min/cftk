@@ -22,21 +22,19 @@ export const ADMIN_ROUTES_DEL = ADMIN+'/delete'
 
 // Volunteer UI
 export const VOLUNTEER = '/volunteer';
-<<<<<<< HEAD
+
 export const UNSAVED_CHANGES = VOLUNTEER + '/unsaved_changes';
 export const CARDS = VOLUNTEER + '/cards';
 export const STEPPER = VOLUNTEER + '/stepper';
 export const COMMENTS = VOLUNTEER + '/comments';
 export const INTEREST = VOLUNTEER + '/interest';
 export const DONATION = VOLUNTEER + '/donation';
-=======
+
 export const VOLUNTEER_SETTINGS = VOLUNTEER + '/settings';
 export const VOLUNTEER_MAP = VOLUNTEER + '/map';
 export const VOLUNTEER_PROGRESS = VOLUNTEER + '/progress';
 export const VOLUNTEER_MESSAGES = VOLUNTEER + '/messages';
-<<<<<<< HEAD
->>>>>>> master
-=======
+
 
 export const VOLUNTEER_HOUSE_DATA = VOLUNTEER + '/house-data';
->>>>>>> liyu-housedata
+
