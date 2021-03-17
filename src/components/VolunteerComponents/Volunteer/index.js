@@ -16,10 +16,11 @@ const App = () => (
     <li>
       <Link to = {ROUTES.UNSAVED_CHANGES}>Unsaved Changes</Link>
     </li>
-      <li>
+    <li>
       <Link to = {ROUTES.STEPPER}>CRUD House Data</Link>
-      </li>
+    </li>
 
+    <li>
         <Link to={ROUTES.VOLUNTEER_SETTINGS}>Volunteer Settings</Link>
     </li>
 
