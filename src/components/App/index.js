@@ -23,7 +23,11 @@ import Donation from '../VolunteerComponents/Donation/index.js';
 
 =======
 import VolunteerSettings from '../VolunteerComponents/VolunteerSettings/index.js';
+<<<<<<< HEAD
 >>>>>>> master
+=======
+import VolunteerHouseData from '../VolunteerComponents/VolunteerHouseData/index.js';
+>>>>>>> liyu-housedata
 
 import * as ROUTES from '../../constants/routes';
 
@@ -79,6 +83,7 @@ const App = () => (
       
 =======
         <Route path={ROUTES.VOLUNTEER_SETTINGS} component={VolunteerSettings} />
+        <Route path={ROUTES.VOLUNTEER_HOUSE_DATA} component={VolunteerHouseData} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
 >>>>>>> master

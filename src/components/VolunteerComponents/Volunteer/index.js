@@ -23,7 +23,13 @@ const App = () => (
 =======
         <Link to={ROUTES.VOLUNTEER_SETTINGS}>Volunteer Settings</Link>
     </li>
+<<<<<<< HEAD
 >>>>>>> master
+=======
+    <li>
+        <Link to={ROUTES.VOLUNTEER_HOUSE_DATA}>Volunteer CRUD House Data</Link>
+    </li>
+>>>>>>> liyu-housedata
 
   </div>
 );
