@@ -10,7 +10,6 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
-import { TextField } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) =>
@@ -33,33 +32,41 @@ export default function CenteredGrid() {
   return (
     <div className={classes.root}>
       <Grid container spacing={4}> 
-      <Grid item xs={12}>
+        <Grid item xs={12}>
         <Typography variant="caption" align = 'left'>102 Misty Pines Pl</Typography>
         </Grid>
         <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
+        <Typography variant="subtitle2" align = 'center'>Were the household residents interested in learning more about Carolina for the Kids? *</Typography>
+        </Grid>
+        <Grid item xs={6} justify ='right' align = 'right'>
+        <Button style={{ "min-height": "130px", width: "130px" }}
+        variant="outlined"
+  color="black" align = 'center'
+>
+  No
+</Button>
+        </Grid>
+        <Grid item xs={6} justify ='left' align = 'left'>
+        <Button style={{ "min-height": "130px", width: "130px" }}
+        variant="outlined"
+  color="black" align = 'center'
+>
+  Yes
+</Button>
         </Grid>
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid container direction = 'column' alignItems = 'center' justify = 'center' >
-        <TextField id="filled-basic" label="Comments" variant="filled" style = {{marginBottom: '5em'}} rows={4}  /> 
         </Grid>
         <Grid item xs={6} justify = 'left' align ='left'>
-        <Button className={classes.button}>CLEAR ALL</Button> 
+        <Button className={classes.button}>BACK</Button> 
         </Grid>
         <Grid item xs={6} justify = 'right' align ='right'>
-        <Fab variant="extended" aria-label="Delete" className={classes.fab}>
-        Submit
+        <Fab variant="extended" aria-label="Delete"  className={classes.fab}>
+        CONTINUE
       </Fab>  
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12}>
+        <Typography variant="h6" align = 'center'></Typography>
         </Grid>
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>

@@ -32,19 +32,14 @@ export default function CenteredGrid() {
   return (
     <div className={classes.root}>
       <Grid container spacing={4}> 
-      <Grid item xs={3}>
-        </Grid>
-        <Grid item xs={3}>
-        <Typography variant="h6" align = 'left'>102 Misty Pines Pl</Typography>
+        <Grid item xs={12}>
+        <Typography variant="caption" align = 'left'>102 Misty Pines Pl</Typography>
         </Grid>
         <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'>Was solicitation allowed?</Typography>
+        <Typography variant="subtitle1" align = 'center'>Was solicitation allowed?</Typography>
         </Grid>
         <Grid item xs={6} justify ='right' align = 'right'>
-        <Button style={{ "min-height": "150px", width: "40%" }}
+        <Button style={{ "min-height": "130px", width: "130px" }}
         variant="outlined"
   color="black" align = 'center'
 >
@@ -52,7 +47,7 @@ export default function CenteredGrid() {
 </Button>
         </Grid>
         <Grid item xs={6} justify ='left' align = 'left'>
-        <Button style={{ "min-height": "150px", width: "40%" }}
+        <Button style={{ "min-height": "130px", width: "130px" }}
         variant="outlined"
   color="black" align = 'center'
 >
@@ -62,29 +57,13 @@ export default function CenteredGrid() {
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>
         </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={3}>
-        </Grid>
-        <Grid item xs={3} justify = 'left' align ='left'>
+        <Grid item xs={6} justify = 'left' align ='left'>
         <Button className={classes.button}>CLEAR ALL</Button> 
         </Grid>
-        <Grid item xs={3} justify = 'right' align ='right'>
+        <Grid item xs={6} justify = 'right' align ='right'>
         <Fab variant="extended" aria-label="Delete" className={classes.fab}>
         Submit
       </Fab>  
-        </Grid>
-        <Grid item xs={3}>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
         </Grid>
         <Grid item xs={12}>
         <Typography variant="h6" align = 'center'></Typography>

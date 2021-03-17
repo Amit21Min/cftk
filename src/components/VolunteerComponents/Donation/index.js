@@ -13,6 +13,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import { TextField } from '@material-ui/core';
 
 
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
@@ -33,23 +34,33 @@ export default function CenteredGrid() {
   return (
     <div className={classes.root}>
       <Grid container spacing={4}> 
-      <Grid item xs={12}>
+        <Grid item xs={12}>
         <Typography variant="caption" align = 'left'>102 Misty Pines Pl</Typography>
         </Grid>
         <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
+        <Typography variant="subtitle2" align = 'center'>How much did the residents donate?*</Typography>
         </Grid>
         <Grid container direction = 'column' alignItems = 'center' justify = 'center' >
-        <TextField id="filled-basic" label="Comments" variant="filled" style = {{marginBottom: '5em'}} rows={4}  /> 
+        <TextField id="filled-basic" label="Donation" variant="filled" style = {{marginBottom: '5em'}} rows={4}  /> 
+        </Grid>
+        <Grid item xs={12}>
+        <Typography variant="subtitle2" align = 'center'>How was the donation provided?</Typography>
+        </Grid>
+        <Grid item xs={6} justify ='right' align = 'right'>
+        <Button style={{ "min-height": "110px", width: "110px" }}
+        variant="outlined"
+  color="black" align = 'center'
+>
+  CASH/CHECK
+</Button>
+        </Grid>
+        <Grid item xs={6} justify ='left' align = 'left'>
+        <Button style={{ "min-height": "110px", width: "110px" }}
+        variant="outlined"
+  color="black" align = 'center'
+>
+  MOBILE PAYMENT
+</Button>
         </Grid>
         <Grid item xs={6} justify = 'left' align ='left'>
         <Button className={classes.button}>CLEAR ALL</Button> 
@@ -59,19 +70,10 @@ export default function CenteredGrid() {
         Submit
       </Fab>  
         </Grid>
-        <Grid item xs={3}>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" align = 'center'></Typography>
-        </Grid>
         <Grid container spacing = {0} direction = 'row' alignItems = 'center' justify ="center">
         <BottomNav/>
         </Grid>
         </Grid>
-     
     </div>
   );
 }

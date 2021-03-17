@@ -18,6 +18,8 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import VolunteersPanel from '../../RoutesComponents/VolunteersPanel';
 import Cards from '../Cards';
 import Comments from '../Comments';
+import Interest from '../Interest';
+import Donation from '../Donation';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ['Cards - Large', 'Comments', 'Interests'];
+  return ['Cards', 'Comments', 'Interests', 'Donation'];
 }
 
 function getStepContent(step) {
@@ -44,9 +46,9 @@ function getStepContent(step) {
     case 1:
       return <Comments/>;
     case 2:
-      return '';
-    default:
-      return '';
+      return <Interest/>
+    case 3: 
+      return <Donation/>;
   }
 }
 
@@ -57,7 +59,7 @@ export default function HorizontalLinearStepper() {
   const steps = getSteps();
 
   const isStepOptional = (step) => {
-    return step === 1;
+    return '';
   };
 
   const isStepSkipped = (step) => {
@@ -81,8 +83,6 @@ export default function HorizontalLinearStepper() {
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 

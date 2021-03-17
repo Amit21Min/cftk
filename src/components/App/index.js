@@ -17,6 +17,8 @@ import UnsavedChanges from '../VolunteerComponents/UnsavedChanges/index.js';
 import Cards from '../VolunteerComponents/Cards/index.js';
 import Stepper from '../VolunteerComponents/Stepper/index.js';
 import Comments from '../VolunteerComponents/Comments/index.js';
+import Interest from '../VolunteerComponents/Interest/index.js';
+import Donation from '../VolunteerComponents/Donation/index.js';
 
 
 import * as ROUTES from '../../constants/routes';
@@ -65,6 +67,8 @@ const App = () => (
         <Route exact path = {ROUTES.CARDS} component = {Cards} />
         <Route exact path = {ROUTES.STEPPER} component = {Stepper} />
         <Route exact path = {ROUTES.COMMENTS} component = {Comments} />
+        <Route exact path = {ROUTES.INTEREST} component = {Interest}/>
+        <Route exact path = {ROUTES.DONATION} component = {Donation}/>
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordPage} />
       
