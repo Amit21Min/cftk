@@ -21,7 +21,7 @@
     "react-firebaseui": "^4.1.0",
     "react-hook-google-maps": "0.0.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.3",
     "rfdc": "^1.1.4"
   },
   "scripts": {

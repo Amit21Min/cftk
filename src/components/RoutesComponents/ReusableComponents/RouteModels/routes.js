@@ -1,4 +1,5 @@
 import db from '../../../FirebaseComponents/Firebase/firebase.js';
+import { validationStates } from './routeConstants';
 
 const toStreet = (streetNames) => {
     var i;
@@ -47,31 +48,93 @@ export const editRouteData = (routeName, streets, volNotes, city) => {
 //     street2: [1,2,3,4]
 // }
 
-export const storeRouteData = (routeName, houseNumbers, volNotes, city) => {
+function isStreetsInStore(streets, city) {
+    // Returns a Promise that will say whether or not a street of that id is already in the firestore
+    return new Promise(resolve => {
+        db.collection("Streets")
+            .where('__name__', 'in', streets)
+            .where('city', '==', city)
+            .get()
+            .then(querySnapshot => {
+                if (querySnapshot.empty) resolve(false);
+                else resolve(true);
+            });
+    })
+}
+
+function isRouteInStore(routeName) {
+    // Returns a Promise that will say whether or not a route of that id is already in the firestore
+    return new Promise(resolve => {
+        db.collection("Routes")
+            .where('__name__', '==', routeName)
+            .get()
+            .then(querySnapshot => {
+                if (querySnapshot.empty) resolve(false);
+                else resolve(true);
+            })
+    })
+}
+
+export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city, canningDate, numDonated) => {
     // Store each street as a document in FireStore
-    var streets = []
-    for (var street in houseNumbers) {
-        streets.push(street)
-        storeStreetData(street, houseNumbers[street], city);
+    // var streets = []
+    // for (var street in houseNumbers) {
+    //     streets.push(street)
+    //     storeStreetData(street, houseNumbers[street], city);
+    // }
+
+    // return db.collection("Routes").doc(routeName).set(
+    //     {
+    //         streets: streets,
+    //         assignmentStatus: false,
+    //         assignmentDates: {},
+    //         perInterest: 0.0,
+    //         perSoliciting: 0.0,
+    //         total: 0.0,
+    //         city: city,
+    //         comments: volNotes
+    //     })
+    const streets = Object.keys(houseNumbers);
+    const isOldRoute = await isRouteInStore(routeName);
+    if (isOldRoute) return {
+        state: validationStates.ERROR,
+        message: `A route with the name: ${routeName} already exists. Please pick a new name.`
     }
 
-    return db.collection("Routes").doc(routeName).set(
-        {
+    db.collection("Routes")
+        .doc(routeName)
+        .set({
             streets: streets,
             assignmentStatus: false,
-            assignmentDates: {},
+            // assignmentDates: canningDate.length > 0 && numDonated.length > 0 ? {
+            //     [canningDate]: {
+            //         amountDonated: parseFloat(numDonated)
+            //     }
+            // } : {},
+            assingmentDates: {},
             perInterest: 0.0,
             perSoliciting: 0.0,
             total: 0.0,
             city: city,
             comments: volNotes
-        })
+        });
+    for (let streetName of streets) {
+        storeStreetData(streetName, houseNumbers[streetName], city)
+    }
+    // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
+    return {
+        state: validationStates.SUCCESS,
+        message: `${routeName} has been added successfully.`
+    }
+
+
 }
 
-export const storeStreetData = (street, houseNumbers, city) => {
-    for (var i = 0; i < houseNumbers.length; i++) {
-        var houseNumber = houseNumbers[i]
-        var house = {
+export const storeStreetData = (streetName, streetData, city) => {
+    console.log(streetData)
+    for (let houseNumber in streetData) {
+        let coords = streetData[houseNumber]
+        let house = {
             [houseNumber]:
             {
                 "visitDates": [
@@ -84,13 +147,14 @@ export const storeStreetData = (street, houseNumbers, city) => {
                             "volunteerComments": "comments"
                         }
                     }
-                ]
+                ],
+                "coordinates": coords
             },
             completed: true,
             city: city
         }
 
-        db.collection("Streets").doc(street).set(house, { merge: true });
+        db.collection("Streets").doc(streetName).set(house, { merge: true });
 
     }
     return
