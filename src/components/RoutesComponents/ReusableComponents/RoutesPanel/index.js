@@ -103,7 +103,6 @@ const RoutesPanel = () => {
     const selected = column.selected_items;
     const selectedIndex = selected.indexOf(street_key);
     let newSelected = [];
-    // console.log(selected);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, street_key);
     } else if (selectedIndex === 0) {
@@ -177,49 +176,27 @@ const RoutesPanel = () => {
     fn();
   }
 
-  const routeHistory = async function(lastRoute) {
-    var date;
-    const routeRef = await db.collection('RouteHistory').doc('R17_12345').get();
-    // console.log(routeRef.data());
-    // routeRef.get().then(function(doc) {
-    //   if (doc.exists) {
-    //     console.log(doc.data().visitDate)
-    //     date = doc.data().visitDate;
-    //   } else {
-    //     return 'failed to fetch';
-    //   }
-    // });
-    // console.log('hello3', date);
-    // return date;
-  }
+
   // ===========================================================================
   //                                 Data Transformation
   // ===========================================================================
   // Takes raw_routes returned from database, and performs necessary calculations and applies transformations/validations required by ResourceIndexTable.
   // This also pre-constructs all of the components used by the ResourceIndexTable, for example, each route will generate a ResourceIndexTable for its child streets to be rendered within each ResourceIndexItem
-  const tableTransform = (raw_routes) => {
+  const tableTransform = (raw_routes, streetData) => {
     let tabled_routes = [];
     for(let i = 0; i < raw_routes.length; i++){
       let data = raw_routes[i];
-      // console.log(data);
 
-      let name, assignment_status, months_since_assigned, total_donations, soliciting_pct, interest_pct, lastVisitDate;
+      let name, assignment_status, months_since_assigned, amount_collected, soliciting_pct, interest_pct, lastVisitDate;
       name = data.routeName;
       if (data.assignmentStatus) {
         assignment_status = "Assigned";
       } else {
         assignment_status = "Unassigned";
       }
-      // if (data.assignmentDates.length >= 1) {
-      //   var lastRoute = data.assignmentDates[data.assignmentDates.length - 1];
-      //   console.log(lastRoute);
-      //   if (typeof lastRoute !== 'undefined') {
-      //     lastVisitDate = routeHistory(lastRoute);
-      //   }
-      // }
       
 
-      total_donations = data.total; // TODO: CREATE A SUM OF TOTAL DONATIONS
+      amount_collected = data.total; // TODO: CREATE A SUM OF TOTAL DONATIONS
 
       interest_pct = data.perInterest;
       soliciting_pct = data.perSoliciting;
@@ -228,58 +205,67 @@ const RoutesPanel = () => {
       if (typeof months_since_assigned == 'undefined') {
         months_since_assigned = "No History";
       }
-      if (typeof totaldonations == 'undefined') {
-        total_donations = "No History";
-      }
-      if (typeof interest_pct == 'undefined') {
-        interest_pct = "No History";
-      }
-      if (typeof soliciting_pct == 'undefined') {
-        soliciting_pct = "No History";
+      if (typeof amount_collected == 'undefined') {
+        amount_collected = "No History";
       }
 
+      var streets = [];
+      for (var x in streetData) {
+        if (data.streets.includes(Object.keys(streetData[x])[0])) {
+          streets.push(streetData[x]);
+        }
+      }
+
+      var solicitSum = 0;
+      var outreachSum = 0;
+
+      var streetItems = [];
+      streets.forEach((street) => {
+        var streetName = Object.keys(street)[0].split("_")[0];
+        var amount_collected = street[Object.keys(street)[0]].total.toString();
+        var soliciting_pct = street[Object.keys(street)[0]].perSoliciting.toString();
+        var outreach_pct = street[Object.keys(street)[0]].perInterest.toString();
+        solicitSum += parseFloat(soliciting_pct);
+        outreachSum += parseFloat(outreach_pct);
+
+        streetItems.push(
+          {route: name, name: streetName, amount_collected, assignment_status: "", months_since_assigned: "", outreach_pct , soliciting_pct}
+        )
+      });
+
+      var solicitAvg = solicitSum / streets.length;
+      var outreachAvg = outreachSum / streets.length;
+
+      console.log(streetItems);
+
         // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
-        // Right now this is hardcoded as an example while the data model for streets is worked out.
-      var street_contents =
+      const street_contents = (
                             <StreetColumnContext.Consumer>
                             {columns => (
                               <StreetItemsContext.Consumer>
                                 {items => (
                                   <ResourceIndexTable
-                                    selectableItemHandler={selectStreet}
-                                    selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
-                                    items={[
-                                      {route: "R17", name: "Easy St", amount_collected: "$1M", assignment_status: "", months_since_assigned: "", outreach_pct: "98%", soliciting_pct: "99%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                                                  {text: "Assign",           action: assignRouteAction},
-                                                                  {text: "House Properties", action: overflow_actions.housePropertiesAction},
-                                                                  {text: "Revision History", action: overflow_actions.revisionHistoryAction},
-                                                                  {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
-                                                                ]}},
-                                      {route: "R17", name: "Hard Knocks Alley", amount_collected: "$3.50", assignment_status: "", months_since_assigned: "", outreach_pct: "2%", soliciting_pct: "1%", overflow: {overflow_items: [{text: "Edit", action: () => overflow_actions.editRouteAction(raw_routes[i].name)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                                                  {text: "Assign",           action: assignRouteAction},
-                                                                  {text: "House Properties", action: overflow_actions.housePropertiesAction},
-                                                                  {text: "Revision History", action: overflow_actions.revisionHistoryAction},
-                                                                  {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
-                                                                ]}}
-                                    ]}
+                                    // selectableItemHandler={selectStreet}
+                                    // selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
+                                    items={streetItems}
                                     columns={columns}
                                   />
                                 )}
                               </StreetItemsContext.Consumer>
                             )}
                           </StreetColumnContext.Consumer>
-
+      )
+      
       tabled_routes.push({
         selectbox: {},
-        streets: ["Easy St", "Hard Knocks Alley"],
-        drop_down: {open: false, contentsType: 'raw', contents: street_contents},
+        drop_down: {open: true, contentsType: 'raw', contents: street_contents},
         name: data.routeName,
         assignment_status: data.assignmentStatus ? data.assignmentStatus.toString() : assignment_status,
         months_since_assigned: months_since_assigned.toString(),
-        amount_collected: null,
+        amount_collected: amount_collected.toString(),
         household_avg: null,
-        outreach_pct: interest_pct,
-        soliciting_pct: soliciting_pct,
+        outreach_pct: outreachAvg.toString(),
+        soliciting_pct: solicitAvg.toString(),
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
         overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(data.routeName)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
                                     {text: "Assign",           action: () => assignRouteAction(data.routeName)},
@@ -292,7 +278,6 @@ const RoutesPanel = () => {
                   }
       });
     }
-    console.log(tabled_routes);
     return tabled_routes;
   }
 
@@ -300,25 +285,21 @@ const RoutesPanel = () => {
     console.log("Creating a new route!");
   }
 
-  const fetchRoads = async (allRoads) => {
-    var allRoadsData = [];
-    var roadsRef = db.collection('Streets');
-    var roadsDoc = await roadsRef.get();
-    var obj = {};
-    var test = [];
-    roadsDoc.forEach(doc => {
-      // console.log(doc.id, doc.data());
-      test.push({
-        [doc.id] : doc.data()
-      })
+  // returns like [ {Rose Ln_R17 : streetData }, {Campbell Lane_R21: streetData} ]
+  const fetchStreets = async (allStreets) => {
+    var promises = allStreets.map(async (street) => {
+      var streetDoc = await db.collection('Streets').doc(street).get();
+      return streetDoc
+    })
+    var results = await Promise.all(promises.map(async (street) => {
+      return street
+    }))
+    var buildStreets = [];
+    results.forEach((streetPromise, i) => {
+      var street = allStreets[i]
+      buildStreets.push( {[street] : streetPromise.data() })
     });
-    console.log(test);
-    // var test = roadsDoc.docs.map(doc => {
-    //   var streetName = doc.id;
-    //   obj[streetName] = doc.data();
-    //   return obj;
-    // });
-    console.log(test);
+    return buildStreets;
   }
 
   useEffect(() => {
@@ -331,17 +312,18 @@ const RoutesPanel = () => {
         })
       });
 
-      var allRoads = [];
+      var allStreets = [];
       allRoutes.forEach((route) => {
-        allRoads.push(route.streets);
+        allStreets.push(route.streets);
       });
-      var roadData = await fetchRoads(allRoads);
+      var streetData = await fetchStreets([].concat.apply([], allStreets));
 
-      setRoutes(tableTransform(allRoutes));
+      setRoutes(tableTransform(allRoutes, streetData));
     });
   }, []);
 
   let screen;
+
 
   if(routes){
     screen = <div className="panel-screen">
