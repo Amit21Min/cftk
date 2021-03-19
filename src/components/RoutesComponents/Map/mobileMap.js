@@ -36,10 +36,11 @@ function Map(props) {
     },
   );
   const { routeName, streetData, error } = useFirebaseStreetInfo(props.routeId);
+  const onClickIcon = props.onClickIcon;
   const [snackBarState, setSnackBarState] = useState({
     open: false,
     message: ""
-  })
+  });
   // const roads = useSnappedRoads(props.addresses);
   function createMarkerListeners(marker, streetData) {
     const markerIn = marker.addListener('mouseover', function () {
@@ -52,7 +53,9 @@ function Map(props) {
     });
     const markerClick = marker.addListener('click', function () {
       // Action on click
-      console.log('click', streetData);
+      if (onClickIcon) {
+        onClickIcon(streetData)
+      }
     })
     return [markerIn, markerOut, markerClick]
   }
@@ -71,7 +74,7 @@ function Map(props) {
           position: value,
           icon: houseDefault
         });
-        createMarkerListeners(marker, { key, steet: street.name, city: street.city });
+        createMarkerListeners(marker, { key, street: street.name, city: street.city });
         tempMarkers.push(marker);
       }
     }
@@ -93,7 +96,7 @@ function Map(props) {
       }
     }
 
-  }, [streetData, map, google, routeName]);
+  }, [streetData, map, google, routeName, onClickIcon]);
 
   useEffect(() => {
 
@@ -212,7 +215,8 @@ function Map(props) {
 Map.propTypes = {
   routeId: PropTypes.string,
   innerStyle: PropTypes.object,
-  children: PropTypes.node
+  children: PropTypes.node,
+  onClickIcon: PropTypes.func
 }
 
 export default Map;
