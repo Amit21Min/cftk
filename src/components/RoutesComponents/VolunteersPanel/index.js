@@ -24,8 +24,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { TrainRounded } from '@material-ui/icons';
 import ImportCSVDialog from '../VolunteersPanel/dialog';
 
-
-
+import {FullScreenDialog, AddMemberDialog} from '../VolunteersPanel/newgroup';
+import * as ROUTES from '../../../constants/routes';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,55 +64,17 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 200,
     },
   },
-  formButton: {
-    width: '160px',
-    [theme.breakpoints.down('md')]: {
-      width: '50%',
-    },
-  },
-  buttonContainer: {
-    //width: '100%',
-    marginTop: '3rem',
-    marginRight: '50px',
-    display: 'flex',
-    alignSelf: 'right',
-    marginLeft: '500'
-
-  },
-  gridContainer: {
-    display: 'block',
-    [theme.breakpoints.up('md')]: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr 1fr',
-    }
-  },
-  gridRequired: {
-    marginTop: '1rem',
-    [theme.breakpoints.up('md')]: {
-      gridColumn: '1',
-      gridRow: '1',
-      margin: '1rem',
-      marginLeft: '0px',
-    }
-  },
-  gridOld: {
-    marginTop: '1rem',
-    [theme.breakpoints.up('md')]: {
-      gridColumn: '1',
-      gridRow: '2',
-      margin: '1rem',
-      marginLeft: '0px',
-    }
-  },
   fab: {
     marginTop: '2rem',
-    marginLeft: '90%',
+    //marginLeft: '90%',
     alignItems: 'right',
 
   },
-  dialog:{
-    margin:'auto'
+  dialog: {
+    margin: 'auto'
+  },
+  input: {
+   
   }
 }));
 
@@ -128,6 +90,7 @@ const VolunteersPanel = () => {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [questopen, setQuestOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [openDialog, setOpenDialog] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [formDialog, setFormDialog] = useState(false);
   const onOpen = () => setOpen(true);
@@ -136,15 +99,15 @@ const VolunteersPanel = () => {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-  
 
-  //const handleClose = (event) => {
-  //  if (anchorRef.current && anchorRef.current.contains(event.target)) {
-  //    return;
-  //  }
 
-  //  setOpen(false);
-  //};
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
@@ -153,13 +116,6 @@ const VolunteersPanel = () => {
     }
   };
 
-  const handleOpen = () => {
-    setOpen(true);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleMenuItemClick = (event, index) => {
     console.log("clicked")
@@ -168,30 +124,45 @@ const VolunteersPanel = () => {
     //setAnchorEl(null);
   };
 
-  const handleClick = (id) => {
-    setClicked(true);
+  const handleClick = () => {
+    setOpenDialog(true);
   };
 
- 
+  
 
   return (
     <div className={classes.root}>
       <div>
-        <AppBar className={classes.appBar} position='fixed' color='transparent'>
+        {/* <AppBar className={classes.appBar} position='fixed' color='transparent'>
           <Toolbar>
             <Typography variant="h4" style={{ fontWeight: 'bold', marginTop: 'auto' }}>Volunteer Groups</Typography>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
+
+        <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>Volunteer Groups</Typography></div>
+        <FullScreenDialog></FullScreenDialog>
+        <br/>
         
         
       </div>
+      <br />
 
+      <div>
+        <Grid container spacing={2}>
+          <Grid>
+            <Card>
 
+            </Card>
+          </Grid>
+          
+        </Grid>
+      </div>
+    
       <div className={classes.fab}>
-        <Fab ref={anchorRef} color="primary"  aria-label='add' aria-controls={open ? 'menu-list-grow' : undefined}
+        <Fab ref={anchorRef} color="primary" aria-label='add' aria-controls={open ? 'menu-list-grow' : undefined}
           aria-haspopup="true"
           onClick={handleToggle}>
-          <AddIcon/>
+          <AddIcon />
           <Popper align='left' open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
             {({ TransitionProps, placement }) => (
               <Grow
@@ -201,18 +172,18 @@ const VolunteersPanel = () => {
                 <Paper>
                   <ClickAwayListener onClickAway={handleClose}>
                     <List onKeyDown={handleListKeyDown}>
-                      <ListItem onClick={(event) => handleMenuItemClick(event)} button>
+                      <ListItem onClick={handleClick} button>
                         <ListItemText primary="Custom Group" />
                       </ListItem>
                       <ListItem onClick={(event) => handleMenuItemClick(event)} button>
                         <ListItemText>Import CSV</ListItemText>
-                        <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
-                          open={open} onClose={handleClose}> 
-                          <ImportCSVDialog close={handleClose}/>
-                        </Dialog>
+                        {/*<Dialog disableBackdropClick disableEscapeKeyDown aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
+                          open={open} onClose={handleClose}>
+                          <ImportCSVDialog close={handleClose} />
+            </Dialog>*/}
                       </ListItem>
                     </List>
-                    
+
                   </ClickAwayListener>
                 </Paper>
               </Grow>
@@ -221,7 +192,7 @@ const VolunteersPanel = () => {
         </Fab>
       </div>
 
-      
+
     </div >
 
   );
