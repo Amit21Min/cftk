@@ -2,71 +2,116 @@ import React, { useState, setState } from 'react';
 import { Link } from 'react-router-dom';
 
 import * as ROUTES from '../../../constants/routes';
-import { Typography, Grid, CircularProgress, Chip, TextField, Button, FormControl, Select, InputLabel, BottomNavigation, BottomNavigationAction} from '@material-ui/core';
-import LabelBottomNavigation from '../BottomNavigationBar';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { Typography, LinearProgress, Grid, Box, CircularProgress} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import CircularProgressBar from '../CircularProgressBar';
+import VolunteerNavBar from '../VolunteerNavBar';
+import "../VolunteerAssignment/index.css";
+
+const useStyles = makeStyles ({
+  borderGrid:{
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 20,
+    width: 325,
+  },
+  bar: {
+    borderRadius: 16,
+    backgroundColor: '#D7DBDD',
+    borderWidth: 2,
+  },
+  colorPrimary: {
+    backgroundColor: '#D7DBDD',
+  },
+  barColorPrimary: {
+    backgroundColor: '#43A047',
+  }
+});
 
 const App = () => {
-  const [numHousesCompleted, setNumHousesCompleted] = useState('');
-  const [totalHouses, setTotalHouses] = useState('');
-  const [state, setState] = useState({
-    age: '',
-    name: 'hai',
-  });
-
-  const handleChange = (event) => {
-    
-    const name = event.target.name;
-    setState({
-      ...state,
-      [name]: event.target.value,
-    });
-  };
+  const classes = useStyles();
 
   return (
     <Grid container justify="center" spacing={3}>
       <Grid item xs={12} justify="center"> 
-        <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Volunteer Assignment</Typography>
+        <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
       </Grid>  
-      <Grid item xs={6} align="right">
+      <Grid item xs={12} align="center">
           <CircularProgressBar numHouses="40" totalHouses="100"/>
       </Grid>
+
       <Grid item xs={6} justify="center">
-        <FormControl>
-          <InputLabel htmlFor="age-native-simple">Complete/Incomplete</InputLabel>
-          <Select
-            native
-            onChange={handleChange}
-            inputProps={{
-              name: 'age',
-              id: 'age-native-simple',
-            }}
-            style= {{minWidth: 200}}
-          >
-            <option aria-label="None"/>
-            <option>Complete</option>
-            <option>Incomplete</option>
-          </Select>
-        </FormControl>
+        <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Manor Ridge Road</Typography>
       </Grid>
-      <Grid item xs={12} justify="center"> \
-        <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Donation Leaderboard</Typography>
+      <Grid item xs={6} justify="center">
+        <Typography align="center" style = {{ fontSize: 14}}>0/15 Houses</Typography>
+      </Grid>
+      <Grid item xs={3}></Grid>
+        <Grid item xs={6} justify="center">
+            <LinearProgress 
+            classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+            className = {classes.bar} 
+            variant="determinate" 
+            value={50} />
+        </Grid>
+      <Grid item xs={3}></Grid>
+
+      <Grid item xs={6} justify="center">
+        <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Misty Pines Pl</Typography>
+      </Grid>
+      <Grid item xs={6} justify="center">
+        <Typography align="center" style = {{ fontSize: 14}}>0/8 Houses</Typography>
+      </Grid>
+      <Grid item xs={3}></Grid>
+      <Grid item xs={6} justify="center">
+          <LinearProgress 
+          classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+          className = {classes.bar} 
+          variant="determinate" 
+          value={20} />
+      </Grid>
+      <Grid item xs={3}></Grid>
+
+      <Grid item xs={6} justify="center">
+        <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Morgan Hill Ct</Typography>
+      </Grid>
+      <Grid item xs={6} justify="center">
+        <Typography align="center" style = {{ fontSize: 14}}>0/23 Houses</Typography>
       </Grid>  
-      <Grid item xs={8} spacing={3}justify="right">
-        <Typography align="left" style = {{ fontSize: 16}}>May 13, 2021</Typography>
-        <Typography align="left" style = {{ fontSize: 16}}>Last Updated: 5:06pm </Typography>
+      <Grid item xs={3}></Grid>
+      <Grid item xs={6} justify="center">
+          <LinearProgress  
+          classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+          className = {classes.bar} 
+          variant="determinate" 
+          value={75} />
       </Grid>
-      <Grid item xs={2} justify="right">
-        <Typography align="left" style = {{ fontSize: 16}}>Your Team Rank: 0 </Typography>
+      <Grid item xs={3}></Grid>
+
+      <Grid item xs={3}></Grid>
+      <Grid item xs={6} justify="center">
+        <Typography align="left" style = {{ fontSize: 24, fontWeight: "bold"}}>Statistics</Typography>
       </Grid>
-      <Grid item xs={12} justify="center">
-        <Typography align="center" style = {{ fontSize: 20}}>No teams have collected any donations yet!</Typography>  
+      <Grid item xs={3}></Grid>
+
+      <Grid>
+        <Box pt={1}>
+              <Box p={3} className = {classes.borderGrid}>
+                  <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>138</span> Dollars raised</Typography>
+              </Box>
+         </Box>
+         <Box pt={1}>
+              <Box p={3} className = {classes.borderGrid}>
+                  <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>52</span> Percentage of residents interested in learning about Carolina for The Kids</Typography>
+              </Box>
+         </Box>
+         <Box pt={1}>
+              <Box p={3} className = {classes.borderGrid}>
+                  <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>n/a</span> Team Rank out of 15</Typography>
+              </Box>
+         </Box>
       </Grid>
-      <Grid container spacing={0} direction="row" alignItems="center" justify="center">
-        <LabelBottomNavigation />
-      </Grid>
-      
+
     </Grid>
   )
 };

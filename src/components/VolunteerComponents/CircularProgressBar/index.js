@@ -3,25 +3,31 @@ import PropTypes from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import "../CircularProgressBar/index.css";
+
 
 function CircularProgressWithLabel(props) {
   return (
     <Box position="relative" display="inline-flex">
-      <CircularProgress variant="determinate" size="250px"{...props} />
+      <CircularProgress  variant="determinate" size="250px"{...props} />
       <Box
         top={0}
-        left={0}
-        bottom={0}
+        left={20}
+        bottom={25}
         right={0}
         position="absolute"
         display="flex"
         alignItems="center"
         justifyContent="center"
       >
+      <Grid>
         <Typography variant="subtitle1" component="div" 
-            style = {{ fontSize: 16, fontWeight: "bold", fontColor: "black"}}>{`${props.totalHouses}
-            \n Total Houses`}
-        </Typography>
+              style = {{ fontSize: 36, fontWeight: "bold", fontColor: "black"}}>{`${props.value}/${props.totalHouses} `}
+          </Typography>    
+          <Typography style = {{ fontSize: 14, fontWeight: "bold", fontColor: "black"}}> Houses Visited</Typography>      
+      </Grid>
       </Box>
     </Box>
   );
