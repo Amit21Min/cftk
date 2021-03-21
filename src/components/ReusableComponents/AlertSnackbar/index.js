@@ -27,7 +27,7 @@ AlertSnackbar.propTypes = {
     severity: PropTypes.oneOf(['error', 'warning', 'info', 'success', '']),
     children: PropTypes.string, // The message to shown in the alert
     onClose: PropTypes.func, // Called to close the snackbar
-    autoHideDuration: PropTypes.number // Number of milliseconds before the snackbar auto closes
+    autoHideDuration: PropTypes.number, // Number of milliseconds before the snackbar auto closes
 }
 
 export default AlertSnackbar;
