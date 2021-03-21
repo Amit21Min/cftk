@@ -236,7 +236,7 @@ const RoutesPanel = () => {
       var solicitAvg = solicitSum / streets.length;
       var outreachAvg = outreachSum / streets.length;
 
-      console.log(streetItems);
+      // console.log(streetItems);
 
         // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
       const street_contents = (
@@ -258,7 +258,7 @@ const RoutesPanel = () => {
       
       tabled_routes.push({
         selectbox: {},
-        drop_down: {open: true, contentsType: 'raw', contents: street_contents},
+        drop_down: {open: false, contentsType: 'raw', contents: street_contents},
         name: data.routeName,
         assignment_status: data.assignmentStatus ? data.assignmentStatus.toString() : assignment_status,
         months_since_assigned: months_since_assigned.toString(),
