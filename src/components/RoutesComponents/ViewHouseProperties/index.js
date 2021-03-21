@@ -14,12 +14,11 @@ import { CardContent } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -34,13 +33,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "24px",
     width: "248px",
     height: "320px",
-    color: "#051820"
+    color: "#051820",
   },
   vhpCardTitle: {
     fontWeight: 600,
     fontSize: "20px",
     font: "Raleway",
-    marginBottom: "32px"
+    marginBottom: "32px",
   },
   cardActions: {
     display: "flex",
@@ -50,21 +49,26 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "11px",
   },
   dialogPaper: {
-    maxHeight: '721px',
-    width: '436px',
-    textAlign: 'center'
+    maxHeight: "721px",
+    width: "436px",
+    textAlign: "center",
   },
   dialogListContainer: {
-    textAlign: 'left',
-    margin: '20px'
+    textAlign: "left",
+    margin: "20px",
   },
   dialogSmallText: {
     fontSize: "11px",
-    color: "#6D6E71"
+    color: "#6D6E71",
   },
   dialogSelect: {
     margin: "0px 32px",
-    textAlign: 'left'
+    textAlign: "left",
+  },
+  customDateFilter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '20px'
   }
 }));
 
@@ -128,6 +132,8 @@ const ViewHouseProperties = (props) => {
 
   const [filter, setFilter] = useState(60);
 
+  const [customDates, setCustomDates] = useState({from: '2017-05-24', to: '2019-05-24'});
+
   const handleDialogOpen = (_title) => {
     setDialogTitle(_title);
     setDialogOpen(true);
@@ -139,6 +145,10 @@ const ViewHouseProperties = (props) => {
 
   const filterChange = (event) => {
     setFilter(event.target.value);
+  };
+
+  const customDateChange = (key) => (event) => {
+    setCustomDates({...customDates, [key]: event.target.value})
   }
 
   const classes = useStyles();
@@ -213,7 +223,7 @@ const ViewHouseProperties = (props) => {
                   date: _date,
                 });
                 _solicitation.push({
-                  allowed: _address.solicitationAllowed,
+                  allowed: _address.solicitation,
                   date: _date,
                 });
                 _learnMore.push({
@@ -296,6 +306,21 @@ const ViewHouseProperties = (props) => {
     setNumber(value);
   };
 
+  function sixMonthsPrior(date) {
+    // Copy date so don't affect original
+    var d = new Date(date);
+    // Get the current month number
+    var m = d.getMonth();
+    // Subtract 6 months
+    d.setMonth(d.getMonth() - 6);
+    // If the new month number isn't m - 6, set to last day of previous month
+    // Allow for cases where m < 6
+    var diff = (m + 12 - d.getMonth()) % 12;
+    if (diff < 6) d.setDate(0);
+
+    return d;
+  }
+
   function HouseProperties(props) {
     if (!props.house) {
       return <b id="selectHouse">Select a house to view its properties</b>;
@@ -313,16 +338,16 @@ const ViewHouseProperties = (props) => {
             >
               Solicitations
             </Typography>
-            {data.solicitation.slice(0,3).map((item , index) =>  {
+            {data.solicitation.slice(0, 3).map((item, index) => {
               return (
-              <div key={index}>
-                <h6>{item.allowed ? "Allowed": "Not Allowed"}</h6>
-                <small className={classes.cardSmallText}>
-                  Group {getGroup(0)} | {item.date}
-                </small>
-                <Divider style={{marginTop: "10px"}}/>
-              </div>
-              )
+                <div key={index}>
+                  <h6>{item.allowed ? "Allowed" : "Not Allowed"}</h6>
+                  <small className={classes.cardSmallText}>
+                    Group {getGroup(0)} | {item.date}
+                  </small>
+                  <Divider style={{ marginTop: "10px" }} />
+                </div>
+              );
             })}
           </CardContent>
           <CardActions className={classes.cardActions}>
@@ -330,7 +355,7 @@ const ViewHouseProperties = (props) => {
               size="small"
               color="primary"
               style={{ fontWeight: 600, fontSize: "16px" }}
-              onClick={() => handleDialogOpen('Solicitations')}
+              onClick={() => handleDialogOpen("Solicitations")}
             >
               View All
             </Button>
@@ -347,16 +372,16 @@ const ViewHouseProperties = (props) => {
             >
               Donations
             </Typography>
-            {data.donations.slice(0,3).map((item, index) =>  {
+            {data.donations.slice(0, 3).map((item, index) => {
               return (
-              <div key={index}>
-                <h6>${item.amount}</h6>
-                <small className={classes.cardSmallText}>
-                  Group {getGroup(0)} | {item.date}
-                </small>
-                <Divider style={{marginTop: "10px"}}/>
-              </div>
-              )
+                <div key={index}>
+                  <h6>${item.amount}</h6>
+                  <small className={classes.cardSmallText}>
+                    Group {getGroup(0)} | {item.date}
+                  </small>
+                  <Divider style={{ marginTop: "10px" }} />
+                </div>
+              );
             })}
           </CardContent>
           <CardActions className={classes.cardActions}>
@@ -364,7 +389,7 @@ const ViewHouseProperties = (props) => {
               size="small"
               color="primary"
               style={{ fontWeight: 600, fontSize: "16px" }}
-              onClick={() => handleDialogOpen('Donations')}
+              onClick={() => handleDialogOpen("Donations")}
             >
               View All
             </Button>
@@ -381,16 +406,16 @@ const ViewHouseProperties = (props) => {
             >
               Volunteer Comments
             </Typography>
-            {data.comments.slice(0,3).map((item, index) =>  {
+            {data.comments.slice(0, 3).map((item, index) => {
               return (
-              <div key={index}>
-                <h6>{item.comment}</h6>
-                <small className={classes.cardSmallText}>
-                  Group {getGroup(0)} | {item.date}
-                </small>
-                <Divider style={{marginTop: "10px"}}/>
-              </div>
-              )
+                <div key={index}>
+                  <h6>{item.comment}</h6>
+                  <small className={classes.cardSmallText}>
+                    Group {getGroup(0)} | {item.date}
+                  </small>
+                  <Divider style={{ marginTop: "10px" }} />
+                </div>
+              );
             })}
           </CardContent>
           <CardActions className={classes.cardActions}>
@@ -398,7 +423,7 @@ const ViewHouseProperties = (props) => {
               size="small"
               color="primary"
               style={{ fontWeight: 600, fontSize: "16px" }}
-              onClick={() => handleDialogOpen('Volunteer Comments')}
+              onClick={() => handleDialogOpen("Volunteer Comments")}
             >
               View All
             </Button>
@@ -412,20 +437,20 @@ const ViewHouseProperties = (props) => {
               variant="h5"
               component="h2"
               className={classes.vhpCardTitle}
-              style={{marginBottom: "8px"}}
+              style={{ marginBottom: "8px" }}
             >
               Interested in Learning More
             </Typography>
-            {data.learnMore.slice(0,3).map((item, index) =>  {
+            {data.learnMore.slice(0, 3).map((item, index) => {
               return (
-              <div key={index}>
-                <h6>{item.learn ? "Yes": "No"}</h6>
-                <small className={classes.cardSmallText}>
-                  Group {getGroup(0)} | {item.date}
-                </small>
-                <Divider style={{marginTop: "10px"}}/>
-              </div>
-              )
+                <div key={index}>
+                  <h6>{item.learn ? "Yes" : "No"}</h6>
+                  <small className={classes.cardSmallText}>
+                    Group {getGroup(0)} | {item.date}
+                  </small>
+                  <Divider style={{ marginTop: "10px" }} />
+                </div>
+              );
             })}
           </CardContent>
           <CardActions className={classes.cardActions}>
@@ -433,7 +458,7 @@ const ViewHouseProperties = (props) => {
               size="small"
               color="primary"
               style={{ fontWeight: 600, fontSize: "16px" }}
-              onClick={() => handleDialogOpen('Learn More')}
+              onClick={() => handleDialogOpen("Learn More")}
             >
               View All
             </Button>
@@ -515,86 +540,569 @@ const ViewHouseProperties = (props) => {
         <SaveButton>Save</SaveButton>
       </div>
       <Dialog
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          classes={{paper: classes.dialogPaper}}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        classes={{ paper: classes.dialogPaper }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" className={classes.vhpCardTitle}>
+          {dialogTitle}
+        </DialogTitle>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={filter}
+          onChange={filterChange}
+          className={classes.dialogSelect}
         >
-          <DialogTitle id="alert-dialog-title" className={classes.vhpCardTitle}>
-            {dialogTitle}
-          </DialogTitle>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={filter}
-            onChange={filterChange}
-            className={classes.dialogSelect}
-          >
-            <MenuItem value={10}>Custom</MenuItem>
-            <MenuItem value={20}>Last 30 days</MenuItem>
-            <MenuItem value={30}>Last 6 months</MenuItem>
-            <MenuItem value={40}>Last year</MenuItem>
-            <MenuItem value={50}>Last 5 years</MenuItem>
-            <MenuItem value={60}>All time</MenuItem>
-          </Select>
-          <DialogContent>
-            {dialogTitle == 'Volunteer Comments' &&
-              <div className={classes.dialogListContainer}>
-                {data.comments.map((value, index) => {
-                  return <div key={index}>
-                    <h6>{value.comment}</h6>
-                    <small className={classes.dialogSmallText}>Group | {value.date}</small>
-                  </div>
-                })}
-              </div>
-            }
-            {dialogTitle == 'Solicitations' &&
-              <div className={classes.dialogListContainer}>
-                {data.solicitation.map((value, index) => {
-                  return <div key={index}>
-                  <h6>{value.allowed ? "Allowed" : "Not Allowed"}</h6>
-                  <small className={classes.dialogSmallText}>
-                    Group  | {value.date}
-                  </small>
-                  </div>
-                })
-                }
-             </div>
-            }
-            {dialogTitle == 'Donations' &&
-              <div className={classes.dialogListContainer}>
-                {data.donations.map((value, index) => {
-                  return <div key={index}>
-                    <h6>${value.amount}</h6>
-                    <small className={classes.dialogSmallText}>
-                      Group  | {value.date}
-                    </small>
-                  </div>
-                })
-                }
-              </div>
-            }
-            {dialogTitle == 'Learn More' &&
-              <div className={classes.dialogListContainer}>
-                {data.learnMore.map((value, index) => {
-                  return <div  key={index}>
-                    <h6>{value.learn}</h6>
-                    <small className={classes.dialogSmallText}>
-                      Group  | {value.date}
-                    </small>
-                  </div>
-                })
-                }
-              </div>
-            }
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose} color="primary" autoFocus>
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
+          <MenuItem value={10}>Custom</MenuItem>
+          <MenuItem value={20}>Last 30 days</MenuItem>
+          <MenuItem value={30}>Last 6 months</MenuItem>
+          <MenuItem value={40}>Last year</MenuItem>
+          <MenuItem value={50}>Last 5 years</MenuItem>
+          <MenuItem value={60}>All time</MenuItem>
+        </Select>
+        <DialogContent>
+          {dialogTitle === "Volunteer Comments" && (
+            <div className={classes.dialogListContainer}>
+              {filter === 60 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        <h6>{value.comment}</h6>
+                        <small className={classes.dialogSmallText}>
+                          Group | {value.date}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 50 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <= 5 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 40 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <= 1 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 30 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= sixMonthsPrior(new Date()) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 20 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >=
+                          new Date().setDate(new Date().getDate() - 30) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 10 && (
+                <div>
+                  <form className={classes.customDateFilter} noValidate>
+                      <TextField
+                        label="From"
+                        type="date"
+                        value={customDates.from}
+                        onChange={customDateChange('from')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <TextField
+                        label="To"
+                        type="date"
+                        value={customDates.to}
+                        onChange={customDateChange('to')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <br></br><br></br>
+                    </form>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= new Date(customDates.from) && new Date(value.date) <= new Date(customDates.to) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+          {dialogTitle === "Solicitations" && (
+            <div className={classes.dialogListContainer}>
+              {filter === 60 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        <h6>{value.comment}</h6>
+                        <small className={classes.dialogSmallText}>
+                          Group | {value.date}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 50 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <=
+                          5 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 40 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <=
+                          1 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 30 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= sixMonthsPrior(new Date()) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 20 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >=
+                          new Date().setDate(new Date().getDate() - 30) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 10 && (
+                <div>
+                  <form className={classes.customDateFilter} noValidate>
+                      <TextField
+                        label="From"
+                        type="date"
+                        value={customDates.from}
+                        onChange={customDateChange('from')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <TextField
+                        label="To"
+                        type="date"
+                        value={customDates.to}
+                        onChange={customDateChange('to')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <br></br><br></br>
+                    </form>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= new Date(customDates.from) && new Date(value.date) <= new Date(customDates.to) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+          {dialogTitle === "Donations" && (
+            <div className={classes.dialogListContainer}>
+              {filter === 60 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        <h6>{value.comment}</h6>
+                        <small className={classes.dialogSmallText}>
+                          Group | {value.date}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 50 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <=
+                          5 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 40 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <=
+                          1 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 30 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= sixMonthsPrior(new Date()) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 20 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >=
+                          new Date().setDate(new Date().getDate() - 30) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 10 && (
+                <div>
+                  <form className={classes.customDateFilter} noValidate>
+                      <TextField
+                        label="From"
+                        type="date"
+                        value={customDates.from}
+                        onChange={customDateChange('from')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <TextField
+                        label="To"
+                        type="date"
+                        value={customDates.to}
+                        onChange={customDateChange('to')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <br></br><br></br>
+                    </form>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= new Date(customDates.from) && new Date(value.date) <= new Date(customDates.to) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+          {dialogTitle === "Learn More" && (
+            <div className={classes.dialogListContainer}>
+              {filter === 60 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        <h6>{value.comment}</h6>
+                        <small className={classes.dialogSmallText}>
+                          Group | {value.date}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 50 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <= 5 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 40 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {Number(value.date.substring(6, value.date.length)) -
+                          new Date().getFullYear() <= 1 && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 30 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= sixMonthsPrior(new Date()) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 20 && (
+                <div>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >=
+                          new Date().setDate(new Date().getDate() - 30) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {filter === 10 && (
+                <div>
+                  <form className={classes.customDateFilter} noValidate>
+                      <TextField
+                        label="From"
+                        type="date"
+                        value={customDates.from}
+                        onChange={customDateChange('from')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <TextField
+                        label="To"
+                        type="date"
+                        value={customDates.to}
+                        onChange={customDateChange('to')}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <br></br><br></br>
+                    </form>
+                  {data.comments.map((value, index) => {
+                    return (
+                      <div key={index}>
+                        {new Date(value.date) >= new Date(customDates.from) && new Date(value.date) <= new Date(customDates.to) && (
+                          <div>
+                            <h6>{value.comment}</h6>
+                            <small className={classes.dialogSmallText}>
+                              Group | {value.date}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary" autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
