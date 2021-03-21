@@ -79,9 +79,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const newGroup = (groupName, idList) => {
   
   db.collection("Groups").doc(groupName).set({
+    assignment: [],
     users: idList
   });
 }
+
+
 
 export function FullScreenDialog() {
   const classes = useStyles();
@@ -96,6 +99,7 @@ export function FullScreenDialog() {
   const [idList, setIdList] = React.useState([]);
   const [membersList, setMembers] = React.useState([]);
   const [id, setId] = React.useState('');
+  const [clicked, setclicks] = React.useState(false);
 
 
   const Names = [
@@ -105,6 +109,32 @@ export function FullScreenDialog() {
     { name: "Addison Thorton", phone: '9190000004', email: 'email4@gm.com', id: '004' },
     { name: "Laura Lawson", phone: '9190000005', email: 'email5@gm.com', id: '005' }
   ]
+
+  const [users, setUsers] = React.useState([]);
+  
+  const getUsers = () => {
+    //const users = [];
+
+    db.collection('User').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const user=doc.data();
+        user.id=doc.id;
+        setUsers(prevState=> [...prevState,user]);
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
+    for (var i=0;i<users.length;i++) {
+      console.log(users[i]);
+    }
+  
+    //return ([]);
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -130,11 +160,11 @@ export function FullScreenDialog() {
 
   const findId = (value) => {
     if (value !== '') {
-      const idFound = Names.find(o => o.name === value.split(' (')[0]).id;
+      const idFound = users.find(o => o.firstName === value.split(' (')[0].split(' ')[0] && o.lastName===value.split(' (')[0].split(' ')[1]).id;
       console.log(idFound);
       setId(idFound);
-      setEmail(Names.find(o=>o.name===value.split(' (')[0]).email);
-      setPhone(Names.find(o=>o.name===value.split(' (')[0]).phone);
+      setEmail(users.find(o=>o.id===idFound).email);
+      setPhone(users.find(o=>o.id===idFound).phone);
     } else {
       console.log('please select name');
       setId('');
@@ -156,8 +186,7 @@ export function FullScreenDialog() {
     console.log(checked);
     handleSecondClose();
     setMembers(prevState => [...prevState, member]);
-    setIdList(prevState=> [...prevState, id]);
-    
+    setIdList(prevState=> [...prevState, id]);    
   }
 
   const saveForm = e => {
@@ -169,12 +198,13 @@ export function FullScreenDialog() {
       handleClose();
       setMembers([]);
       setIdList([]);
+      setUsers([]);
     }
   }
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+      <Button variant="outlined" color="primary" onClick={() => {handleClickOpen(); getUsers();}}>
         Create New Group
       </Button>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -199,11 +229,13 @@ export function FullScreenDialog() {
           onChange={(e) => { setGroupName(e.target.value); }} />
         <TextField label="Description" />
         <br></br>
+        
         <Grid container className={classes.grid} spacing={2}>
+          
         <Grid item xs={3} mx='auto' my='auto'>
         <Card className={classes.card} style={{width:250, height: 250}}>
           <CardActions className={classes.margin} justify="center">
-            <Button className={classes.addButton} aria-label="add" variant="outlined" color="primary" onClick={handleSecondClickOpen}>
+            <Button className={classes.addButton} aria-label="add" variant="outlined" color="primary" onClick={() => {handleSecondClickOpen();}}> 
               <AddIcon></AddIcon>
             </Button>
             <Dialog fullWidth open={secondOpen}
@@ -219,12 +251,13 @@ export function FullScreenDialog() {
               <DialogContent>
                 <Autocomplete
                   id="name-search"
-                  options={Names}
-                  getOptionSelected={(option, value) => option.name === value.name}
-                  getOptionLabel={(option) => (option.name + ' ' + '(' + option.email.split('@')[0] + ')')}
+                  options={users}
+                  
+                  getOptionSelected={(option, value) => option.firstName === value.firstName && option.lastName===value.lastName}
+                  getOptionLabel={(option) => (option.firstName + ' ' + option.lastName + ' ' + '(' + option.email.split('@')[0] + ')')}
                   style={{ width: 300 }}
-
-                  onInputChange={(event, newValue) => { setName(newValue.split(' (')[0]); findId(newValue); }}
+                  filterSelectedOptions
+                  onInputChange={(event, newValue) => { setName(newValue.split(' (')[0].split(' ')[0]+' '+newValue.split(" (")[0].split(' ')[1]); findId(newValue);}}
                   renderInput={(params) => <TextField {...params} required label="Name" />}
                 />
 
