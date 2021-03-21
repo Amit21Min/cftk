@@ -55,6 +55,7 @@ const AssignRoute = (props) => {
             city: city
         }
         for (let i in streets) {
+            console.log(streets[i]);
             var gatherHouses = [];
             let houseInfo = {
                 donationAmt: null,
@@ -63,12 +64,15 @@ const AssignRoute = (props) => {
                 volunteerComments: null
             };
             Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
-                routeHistory.housesTotal += 1;
-                gatherHouses.push({
-                    [houseNumber] : houseInfo
-                });
+                if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total')) {
+                    routeHistory.housesTotal += 1;
+                    gatherHouses.push({
+                        [houseNumber] : houseInfo
+                    });
+                }
+
             });
-            routeHistory.streets[streets[i]] = gatherHouses;
+            routeHistory.streets[streets[i].split("_")[0]] = gatherHouses;
         }
         const ref = db.collection('your_collection_name').doc();
         const id = ref.id;
@@ -92,6 +96,36 @@ const AssignRoute = (props) => {
             assignment: routeUID
         })
     }
+
+    const isGroupAssigned = async function(group) {
+        var groupRef = db.collection('Groups').doc(group);
+        const groupDoc = await groupRef.get();
+        if (groupDoc.exists) {
+            if (groupDoc.data().assignment) {
+                return true;
+            } else {
+                return false; // group is not assigned
+            }
+        } else {
+            return false; // group name not found
+        }
+        
+    }
+    const isRouteAssigned = async function(route_id) {
+        var routeRef = db.collection('Routes').doc(route_id);
+        const routeDoc = await routeRef.get();
+        if (routeDoc.exists) {
+            if (routeDoc.data().assignmentStatus) {
+                return true;
+            } else {
+                return false; // group is not assigned
+            }
+        } else {
+            return false; // group name not found
+        }
+        
+    }
+    
     
     // async func for fetching all streets within a route, then fetching all street information and building the route object to store in "routeHistory"
     const getStreets = async function(input) {
@@ -112,7 +146,7 @@ const AssignRoute = (props) => {
     }
 
     //submit assign
-    const assign = () => {
+    const assign = async () => {
         let input = {
             routeID: props.routes,
             group: document.getElementById('group').value,
@@ -121,12 +155,17 @@ const AssignRoute = (props) => {
             emails: emailData,
             message: document.getElementById('message').value,
         }
-        getStreets(input);
+        let groupAssignment = await isGroupAssigned(input.group);
+        let routeAssignment = await isRouteAssigned(input.routeID);
+        if (groupAssignment) {
+            console.log('group already assigned');
+        } else if (routeAssignment) {
+            console.log('route is already assigned');
+        } else {  
+            getStreets(input);
+        }
 
-        // 3. Deisgn unassign button to cache the active rouets (admin side, later to be used for volunteer UI "completing" a route")
-        // 4. possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
-
-        // TODO: create a button that "finishes" a route to implement the storage of a RoutesActive to a RoutesComplete
+        // TODO possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
     }
 
     const addGroup = () => {
