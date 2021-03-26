@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CircularProgressBar from '../CircularProgressBar';
 import VolunteerNavBar from '../VolunteerNavBar';
 import "../VolunteerAssignment/index.css";
+import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
 
 const useStyles = makeStyles ({
   borderGrid:{
@@ -29,15 +30,45 @@ const useStyles = makeStyles ({
 });
 
 const App = () => {
+  const [housesCompleted, setHousesCompleted] = useState(0);
   const classes = useStyles();
+  console.log(housesCompleted);
 
+
+  var user = auth.currentUser;
+  console.log(user);
+
+  const getHouses = async () => {
+    // need to use firebase auth to fetch the currently logged in user
+
+    const userRef = db.collection('User').doc('3ytt1skUvlhMWmuGS8hsqGgpRbI2');
+    const userDoc = await userRef.get();
+    if (userDoc.exists) {
+      // do something with the data
+      console.log(userDoc.data());
+      const assignment = userDoc.data().assignment;
+      console.log(assignment);
+
+      const routesActiveRef = db.collection('RoutesActive').doc(assignment);
+      const routesActiveDoc = await routesActiveRef.get();
+      if (routesActiveDoc.exists) {
+        console.log(routesActiveDoc.data());
+        setHousesCompleted(routesActiveDoc.data().housesCompleted);
+        console.log(housesCompleted)
+      }
+    }
+
+  }
+
+  getHouses();
+  
   return (
     <Grid container justify="center" spacing={3}>
       <Grid item xs={12} justify="center"> 
         <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
       </Grid>  
       <Grid item xs={12} align="center">
-          <CircularProgressBar numHouses="40" totalHouses="100"/>
+          <CircularProgressBar numHouses={housesCompleted} totalHouses="100"/>
       </Grid>
 
       <Grid item xs={6} justify="center">

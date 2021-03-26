@@ -11,7 +11,7 @@ import VolunteerSettings from '../components/VolunteerComponents/VolunteerSettin
 import VolunteerAssignment from '../components/VolunteerComponents/VolunteerAssignment/index.js';
 
 const VolunteerLayout = () => (
-    <Switch>
+    <Switch>``
         <Route exact path={ROUTES.VOLUNTEER_MAP}></Route>
         <Route exact path={ROUTES.VOLUNTEER_MESSAGES}></Route>
         <Route exact path={ROUTES.VOLUNTEER_PROGRESS} component={VolunteerAssignment}></Route>
