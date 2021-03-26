@@ -76,41 +76,23 @@ function isRouteInStore(routeName) {
 }
 
 export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city, canningDate, numDonated) => {
-    // Store each street as a document in FireStore
-    // var streets = []
-    // for (var street in houseNumbers) {
-    //     streets.push(street)
-    //     storeStreetData(street, houseNumbers[street], city);
-    // }
 
-    // return db.collection("Routes").doc(routeName).set(
-    //     {
-    //         streets: streets,
-    //         assignmentStatus: false,
-    //         assignmentDates: {},
-    //         perInterest: 0.0,
-    //         perSoliciting: 0.0,
-    //         total: 0.0,
-    //         city: city,
-    //         comments: volNotes
-    //     })
-    const streets = Object.keys(houseNumbers);
+    var streets = Object.keys(houseNumbers);
     const isOldRoute = await isRouteInStore(routeName);
     if (isOldRoute) return {
         state: validationStates.ERROR,
         message: `A route with the name: ${routeName} already exists. Please pick a new name.`
     }
 
+    streets = streets.map((street) => {
+        return (street + '_' + routeName);
+    });
+
     db.collection("Routes")
         .doc(routeName)
         .set({
             streets: streets,
             assignmentStatus: false,
-            // assignmentDates: canningDate.length > 0 && numDonated.length > 0 ? {
-            //     [canningDate]: {
-            //         amountDonated: parseFloat(numDonated)
-            //     }
-            // } : {},
             assingmentDates: {},
             perInterest: 0.0,
             perSoliciting: 0.0,
@@ -119,7 +101,8 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
             comments: volNotes
         });
     for (let streetName of streets) {
-        storeStreetData(streetName, houseNumbers[streetName], city)
+        console.log(streetName);
+        storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city)
     }
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
     return {
@@ -131,7 +114,6 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
 }
 
 export const storeStreetData = (streetName, streetData, city) => {
-    console.log(streetData)
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]
         let house = {
@@ -151,7 +133,10 @@ export const storeStreetData = (streetName, streetData, city) => {
                 "coordinates": coords
             },
             completed: true,
-            city: city
+            city: city,
+            total: 0,
+            perInterest: 0,
+            perSoliciting: 0,
         }
 
         db.collection("Streets").doc(streetName).set(house, { merge: true });
@@ -160,3 +145,60 @@ export const storeStreetData = (streetName, streetData, city) => {
     return
 }
 
+export const getMapAddresses = async (routeId) => {
+    let returnObj = {
+        streetData: [],
+        error: ""
+    }
+
+    if (!routeId || routeId === "") return returnObj;
+    try {
+        let streetNames = await new Promise((resolve, reject) => {
+            db.collection("Routes")
+                .doc(routeId)
+                .get()
+                .then(doc => {
+                    if (doc.exists) {
+                        resolve(doc.data().streets || [])
+                    } else {
+                        reject("Route does not exist")
+                    }
+                })
+        });
+        
+        let streetPromises = [];
+        for (let street in streetNames) {
+            const streetName = streetNames[street];
+            streetPromises.push(new Promise((resolve, reject) => {
+                db.collection("Streets")
+                .doc(streetName)
+                .get()
+                .then(doc => {
+                    if (!doc.exists) reject(`The data for the street ${streetName} cannot be found`);
+                    let simplifiedStreet = {
+                        name: streetName,
+                        addresses: {}
+                    };
+                    for (const [key, value] of Object.entries(doc.data())) {
+                        if (key === 'city') {
+                            simplifiedStreet[key] = value;
+                        } else if ( key !== 'completed') {
+                            simplifiedStreet.addresses[key] = value.coordinates
+                        }
+                    }
+                    resolve(simplifiedStreet)
+                })
+            }))
+        }
+
+        const newData = await Promise.all(streetPromises);
+        returnObj.streetData = newData;
+        return returnObj;
+    } catch (error) {
+        returnObj = {
+            streetData: [],
+            error: error
+        }
+        return returnObj;
+    }
+}
