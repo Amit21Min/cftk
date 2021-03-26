@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
-import { storeNewRouteData } from '../ReusableComponents/RouteModels/routes';
+import { storeRouteData } from '../ReusableComponents/RouteModels/routes';
 import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,12 +8,10 @@ import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import DualGroupedTextField from '../../ReusableComponents/GroupedTextField/DualGroupedTextField';
 import ChipList from '../../ReusableComponents/ChipList';
 import PillButton from '../../ReusableComponents/PillButton';
-import AlertSnackbar from '../../ReusableComponents/AlertSnackbar';
-import { useGoogleMaps } from "react-hook-google-maps";
 
 import * as ROUTES from '../../../constants/routes';
 
-import Map from '../Map/';
+import Map from '../Map';
 
 // TODO: Implement revision history and modified by (Feature from figma, but rather weird for creating a route)
 // TODO: Deal with google map implementation (the map doesn't update properly after the inital adding of addresses)
@@ -25,8 +23,10 @@ const useStyles = makeStyles((theme) => ({
   pageContainer: {
     margin: '4rem',
     height: 'calc(100% - 8rem)',
-    width: 'calc(100% - 8rem)',
+    width: '100%',
     display: 'flex',
+    justifyContent: 'center',
+    // alignItems: 'center',
     flexDirection: 'column',
     [theme.breakpoints.down('md')]: {
       margin: '0px',
@@ -86,20 +86,18 @@ const useStyles = makeStyles((theme) => ({
 
 const NewRoutePanel = () => {
 
-  // Final TODOS for now. Rewrite geocoder as recursion for speed optimization
-  // Figure out how to load data into Firestore
-
   // variables used in the state
-  const [{ routeName, isValidName }, setRouteName] = useState({
+  const [{routeName, isValidName}, setRouteName] = useState({
     routeName: "",
     isValidName: true
   });
-  const [{ cityName, isValidCity }, setCityName] = useState({
+  const [{cityName, isValidCity}, setCityName] = useState({
     cityName: "",
     isValidCity: true
   });
   const [currStreet, setCurrStreet] = useState('');
   const [currHouses, setCurrHouses] = useState('');
+  const [streetList, setStreetList] = useState([]);
   const [houseNumbers, setHouseNumbers] = useState({});
   const [canningDate, setCanningDate] = useState('');
   const [numDonated, setNumDonated] = useState('');
@@ -107,84 +105,19 @@ const NewRoutePanel = () => {
   const [volNotes, setVolNotes] = useState([]);
 
   const [validForm, setValidForm] = useState(false);
-  // const [validForm, setValidForm] = useState(true);
-  const [snackBarState, setSnackBarState] = useState({
-    open: false,
-    severity: "",
-    message: ""
-  })
-
-
-  const defaultLoc = { lat: 35.9132, lng: -79.0558 }
-  const { ref, google } = useGoogleMaps(
-    process.env.REACT_APP_MAPS_API_KEY,
-    {
-      zoom: 18,
-      center: defaultLoc
-    },
-  );
 
   const validateForm = () => {
-    setValidForm(Object.keys(houseNumbers).length > 0 && routeName.length > 0 && cityName.length > 0)
+    setValidForm(streetList.length > 0 && routeName.length > 0 && cityName.length > 0)
   }
 
-  async function geocodeAddresses(addressList, streetName, cityName) {
-
-    function geocodePromise(geocoder, address) {
-      return new Promise((resolve) => {
-        geocoder.geocode({ address: address }, (results, status) => {
-          resolve({ results, status })
-        });
-      })
-    }
-
-    const geocoder = new google.maps.Geocoder();
-    let withCoordinates = {};
-
-    const len = addressList.length;
-    let overLimitCount = 0;
-    for (let i = 0; i < len; i++) {
-      const addrNumber = addressList.pop();
-      if (addrNumber && houseNumbers[streetName] && houseNumbers[streetName][addrNumber]) {
-        // Check to see if this address has already been geocoded before. Makes the remove address process much much faster
-        withCoordinates[addrNumber] = houseNumbers[streetName][addrNumber];
-      } else if (addrNumber) {
-        // Can only move to the next address once the current one is completed
-        const { results, status } = await geocodePromise(geocoder, `${addrNumber} ${streetName} ${cityName}`);
-        if (status === "OK" && results.length > 0) {
-          withCoordinates[addrNumber] = results[0].geometry.location.toJSON()
-        } else if (status === "OVER_QUERY_LIMIT") {
-          // If over the query limit, try again after waiting 2 seconds
-          console.log(`Over Query Limit @ ${i}`);
-          // Very sketchy recreation of sleep from Java
-          await new Promise(r => setTimeout(r, 2000));
-          // Pushes address back into the loop and the loop back
-          addressList.push(addrNumber);
-          i--;
-          // Increments number of times it tries again
-          overLimitCount++;
-        } else {
-          // Exit the loop if there is an error not related to the query limit
-          alert("Geocode was not successful for the following reason: " + status);
-          return;
-        }
-      }
-      if (overLimitCount > 20) {
-        // If the amount of times it tries again exceeds 20 times or if there are no more addresses left. Return the values it has already gained
-        alert("Geocoder Query Limit Exceeded 20+ times, please wait a while before trying again");
-        return withCoordinates;
-      }
-      if (addressList.length === 0) {
-        return withCoordinates;
-      }
-    }
-    return withCoordinates;
-
-  }
+  useEffect(validateForm, [routeName, cityName, streetList])
 
   const updateStreetList = e => {
     // preventDefault() prevents the page from reloading whenever a button is pressed
     e.preventDefault();
+
+    // STILL NEED TO IMPLEMENT - SHOWING THE HOUSE NUMBERS + STREET (CURRENTLY ONLY SHOWS STREET WHEN ADDED)
+    // BARE FUNCTIONALITY, PROBABLY MANY BUGS
 
     // Turns comma seperated list into array
     let numbers = currHouses.trim().split(",");
@@ -198,17 +131,18 @@ const NewRoutePanel = () => {
       }
     );
 
-    geocodeAddresses([...numbers], parsedStreet, cityName).then(newAddresses => {
-      if (newAddresses) {
-        setHouseNumbers(prevState => ({
-          ...prevState,
-          [parsedStreet]: newAddresses
-        }));
-      }
-    })
+    // let newHouseNums = getNewHouseNums(parsedStreet, numbers);
 
+    setStreetList(prevState => {
+      const streets = [...prevState, parsedStreet]
+      return streets.filter((street, index) => streets.indexOf(street) == index)
+    });
+    console.log(numbers)
     // stores houseNumbers as {street1: [122,123,145], street2: [122,123,124]}
-
+    setHouseNumbers(prevState => ({
+      ...prevState,
+      [parsedStreet]: numbers
+    }));
 
     setCurrStreet('');
     setCurrHouses('');
@@ -224,10 +158,11 @@ const NewRoutePanel = () => {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       }
     );
+
+    setStreetList(prevState => prevState.filter(name => name !== street));
     setHouseNumbers(prevState => {
-      let newState = { ...prevState }
-      delete newState[streetName]
-      return newState;
+      delete prevState[streetName];
+      return prevState;
     });
   }
 
@@ -286,7 +221,7 @@ const NewRoutePanel = () => {
   }
 
   const handleDonated = (e) => {
-    setNumDonated(e.target.value.replace(/[^0-9.]/g, ''))
+    setNumDonated(e.target.value.replace(/[^0-9]/g, ''))
   }
 
   const handleDates = (e) => {
@@ -299,19 +234,9 @@ const NewRoutePanel = () => {
 
   const openStreet = (street) => {
     const streetAddresses = houseNumbers[street];
-    const asString = streetAddresses ? Object.keys(streetAddresses).join(",") : "";
+    const asString = streetAddresses ? streetAddresses.join(",") : "";
     setCurrStreet(street);
     setCurrHouses(asString);
-  }
-
-  function handleSnackBarClose(event, reason) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackBarState(prevState => ({
-      ...prevState,
-      open: false
-    }));
   }
 
   const saveForm = _ => {
@@ -320,20 +245,12 @@ const NewRoutePanel = () => {
     if (routeName === '') {
       alert('Please enter a route name');
       return;
-    } else if (Object.keys(houseNumbers).length === 0) {
+    } else if (streetList.length === 0) {
       alert('Please enter/add a street name');
       return;
     }
-    storeNewRouteData(routeName, houseNumbers, volNotes, cityName, canningDate, numDonated).then(msg => {
-      setSnackBarState({
-        open: true,
-        severity: msg.state.toLowerCase(),
-        message: msg.message
-      })
-    });
+    storeRouteData(routeName, houseNumbers, volNotes, cityName);
   }
-
-  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
 
   const classes = useStyles();
 
@@ -357,11 +274,12 @@ const NewRoutePanel = () => {
               <DualGroupedTextField buttonLabel="ADD" buttonColor="primary"
                 label1={<span>Street Name<span style={{ color: '#AA0000' }}>*</span></span>} value1={currStreet} onChange1={handleStreet}
                 label2={<span>House Number<span style={{ color: '#AA0000' }}>*</span></span>} value2={currHouses} onChange2={handleAddress}
+                list={streetList}
                 helperText1="Street Name Only"
                 helperText2="Comma Seperated"
                 onButtonClick={updateStreetList}
               />
-              {Object.keys(houseNumbers).length > 0 ? <ChipList color="primary" list={Object.keys(houseNumbers)} onClick={openStreet} onDelete={removeStreet} /> : null}
+              {streetList.length > 0 ? <ChipList color="primary" list={streetList} onClick={openStreet} onDelete={removeStreet} /> : null}
             </Grid>
           </Grid>
         </div>
@@ -399,17 +317,7 @@ const NewRoutePanel = () => {
             Save
           </PillButton>
         </div>
-        {/* This is a dummy object, it's supposed to hold an invisible map */}
-        <div ref={ref} style={{ display: 'none' }}></div>
       </div>
-      <AlertSnackbar
-        open={snackBarState.open}
-        severity={snackBarState.severity}
-        autoHideDuration={6000}
-        onClose={handleSnackBarClose}>
-        {snackBarState.message}
-      </AlertSnackbar>
-
     </div>
 
   );
