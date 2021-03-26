@@ -111,7 +111,6 @@ const App = () => {
               </Box>
          </Box>
       </Grid>
-
     </Grid>
   )
 };
