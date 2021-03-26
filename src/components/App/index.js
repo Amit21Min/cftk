@@ -51,13 +51,12 @@ const App = () => (
         <Route exact path="/">
           <Redirect to="/signin" />
         </Route>
-        <Route path={ROUTES.VOLUNTEER_ASSIGNMENT} component={VolunteerAssignment} />
         <Route path={ROUTES.HOME} component={HomePage} /> 
         {/* This Admin Route should be eventually removed, but for now refer to /admin for ViewHouse and Other Admin stuff */}
         <Route path={ROUTES.ADMIN} component={AdminLayout} />
         <Route path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHousePropertiesPage} />
         <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-        {/* <Route path={ROUTES.VOLUNTEER} component={VolunteerLayout} /> */}
+         <Route path={ROUTES.VOLUNTEER} component={VolunteerLayout} />
         
         {/* <Route path={ROUTES.ADMIN_DASHBOARD} component={AdminLayout} />
         <Route path={ROUTES.ADMIN_ROUTES} component={AdminLayout} />
