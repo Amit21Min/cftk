@@ -236,6 +236,14 @@ const ViewHouseProperties = (props) => {
                 });
               }
             }
+
+            // Sorting all of the data by date
+            _comments = _comments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            _donations = _donations.sort((a, b) => new Date(b.date) - new Date(a.date));
+            _learnMore = _learnMore.sort((a, b) => new Date(b.date) - new Date(a.date))
+            _solicitation = _solicitation.sort((a, b) => new Date(b.date) - new Date(a.date))
+
+
             setData({
               donations: _donations,
               solicitation: _solicitation,
@@ -247,40 +255,8 @@ const ViewHouseProperties = (props) => {
     }
   }, [street, number]);
 
-  const getDonation = (visit_i) => {
-    if (visit_i >= data.donations.length) {
-      return null;
-    }
-    return data.donations[visit_i].amount;
-  };
-
-  const solicitationAllowedText = (visit_i) => {
-    if (visit_i >= data.solicitation.length) {
-      return null;
-    }
-    return data.solicitation[visit_i].allowed ? "Allowed" : "Not Allowed";
-  };
-
-  const learnMoreText = (visit_i) => {
-    if (visit_i >= data.learnMore.length) {
-      return null;
-    }
-    return data.learnMore[visit_i].learn ? "Yes" : "No";
-  };
-
-  const getComment = (visit_i) => {
-    if (visit_i >= data.comments.length) {
-      return null;
-    }
-    return data.comments[visit_i].comment;
-  };
-
   const getGroup = (index) => {
     return null;
-  };
-
-  const getDate = (index) => {
-    return data.comments[0].date;
   };
 
   const handleStreetChange = (event, value, reason) => {
