@@ -7,6 +7,7 @@ import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import { db } from '../../FirebaseComponents/Firebase/firebase';
 // https://www.npmjs.com/package/material-ui-chip-input
 // npm i --save material-ui-chip-input@next
 // import ChipInput from 'material-ui-chip-input' // not working well - hard to style
@@ -17,7 +18,7 @@ const AssignRoute = (props) => {
     const [group, setGroup] = React.useState("");
     const [phoneData, setPhoneData] = React.useState([]); // phone number list
     const [emailData, setEmailData] = React.useState([]); // email list
-    //console.log(props);
+    // console.log(props.routes);
 
     //validations
     const [inputs, setInputs] = React.useState({
@@ -29,17 +30,142 @@ const AssignRoute = (props) => {
         complete: false
     });
 
+    // helper function that gets all house numbers on a street, used for building the RoutesActive document
+    const getHouses = (item_ids, callback) => {
+        let itemRefs = item_ids.map(id => {
+          return db.collection('Streets').doc(id).get();
+        });
+
+        Promise.all(itemRefs)
+        .then(docs => {
+          let items = docs.map(doc => doc.data());
+          callback(items);
+        })
+        .catch(error => console.log(error))
+      }
+    // creates the document in RoutesActive
+    const setActiveRoute = function(input, streets, houses, users, city) {
+        var today = new Date();
+        var routeHistory = {
+            assignedTo : input.group,
+            housesCompleted: 0,
+            housesTotal: 0,
+            streets: {},
+            visitDate: String(parseInt(today.getMonth())+1) + '/' + today.getDate()  + '/' + today.getFullYear(),
+            city: city
+        }
+        for (let i in streets) {
+            console.log(streets[i]);
+            var gatherHouses = [];
+            let houseInfo = {
+                donationAmt: null,
+                learnMore: null,
+                solicitation: null,
+                volunteerComments: null
+            };
+            Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
+                if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total')) {
+                    routeHistory.housesTotal += 1;
+                    gatherHouses.push({
+                        [houseNumber] : houseInfo
+                    });
+                }
+
+            });
+            routeHistory.streets[streets[i].split("_")[0]] = gatherHouses;
+        }
+        const ref = db.collection('your_collection_name').doc();
+        const id = ref.id;
+        let routeUID = props.routes + '_' + id;
+
+        const res = db.collection('RoutesActive').doc(routeUID).set(routeHistory);
+        setGroupAssignment(input.group, routeUID);
+        setRouteAssignment(input.routeID);
+
+    };
+
+    const setRouteAssignment = async function(routeID) {
+        db.collection('Routes').doc(routeID).update({
+            assignmentStatus: true
+        })
+    }
+
+    const setGroupAssignment = async function(group, routeUID) {
+        var groupRef = db.collection('Groups').doc(group);
+        groupRef.update({
+            assignment: routeUID
+        })
+    }
+
+    const isGroupAssigned = async function(group) {
+        var groupRef = db.collection('Groups').doc(group);
+        const groupDoc = await groupRef.get();
+        if (groupDoc.exists) {
+            if (groupDoc.data().assignment) {
+                return true;
+            } else {
+                return false; // group is not assigned
+            }
+        } else {
+            return false; // group name not found
+        }
+        
+    }
+    const isRouteAssigned = async function(route_id) {
+        var routeRef = db.collection('Routes').doc(route_id);
+        const routeDoc = await routeRef.get();
+        if (routeDoc.exists) {
+            if (routeDoc.data().assignmentStatus) {
+                return true;
+            } else {
+                return false; // group is not assigned
+            }
+        } else {
+            return false; // group name not found
+        }
+        
+    }
+    
+    
+    // async func for fetching all streets within a route, then fetching all street information and building the route object to store in "routeHistory"
+    const getStreets = async function(input) {
+        const routeRef = db.collection('Routes').doc(input.routeID);
+        const doc = await routeRef.get();
+        const groupRef = db.collection('Groups').doc(input.group);
+        const groupDoc = await groupRef.get();
+
+        if (!doc.exists) {
+            console.log('No such route found');
+        } else if (!groupDoc.exists) {
+            console.log('No such group name');
+        } else {
+            let city = doc.data().city;
+            let streets = doc.data().streets;
+            getHouses(streets, houses => setActiveRoute(input, streets, houses, "placeholder users", city)); // getHouses grabs all of the houses with a Promise.all -> when resolved, it callbacks to houses() to set the route as active
+        }
+    }
+
     //submit assign
-    const assign = () => {
+    const assign = async () => {
         let input = {
+            routeID: props.routes,
             group: document.getElementById('group').value,
             link: document.getElementById('link').value,
             phone_numbers: phoneData,
             emails: emailData,
             message: document.getElementById('message').value,
         }
-        //TODO: some db interaction to assign routes
-        console.log(input);
+        let groupAssignment = await isGroupAssigned(input.group);
+        let routeAssignment = await isRouteAssigned(input.routeID);
+        if (groupAssignment) {
+            console.log('group already assigned');
+        } else if (routeAssignment) {
+            console.log('route is already assigned');
+        } else {  
+            getStreets(input);
+        }
+
+        // TODO possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
     }
 
     const addGroup = () => {
@@ -125,7 +251,8 @@ const AssignRoute = (props) => {
 
     return (
         <Box maxWidth="600px" style={{ padding: 10, margin: 20 }}>
-            <h1 className="title">Assign {props.routes.length === 1 ? props.routes[0] : "Multiple Routes"}
+            <h1 className="title">Assign {props.routes}
+            {/* props.routes.length === 1 ? props.routes[0] : "Multiple Routes" */}
                 <IconButton aria-label="close" style={{ float: "right", display: "inline" }} onClick={props.close}>
                     <CloseIcon />
                 </IconButton></h1>
@@ -235,7 +362,8 @@ const AssignRoute = (props) => {
                 <p>&nbsp;&nbsp;&nbsp;</p>
                 <Button variant="contained" ml={50} style={{ borderRadius: 50 }} color="primary"
                     onClick={function (event) { assign(); props.close(); }}
-                    disabled={(phoneData.length == 0 && emailData.length == 0) || group === ""}>
+                    // disabled={(phoneData.length == 0 && emailData.length == 0) || group === ""}
+                    >
                     ASSIGN</Button>
             </Grid>
         </Box>
