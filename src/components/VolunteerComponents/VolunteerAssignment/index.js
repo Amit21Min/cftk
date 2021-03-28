@@ -63,86 +63,94 @@ const App = () => {
   getHouses();
   
   return (
-    <Grid container justify="center" spacing={3}>
-      <Grid item xs={12} justify="center"> 
-        <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
-      </Grid>  
-      <Grid item xs={12} align="center">
-          <CircularProgressBar numHouses={housesCompleted} totalHouses="100"/>
-      </Grid>
+    <div className='volunteer-assignment-main'>
+      <div className='volunteer-assignment-content'>
 
-      <Grid item xs={6} justify="center">
-        <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Manor Ridge Road</Typography>
-      </Grid>
-      <Grid item xs={6} justify="center">
-        <Typography align="center" style = {{ fontSize: 14}}>0/15 Houses</Typography>
-      </Grid>
-      <Grid item xs={3}></Grid>
-        <Grid item xs={6} justify="center">
-            <LinearProgress 
-            classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
-            className = {classes.bar} 
-            variant="determinate" 
-            value={50} />
+      
+        <Grid container justify="center" spacing={3}>
+          <Grid item xs={12} justify="center"> 
+            <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
+          </Grid>  
+          <Grid item xs={12} align="center">
+              <CircularProgressBar numHouses={housesCompleted} totalHouses="100"/>
+          </Grid>
+
+          <Grid item xs={6} justify="center">
+            <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Manor Ridge Road</Typography>
+          </Grid>
+          <Grid item xs={6} justify="center">
+            <Typography align="center" style = {{ fontSize: 14}}>0/15 Houses</Typography>
+          </Grid>
+          <Grid item xs={3}></Grid>
+            <Grid item xs={6} justify="center">
+                <LinearProgress 
+                classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+                className = {classes.bar} 
+                variant="determinate" 
+                value={50} />
+            </Grid>
+          <Grid item xs={3}></Grid>
+
+          <Grid item xs={6} justify="center">
+            <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Misty Pines Pl</Typography>
+          </Grid>
+          <Grid item xs={6} justify="center">
+            <Typography align="center" style = {{ fontSize: 14}}>0/8 Houses</Typography>
+          </Grid>
+          <Grid item xs={3}></Grid>
+          <Grid item xs={6} justify="center">
+              <LinearProgress 
+              classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+              className = {classes.bar} 
+              variant="determinate" 
+              value={20} />
+          </Grid>
+          <Grid item xs={3}></Grid>
+
+          <Grid item xs={6} justify="center">
+            <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Morgan Hill Ct</Typography>
+          </Grid>
+          <Grid item xs={6} justify="center">
+            <Typography align="center" style = {{ fontSize: 14}}>0/23 Houses</Typography>
+          </Grid>  
+          <Grid item xs={3}></Grid>
+          <Grid item xs={6} justify="center">
+              <LinearProgress  
+              classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+              className = {classes.bar} 
+              variant="determinate" 
+              value={75} />
+          </Grid>
+          <Grid item xs={3}></Grid>
+
+          <Grid item xs={3}></Grid>
+          <Grid item xs={6} justify="center">
+            <Typography align="left" style = {{ fontSize: 24, fontWeight: "bold"}}>Statistics</Typography>
+          </Grid>
+          <Grid item xs={3}></Grid>
+
+          <Grid>
+            <Box pt={1}>
+                  <Box p={3} className = {classes.borderGrid}>
+                      <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>138</span> Dollars raised</Typography>
+                  </Box>
+            </Box>
+            <Box pt={1}>
+                  <Box p={3} className = {classes.borderGrid}>
+                      <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>52</span> Percentage of residents interested in learning about Carolina for The Kids</Typography>
+                  </Box>
+            </Box>
+            <Box pt={1}>
+                  <Box p={3} className = {classes.borderGrid}>
+                      <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>n/a</span> Team Rank out of 15</Typography>
+                  </Box>
+            </Box>
+          </Grid>
         </Grid>
-      <Grid item xs={3}></Grid>
+      </div>
 
-      <Grid item xs={6} justify="center">
-        <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Misty Pines Pl</Typography>
-      </Grid>
-      <Grid item xs={6} justify="center">
-        <Typography align="center" style = {{ fontSize: 14}}>0/8 Houses</Typography>
-      </Grid>
-      <Grid item xs={3}></Grid>
-      <Grid item xs={6} justify="center">
-          <LinearProgress 
-          classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
-          className = {classes.bar} 
-          variant="determinate" 
-          value={20} />
-      </Grid>
-      <Grid item xs={3}></Grid>
-
-      <Grid item xs={6} justify="center">
-        <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Morgan Hill Ct</Typography>
-      </Grid>
-      <Grid item xs={6} justify="center">
-        <Typography align="center" style = {{ fontSize: 14}}>0/23 Houses</Typography>
-      </Grid>  
-      <Grid item xs={3}></Grid>
-      <Grid item xs={6} justify="center">
-          <LinearProgress  
-          classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
-          className = {classes.bar} 
-          variant="determinate" 
-          value={75} />
-      </Grid>
-      <Grid item xs={3}></Grid>
-
-      <Grid item xs={3}></Grid>
-      <Grid item xs={6} justify="center">
-        <Typography align="left" style = {{ fontSize: 24, fontWeight: "bold"}}>Statistics</Typography>
-      </Grid>
-      <Grid item xs={3}></Grid>
-
-      <Grid>
-        <Box pt={1}>
-              <Box p={3} className = {classes.borderGrid}>
-                  <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>138</span> Dollars raised</Typography>
-              </Box>
-         </Box>
-         <Box pt={1}>
-              <Box p={3} className = {classes.borderGrid}>
-                  <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>52</span> Percentage of residents interested in learning about Carolina for The Kids</Typography>
-              </Box>
-         </Box>
-         <Box pt={1}>
-              <Box p={3} className = {classes.borderGrid}>
-                  <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>n/a</span> Team Rank out of 15</Typography>
-              </Box>
-         </Box>
-      </Grid>
-    </Grid>
+      <VolunteerNavBar tab="progress" />
+    </div>
   )
 };
  
