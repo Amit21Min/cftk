@@ -6,7 +6,7 @@ import './index.css';
 
 const ZeroResource = (props) => (
   <div>
-    <h4 className="zero-resource-heading">No {props.name} are available</h4>
+    <h4 className="zero-resource-heading">No {props.name} is available</h4>
     <span className="zero-resource-message">{props.msg}</span>
   </div>
 );

@@ -28,6 +28,7 @@ import {RouteColumnContext, RouteItemsContext,
         StreetColumnContext, StreetItemsContext,
         init_route_columns, init_street_columns
        } from './contexts.js';
+import TitleCard from '../../../ReusableComponents/TitleCard';
 
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
@@ -379,7 +380,8 @@ const RoutesPanel = () => {
 
   return(
     <div className="container">
-      <PanelBanner title="Routes"/>
+      {/* <PanelBanner title="Routes"/> */}
+      <TitleCard title="Routes"></TitleCard>
       <RouteColumnContext.Provider value={routeColumnNames}>
         <RouteItemsContext.Provider value={routes}>
           {screen}
