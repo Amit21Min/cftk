@@ -29,14 +29,100 @@ import {RouteColumnContext, RouteItemsContext,
         init_route_columns, init_street_columns
        } from './contexts.js';
 
+
 const RoutesPanel = () => {
   const [routes, setRoutes] = useState(null);
+
   const [routeMetrics, setRouteMetrics] = useState({ // hook up to firebase
-    total_assigned: "12",
-    ready_to_be_assigned: "5",
-    donations_this_year: "$300",
-    delta_from_last_canning: "$124"
+    total_assigned: 0,
+    ready_to_be_assigned: 0,
+    donations_last_event: "$0",
+    delta_from_last_canning: "$0"
   });
+
+  const findRouteStatistics = async function() {
+    let assignedCounter = 0;
+    let readyAssignCounter = 0;
+    db.collection("Routes").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+          if (doc.data().assignmentStatus === true) {
+            assignedCounter++;
+          }
+
+          else {
+            readyAssignCounter++;
+          }
+      });
+
+      let newRouteMetrics = Object.assign(routeMetrics, 
+        { 
+          total_assigned: assignedCounter,
+          ready_to_be_assigned: readyAssignCounter,
+        }
+      )
+      setRouteMetrics(
+        {
+          total_assigned: newRouteMetrics.total_assigned,
+          ready_to_be_assigned: newRouteMetrics.ready_to_be_assigned,
+          donations_last_event: newRouteMetrics.donations_last_event,
+          delta_from_last_canning: newRouteMetrics.delta_from_last_canning
+        }
+      );
+    });
+  }
+
+  const findDonorStatistics = async function() {
+    let eventDonationAmount = 0;
+    let latestDate = "01-01-1800";
+    db.collection('RoutesComplete').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (Date.parse(latestDate) < Date.parse(doc.data().visitDate)) {
+          latestDate = doc.data().visitDate;
+        }
+      });
+
+      querySnapshot.forEach((doc) => { // left off here
+        if (doc.data().visitDate === latestDate) {
+
+          //console.log(doc.data().streets);
+          for (const [key, value] of Object.entries(doc.data().streets)) { //gets each street (key) and array of houses objects (value)
+            // console.log(value[0]['104'].donationAmt);
+            for (let i = 0; i < value.length; i++) { //loops through array of house objects
+              let houseObjects = Object.keys(value[i]); // gets the key (1) of each house object
+              for (let j = 0; j < houseObjects.length; j++) {
+                if (value[i][houseObjects[j]].donationAmt != null) {
+                  eventDonationAmount += value[i][houseObjects[j]].donationAmt; //add donation amount
+                  // console.log(eventDonationAmount);
+                }
+       
+              }
+            }
+          } 
+        }
+      });
+      let newRouteMetrics = Object.assign(routeMetrics, 
+        { 
+          donations_last_event: `$${eventDonationAmount}`,
+        }
+      )
+      setRouteMetrics(
+        {
+          total_assigned: newRouteMetrics.total_assigned,
+          ready_to_be_assigned: newRouteMetrics.ready_to_be_assigned,
+          donations_last_event: newRouteMetrics.donations_last_event,
+          delta_from_last_canning: newRouteMetrics.delta_from_last_canning
+        }
+      );
+    });
+  }
+
+  useEffect(function() {
+    findRouteStatistics();
+  }, []);
+
+  useEffect(function() {
+    findDonorStatistics();
+  }, []);
 
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
   const [queryState, setQueryState] = useState({sort: false, queryString: ""});
