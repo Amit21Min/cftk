@@ -6,3 +6,85 @@
     text-align: center;
     margin-top: 120px;
 }
+
+.dashboard-metric-item{
+    text-align: left;
+    padding: 24px;
+}
+  
+h4.dashboard-metric-main{
+    font-weight: bold;
+    width: 100%;
+    font-size: 56px;
+    color: black;
+}
+
+span.dashboard-metric-label{
+    color: black;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+}
+
+.dashboard-metric-efficient {
+    background-color: #BFBAFF; 
+    box-shadow: 5px 15px 25px #d0cdfa;
+}
+
+.dashboard-metric-learnmore {
+    background-color: #F78A72; 
+    box-shadow: 5px 15px 25px #f7b4a5;
+}
+
+.dashboard-metric-avgdonation {
+    background-color: #89D9E0; 
+    box-shadow: 5px 15px 25px #a7dadf;
+}
+
+.dashboard-metric-totaldonation {
+    background-color: #7CC9AA;
+    box-shadow: 5px 15px 25px #a6c7ba;
+}
+
+.dashboard-metric-general {
+    border-radius: 25px;
+}
+
+.data-container {
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 65% 35%;
+}
+
+.stat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-right: 20px;
+}
+
+.abstractOne {
+    position: absolute;
+    right: 54px;
+    bottom: 511.3px;
+}
+
+.abstractTwo {
+    position: absolute;
+    right: 53px;
+    bottom: 325px;
+}
+
+.abstractThree {
+    position: absolute;
+    right: 53px;
+    bottom: 104px;
+    border-radius: 20px;
+}
+
+.abstractFour {
+    position: absolute;
+    right: 53px;
+    top: 709px;
+    border-radius: 30px;
+}
