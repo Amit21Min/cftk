@@ -22,6 +22,8 @@ export const ADMIN_ROUTES_DEL = ADMIN+'/delete'
 
 // Volunteer UI
 export const VOLUNTEER = '/volunteer';
+// create new volunteer group
+export const ADMIN_VOLUNTEER_NEW_GROUP=ADMIN+'/volunteers/newgroup';
 
 export const VOLUNTEER_ASSIGNMENT = VOLUNTEER + '/assignment';
 export const VOLUNTEER_SETTINGS = VOLUNTEER + '/settings';
