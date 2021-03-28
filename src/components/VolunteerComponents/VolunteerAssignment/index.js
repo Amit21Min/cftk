@@ -34,8 +34,8 @@ const App = () => {
   const classes = useStyles();
   console.log(housesCompleted);
 
-
-  var user = auth.currentUser;
+  // gets the current user's UID
+  var user = auth.currentUser.uid;
   console.log(user);
 
   const getHouses = async () => {
@@ -61,6 +61,9 @@ const App = () => {
   }
 
   getHouses();
+
+
+
   
   return (
     <div className='volunteer-assignment-main'>
