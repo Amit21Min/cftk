@@ -1,8 +1,8 @@
-.title {
+/* .title {
     margin-bottom:2%;
     margin-left:2%;
-}
-
+} */
+/* 
 .street-select {
     margin-left: 1%;
     margin-right: 1%;
@@ -54,4 +54,46 @@
     text-align: center;
     vertical-align: middle;
     font-size: 30px;
+} */
+
+.vhp-container {
+    margin: 32px;
+    display: inline-grid;
+    grid-template-columns: auto auto auto;
+    grid-column-gap: 20px
+}
+
+.selection-items {
+    display: inline-flex;
+    grid-gap: 20px;
+}
+
+.google_map{
+    margin-top:10%;
+}
+
+.house-props-cards {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 24px;
+    grid-row-gap: 20px;
+}
+
+/* This is to make sure the actions stay at the bottom and could effect others */
+.MuiCard-root{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.vhp-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 33px;
+    margin: 40px 160px 40px 0px
+}
+
+.title {
+    margin-left: 32px;
+    margin-top: 28px;
 }
