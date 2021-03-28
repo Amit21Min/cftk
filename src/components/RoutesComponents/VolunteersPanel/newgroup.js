@@ -79,12 +79,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const newGroup = (groupName, idList) => {
   
   db.collection("Groups").doc(groupName).set({
-    assignment: [],
+    assignment: null,
     users: idList
   });
 }
-
-
 
 export function FullScreenDialog() {
   const classes = useStyles();
