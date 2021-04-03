@@ -1,0 +1,9 @@
+
+.volunteer-progress-main {
+    height: 100vh;
+}
+
+.volunteer-progress-content {
+    height: 90%;
+    overflow: scroll;
+}

@@ -33,7 +33,6 @@ const App = () => {
   const [housesCompleted, setHousesCompleted] = useState(0);
   const classes = useStyles();
   console.log(housesCompleted);
-
   // gets the current user's UID
   var user = auth.currentUser.uid;
   console.log(user);
@@ -151,7 +150,6 @@ const App = () => {
           </Grid>
         </Grid>
       </div>
-
       <VolunteerNavBar tab="progress" />
     </div>
   )
