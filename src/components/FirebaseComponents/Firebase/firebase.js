@@ -24,7 +24,7 @@ export const db = firebase.firestore();
 // creating new collections
 // if the collection already exists, it will just move on
 const routes = db.collection('Routes');
-const users = db.collection('User');
+//const users = db.collection('User');
 /* example of how to use the SignOut function
 
 <button onClick={signOut}>
