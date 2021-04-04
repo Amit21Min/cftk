@@ -1,0 +1,9 @@
+
+.volunteer-assignment-main {
+    height: 100vh;
+}
+
+.volunteer-assignment-content {
+    height: 90%;
+    overflow: scroll;
+}

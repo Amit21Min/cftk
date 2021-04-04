@@ -1,6 +1,9 @@
 // import { AddCircle } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
 import { useGoogleMaps } from "react-hook-google-maps";
+import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
+import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
+
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
@@ -57,31 +60,45 @@ function Map(props) {
   );
   const coords = useFlatAddress(props.addresses);
   // const roads = useSnappedRoads(props.addresses);
+  function createMarkerListeners(marker) {
+    const markerIn = marker.addListener('mouseover', function() {
+      // Action on the way in
+      marker.setIcon(houseDefaultSelected)
+    });
+    const markerOut = marker.addListener('mouseout', function() {
+      // Reset on the way out
+      marker.setIcon(houseDefault)
+    });
+    const markerClick = marker.addListener('click', function() {
+      // Action on click
+      console.log('click');
+    })
+    return [markerIn, markerOut, markerClick]
+  }
 
   useEffect(() => {
 
     // Exit if the map or google objects are not yet ready
     if (!map || !google || coords.length === 0) return;
 
-    const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
-    const parkingIcon = iconBase + 'parking_lot_maps.png';
-
-    // Add only the markers that are new
-
     map.panTo(coords[0]);
 
     let tempMarkers = []
     for (let address of coords) {
-      tempMarkers.push(new google.maps.Marker({
+      const marker = new google.maps.Marker({
         map: map,
         position: address,
-        icon: parkingIcon
-      }));
+        icon: houseDefault
+      });
+      createMarkerListeners(marker);
+      tempMarkers.push(marker);
     }
 
     return function cleanup() {
       for (let marker of tempMarkers) {
         marker.setMap(null);
+        google.maps.event.clearInstanceListeners(marker);
+        marker = null;
       }
     }
 
