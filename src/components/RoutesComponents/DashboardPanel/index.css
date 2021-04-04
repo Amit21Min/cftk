@@ -29,21 +29,25 @@ span.dashboard-metric-label{
 .dashboard-metric-efficient {
     background-color: #BFBAFF; 
     box-shadow: 5px 15px 25px #d0cdfa;
+    position: relative;
 }
 
 .dashboard-metric-learnmore {
     background-color: #F78A72; 
     box-shadow: 5px 15px 25px #f7b4a5;
+    position: relative;
 }
 
 .dashboard-metric-avgdonation {
     background-color: #89D9E0; 
     box-shadow: 5px 15px 25px #a7dadf;
+    position: relative;
 }
 
 .dashboard-metric-totaldonation {
     background-color: #7CC9AA;
     box-shadow: 5px 15px 25px #a6c7ba;
+    position: relative;
 }
 
 .dashboard-metric-general {
@@ -65,26 +69,27 @@ span.dashboard-metric-label{
 
 .abstractOne {
     position: absolute;
-    right: 54px;
-    bottom: 511.3px;
+    right: 0;
+    top: 0;
+
 }
 
 .abstractTwo {
     position: absolute;
-    right: 53px;
-    bottom: 325px;
+    right: 0;
+    top: 0;
 }
 
 .abstractThree {
     position: absolute;
-    right: 53px;
-    bottom: 104px;
+    right: 0;
+    top: 0;
     border-radius: 20px;
 }
 
 .abstractFour {
     position: absolute;
-    right: 53px;
-    top: 709px;
+    right: 0;
+    top: 0;
     border-radius: 30px;
 }

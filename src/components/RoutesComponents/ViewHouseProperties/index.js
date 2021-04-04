@@ -108,24 +108,24 @@ const ViewHouseProperties = () => {
                 let _donations = []
                 for(let i = 0; i < address.visitDates.length; i++){
                     for (let _date in address.visitDates[i]) {
-                    let _address = address.visitDates[i][_date]
-                    _comments.push({
-                        comment: _address.volunteerComments,
-                        date: _date,
-                    }); 
-                    _solicitation.push({
-                        allowed: _address.solicitationAllowed,
-                        date: _date,
-                    });
-                    _learnMore.push({
-                        learn: _address.learnMore,
-                        date: _date,
-                    })
-                    _donations.push({
-                        amount: _address.donationAmt,
-                        date: _date,
-                    }) 
-                }
+                        let _address = address.visitDates[i][_date]
+                        _comments.push({
+                            comment: _address.volunteerComments,
+                            date: _date,
+                        }); 
+                        _solicitation.push({
+                            allowed: _address.solicitationAllowed,
+                            date: _date,
+                        });
+                        _learnMore.push({
+                            learn: _address.learnMore,
+                            date: _date,
+                        })
+                        _donations.push({
+                            amount: _address.donationAmt,
+                            date: _date,
+                        }) 
+                    }
                 }
                 setData({
                     donations: _donations,
