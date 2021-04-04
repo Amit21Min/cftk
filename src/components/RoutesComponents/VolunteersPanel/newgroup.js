@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState }  from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-
+import Checkbox from '@material-ui/core/Checkbox';
+import EmailIcon from '@material-ui/icons/Email';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -27,7 +28,27 @@ import db from '../../FirebaseComponents/Firebase/firebase.js';
 import Grid from '@material-ui/core/Grid';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+import { DataUsageSharp, EmailOutlined } from '@material-ui/icons';
+import { DataGrid } from '@material-ui/data-grid';
+import Paper from '@material-ui/core/Paper';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Box from '@material-ui/core/Box';
+import Collapse from '@material-ui/core/Collapse';
+import MessageIcon from '@material-ui/icons/Message';
+import SpeakerNotesOffOutlinedIcon from '@material-ui/icons/SpeakerNotesOffOutlined';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
 
+////////////////////////////////////////////// styling //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: 'relative',
@@ -50,7 +71,8 @@ const useStyles = makeStyles((theme) => ({
     margin: "left",
     alignContent: "center",
     marginLeft: theme.spacing(2),
-    borderRadius: "2em"
+    borderRadius: "2em",
+    justifyContent:'center'
   },
   margin: {
     justify: 'center',
@@ -58,19 +80,29 @@ const useStyles = makeStyles((theme) => ({
   },
   addButton: {
     margin: theme.spacing(1),
-    borderRadius: "5em"
+    borderRadius: "5em",
+    paddingTop: '40'
   },
   labelAsterisk: {
     color: "#b71c1c"
-  }
+  },
+  table: {
+    height:'100%',
+    minWidth: '650',
+    width: '100%'
+  },
 
 
 }));
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////// NEW GROUP CUSTOM DIALOG //////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+// saves the new group to db collecitons
 const newGroup = (groupName, idList) => {
   
   db.collection("Groups").doc(groupName).set({
@@ -106,10 +138,8 @@ export function FullScreenDialog() {
   ]
 
   const [users, setUsers] = React.useState([]);
-  
-  const getUsers = () => {
-    //const users = [];
 
+  useEffect(() => {
     db.collection('User').get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         //console.log(doc.id, " => ", doc.data());
@@ -124,12 +154,10 @@ export function FullScreenDialog() {
         console.log("error: ", error);
     })
 
-    for (var i=0;i<users.length;i++) {
-      console.log(users[i]);
-    }
+
+  }, []);
   
-    //return ([]);
-  }
+  
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -199,7 +227,7 @@ export function FullScreenDialog() {
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={() => {handleClickOpen(); getUsers();}}>
+      <Button variant="contained" color="primary" onClick={() => {handleClickOpen(); }}>
         Create New Group
       </Button>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -229,9 +257,9 @@ export function FullScreenDialog() {
           
         <Grid item xs={3} mx='auto' my='auto'>
         <Card className={classes.card} style={{width:250, height: 250}}>
-          <CardActions className={classes.margin} justify="center">
+          <CardActions  style={{justifyContent: 'center'}}>
             <Button className={classes.addButton} aria-label="add" variant="outlined" color="primary" onClick={() => {handleSecondClickOpen();}}> 
-              <AddIcon></AddIcon>
+              <AddIcon > </AddIcon>
             </Button>
             <Dialog fullWidth open={secondOpen}
               onClose={handleClose}
@@ -274,8 +302,8 @@ export function FullScreenDialog() {
             </Dialog>
           </CardActions>
           <CardContent>
-            <Typography variant="h6" component="h2" style={{ color: "#bdbdbd", mx: "auto" }}>
-              Add another item
+            <Typography variant="h6" component="h2" align='center' style={{ color: "#bdbdbd"}}>
+              Add new member
             </Typography>
           </CardContent>
         </Card>
@@ -295,7 +323,7 @@ export function FullScreenDialog() {
                 {member.phone}
             </Typography>
           </CardContent>
-          <CardActions>
+          <CardActions style={{justifyContent: 'center'}}>
             <Button>
               <EditIcon></EditIcon>
             </Button>
@@ -315,6 +343,201 @@ export function FullScreenDialog() {
   );
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// GROUP TABLE COMPONENTS /////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const useRowStyles = makeStyles({
+  root: {
+    '& > *': {
+      borderBottom: 'unset',
+    },
+  },
+});
+
+////////// ROW COMPONENT //////////
+function Row(props) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
+  const classes = useRowStyles();
+  const [foundUsers, setUsers] = React.useState([]);
 
 
+  useEffect(() => {
+    db.collection('User').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const user=doc.data();
+        user.id=doc.id;
+        console.log(user.lastName);
+        if (row.users.find(o => o === user.id) === user.id) {
+          setUsers(prevState=> [...prevState,user]);
+        }
+        //setIdList(prevState=> [...prevState,doc.id]);
+        //console.log(user);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
+  }, []);
+
+ 
+  const [checked, setChecked] = React.useState(false);
+  const [userchecked, setCheckedUser] = React.useState(false);
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
+  const handleChangeUser=(event) => {
+    setCheckedUser(event.target.checked);
+  }
+
+
+
+  return (
+    <React.Fragment>
+      <TableRow className={classes.root}>
+        <TableCell padding="checkbox"> 
+            <Checkbox
+              checked={checked}
+              onChange={handleChange}
+              inputProps={{ 'aria-label': 'primary checkbox' }}
+            />
+        </TableCell>
+        <TableCell size = "small"> 
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        
+        <TableCell component="th" scope="row" align="right" size = "medium" >{row.id}</TableCell>
+        <TableCell align="right" size = "medium">{row.users.length}</TableCell>
+        <TableCell align="right" size = "medium">{row.assignment}</TableCell>
+        <TableCell align="right" size = "medium"></TableCell>
+        <TableCell align="right" size = "medium"></TableCell>
+        <TableCell align="right" size = "small"></TableCell>
+        
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0, paddingLeft: "checkbox"}} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+           
+              <Table >
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="checkbox"></TableCell>
+                    
+                    <TableCell>Name</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell>Phone Number</TableCell>
+                    <TableCell align="right">Email Address</TableCell>
+                    <TableCell align="right">Preferred Contact Method</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {foundUsers.map((user) => (
+                    
+                    <TableRow key={user.id}>
+                      <TableCell padding="checkbox"> 
+                          
+                          <Checkbox
+                            checked={userchecked}
+                            onChange={(event) => {
+                              setCheckedUser(event.target.checked);
+                            }}
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                          />
+                      </TableCell>
+                      
+                      <TableCell align="right"  size = "medium" >{user.firstName} {user.lastName}</TableCell>
+                      <TableCell align="right" size = "medium"></TableCell>
+                      <TableCell align="right"  size = "medium"></TableCell>
+                      <TableCell align="right"  size = "medium" >{user.phone}</TableCell>
+                      <TableCell align="right" size = "medium">{user.email}</TableCell>
+                      <TableCell align="right" size = "small">{user.emailNotifications ? <EmailIcon color="primary"/> : <MailOutlineIcon color="#e0e0e0"/>} {user.sms ? <MessageIcon color="primary"/> : <SpeakerNotesOffOutlinedIcon color="#e0e0e0"/>} </TableCell>
+
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
+}
+
+///////// ACTUAL TABLE ////////////////
+
+export const GroupTable = (props) => {
+  const [data, setData] = useState([]);
+  const classes = useStyles();
+  useEffect(() => {
+    db.collection('Groups').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const group=doc.data();
+        group.id=doc.id;
+        setData(prevState=> [...prevState,group]);
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
+  }, []);
+
+  const [checked, setChecked] = React.useState(true);
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
+  const columns = [
+    {field: 'icon', headerName: "", width: 70},
+    {field: 'name', headerName:'Name', width: 130},
+    {field: 'number', headerName: 'Number of Volunteers', width: 100},
+    {field: 'assigned', headerName: 'Route Assigned', width: 100},
+    {field: 'phone', headerName: 'Phone Number', width: 130},
+    {field: 'email', headerName: 'Email Address', width: 150},
+    {field: 'preferred', headerName: 'Preferred Contact Method', width: 100}
+  ]
+
+  return (
+    <TableContainer component = {Paper}>
+      <Table aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            <TableCell padding="checkbox"> 
+            
+            </TableCell>
+
+            <TableCell size="small"/>
+            <TableCell align="right"> Name </TableCell>
+            <TableCell align="right"> Number of Volunteers </TableCell>
+            <TableCell align="right"> Route Assigned </TableCell>
+            <TableCell align="right"> Phone Number</TableCell>
+            <TableCell align="right"> Email Address </TableCell>
+            <TableCell align="right"> Preferred Contact Method </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((row) => (
+            <Row key={row.name} row={row} />
+          ))}
+        </TableBody>
+      </Table>
+
+    </TableContainer>
+
+    //<div style={{height: '100%', width:'100%',minWidth:'650'}}>
+    //  <DataGrid  rows={data} columns={columns} pageSize={5} checkboxSelection />
+    // </div>
+  );
+};
 
