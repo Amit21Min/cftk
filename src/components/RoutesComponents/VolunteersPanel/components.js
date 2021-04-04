@@ -1,51 +1,109 @@
 import React, { useEffect, useState }  from 'react';
+import {Button, Dialog, Checkbox, AppBar, Toolbar, IconButton, Typography, Slide, TextField, Paper} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import Checkbox from '@material-ui/core/Checkbox';
+import {Card, CardActions, CardContent} from '@material-ui/core';
+//import { AddIcon, CloseIcon, EditIcon, DeleteIcon, KeyboardArrowDownIcon, KeyboardArrowUpIcon,MessageIcon,MailOutlineIcon}  from '@material-ui/icons';
+import {DialogActions, DialogContent, DialogTitle, Switch, FormGroup, FormControlLabel, Grid} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Collapse} from '@material-ui/core';
+
+
 import EmailIcon from '@material-ui/icons/Email';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
-import TextField from '@material-ui/core/TextField';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import Switch from '@material-ui/core/Switch';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import db from '../../FirebaseComponents/Firebase/firebase.js';
-import Grid from '@material-ui/core/Grid';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import { DataUsageSharp, EmailOutlined } from '@material-ui/icons';
-import { DataGrid } from '@material-ui/data-grid';
-import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Box from '@material-ui/core/Box';
-import Collapse from '@material-ui/core/Collapse';
 import MessageIcon from '@material-ui/icons/Message';
 import SpeakerNotesOffOutlinedIcon from '@material-ui/icons/SpeakerNotesOffOutlined';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
+
+import db from '../../FirebaseComponents/Firebase/firebase.js';
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+export function CardHolders() {
+  const [data, setData] = useState([]);
+  const classes = useStyles();
+  const [users, setUsers] = React.useState([]);
+  const [usersNotInGroup, setUsersNotInGroup] = React.useState([]);
+
+  useEffect(() => {
+    db.collection('User').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const user=doc.data();
+        user.id=doc.id;
+        setUsers(prevState=> [...prevState,user]);
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
+    db.collection('Groups').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const group=doc.data();
+        group.id=doc.id;
+        setData(prevState=> [...prevState,group]);
+        //const result = group.users.every(val => users.includes(val));
+        //setUsersNotInGroup(pre)
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
+    
+
+  }, []);
+
+  return (
+    <Grid container spacing={1} alignItems="flex-end">
+      <Grid item xs={3} mx='auto' my='auto'>
+        <Card style={{backgroundColor:'#7CC9AA'}}>
+          <CardContent>
+            <Typography variant="h2"> {data.length} </Typography>
+            <Typography variant="subtitle1"> Total Groups </Typography>
+            
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={3} mx='auto' my='auto'>
+        <Card style={{backgroundColor:'#F78A72'}}>
+          <CardContent>
+            <Typography variant="h2"> {data.length} </Typography>
+            <Typography variant="subtitle1"> Groups Without Assignment</Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={3} mx='auto' my='auto'>
+        <Card style={{backgroundColor:'#BFBAFF'}}>
+          <CardContent>
+            <Typography variant="h2"> {users.length} </Typography>
+            <Typography variant="subtitle1"> Total Volunteers </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={3} mx='auto' my='auto'>
+        <Card style={{backgroundColor:'#89D9E0'}}>
+          <CardContent>
+            <Typography variant="h2"> {users.length} </Typography>
+            <Typography variant="subtitle1"> Ungrouped Volunteers </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
+  );
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////// styling //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

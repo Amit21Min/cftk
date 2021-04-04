@@ -10,9 +10,9 @@ import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 
-import Card from '@material-ui/core/Card';
-
-import {FullScreenDialog, GroupTable} from '../VolunteersPanel/newgroup';
+import {Card, CardActions, CardContent} from '@material-ui/core';
+import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import {FullScreenDialog, GroupTable, CardHolders} from '../VolunteersPanel/components';
 import * as ROUTES from '../../../constants/routes';
 import db from '../../FirebaseComponents/Firebase/firebase.js';
 
@@ -71,6 +71,9 @@ const useStyles = makeStyles((theme) => ({
   input: {
    
   }, 
+  grid: {
+    flexGrow: 1,
+  },
   
 }));
 
@@ -140,30 +143,43 @@ const VolunteersPanel = () => {
   
 
   return (
-    <div className={classes.root}>
-      <div>
-        {/* <AppBar className={classes.appBar} position='fixed' color='transparent'>
-          <Toolbar>
-            <Typography variant="h4" style={{ fontWeight: 'bold', marginTop: 'auto' }}>Volunteer Groups</Typography>
-          </Toolbar>
-        </AppBar> */}
+    <div className={classes.root}> 
 
+
+      <div>
+        
         <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>Volunteer Groups</Typography></div>
-        <div className={classes.button}> 
-        <FullScreenDialog></FullScreenDialog>
-        <Button color="secondary" variant = "outlined"> Import CSV </Button>
-        </div>
+        
         <br/>
-        
-        
+
+
         <div>
+          <CardHolders></CardHolders>
+        </div>
+
+        <br/>
+
+        <div className={classes.button}> 
+          <FullScreenDialog></FullScreenDialog>
+          <Button color="secondary" variant = "outlined"> Import CSV </Button>
+        </div>
+
+        <div>
+        <Grid container spacing={1} alignItems="flex-end">
+          <Grid item>
+            <SearchOutlinedIcon />
+          </Grid>
+          <Grid item>
+            <TextField id="input-with-icon-grid" label="Search Group" />
+          </Grid>
+        </Grid>
           <GroupTable></GroupTable>
         </div>
-
-        
       </div>
       
-    </div >
+
+    </div>
+
 
   );
 

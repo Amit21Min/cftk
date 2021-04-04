@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useHistory
 } from "react-router-dom";
 
 import DashboardPanel from '../DashboardPanel/index';
@@ -33,11 +34,12 @@ import GroupIcon from '@material-ui/icons/Group';
 import MessageIcon from '@material-ui/icons/Message';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { auth } from "../../FirebaseComponents/Firebase/firebase";
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
-    width: 'inherit',
     background: 'linear-gradient(180deg, #7CC9AA 0%, #0075A3 100%)',
+    width: '200px'
   },
   link: { 
     textDecoration: 'none', 
@@ -52,8 +54,16 @@ const useStyles = makeStyles((theme) => ({
 const Sidebar = () => {
   const classes = useStyles();
 
+  const history = useHistory();
+
+  const logout = () => {
+    auth.signOut().then(() => {
+      history.push('/signin')
+    })
+  }
+
   return (
-    <div id="sidebar">
+    <div id="sidebar"> 
 
       <div id="sidebar-menu">
         <div id="sidebar-adaptation">
@@ -62,7 +72,6 @@ const Sidebar = () => {
         </div>
       </div>
       <Drawer
-        style={{ width: '200px' }}
         variant="persistent"
         anchor="left"
         open={true}
@@ -118,7 +127,7 @@ const Sidebar = () => {
             </ListItem>
           </List>
         </Box>
-        <div className="logout-container">
+        <div className="logout-container" onClick={logout}>
           <ListItem button className={classes.link}>
             <ListItemIcon>
               <ExitToAppIcon className={classes.link} />
