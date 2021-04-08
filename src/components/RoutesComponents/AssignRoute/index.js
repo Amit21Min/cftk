@@ -86,6 +86,9 @@ const AssignRoute = (props) => {
             assignedTo : input.group,
             housesCompleted: 0,
             housesTotal: 0,
+            donationTotal: 0,
+            pctInterest: 0,
+            pctSoliciting: 0,
             streets: {},
             visitDate: String(parseInt(today.getMonth())+1) + '/' + today.getDate()  + '/' + today.getFullYear(),
             city: city

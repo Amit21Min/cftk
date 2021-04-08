@@ -11,7 +11,7 @@ import "../CircularProgressBar/index.css";
 function CircularProgressWithLabel(props) {
   return (
     <Box position="relative" display="inline-flex">
-      <CircularProgress  variant="determinate" size="250px"{...props} />
+      <CircularProgress  variant="determinate" size="250px" value={props.progress}/>
       <Box
         top={0}
         left={20}
@@ -24,7 +24,7 @@ function CircularProgressWithLabel(props) {
       >
       <Grid>
         <Typography variant="subtitle1" component="div" 
-              style = {{ fontSize: 36, fontWeight: "bold", fontColor: "black"}}>{`${props.value}/${props.totalHouses} `}
+              style = {{ fontSize: 36, fontWeight: "bold", fontColor: "black"}}>{`${props.housesCompleted}/${props.totalHouses} `}
           </Typography>    
           <Typography style = {{ fontSize: 14, fontWeight: "bold", fontColor: "black"}}> Houses Visited</Typography>      
       </Grid>
@@ -42,6 +42,6 @@ CircularProgressWithLabel.propTypes = {
 };
 
 export default function CircularStatic(props) {
-  let progress = (props.numHouses/props.totalHouses) * 100;
-  return <CircularProgressWithLabel value={progress} totalHouses={props.totalHouses} />;
+  let progress = (props.housesCompleted/props.totalHouses) * 100;
+  return <CircularProgressWithLabel progress={progress} housesCompleted={props.housesCompleted} totalHouses={props.totalHouses} />;
 }
