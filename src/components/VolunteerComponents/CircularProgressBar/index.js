@@ -33,15 +33,13 @@ function CircularProgressWithLabel(props) {
   );
 }
 
-CircularProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate variant.
-   * Value between 0 and 100.
-   */
-  value: PropTypes.number.isRequired,
-};
-
 export default function CircularStatic(props) {
   let progress = (props.housesCompleted/props.totalHouses) * 100;
-  return <CircularProgressWithLabel progress={progress} housesCompleted={props.housesCompleted} totalHouses={props.totalHouses} />;
+  if (progress === undefined) {
+    progress = 0;
+  }
+  if (props.housesCompleted === undefined) {
+    props.housesCompleted = 0;
+  }
+  return <CircularProgressWithLabel progress={0} housesCompleted={props.housesCompleted} totalHouses={props.totalHouses} />;
 }
