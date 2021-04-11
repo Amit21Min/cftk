@@ -4,3 +4,26 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
+.route-metric-assign {
+  background-color: #F78A72; 
+}
+
+.route-metric-ready {
+  background-color: #89D9E0;
+}
+
+.route-metric-donations {
+  background-color: #7CC9AA;
+}
+
+.route-metric-gain {
+  background-color: #BFBAFF;
+}
+
+.route-metric-general {
+  width: 257px;
+  height: 136px;
+  border-radius: 25px;
+  box-shadow: 5px 15px 25px #b0b0b0;
+}

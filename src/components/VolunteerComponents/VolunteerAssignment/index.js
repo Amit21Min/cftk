@@ -1,4 +1,4 @@
-import React, { useState, setState } from 'react';
+import React, { useState, useEffect, Component, Fragment} from 'react';
 import { Link } from 'react-router-dom';
 
 import * as ROUTES from '../../../constants/routes';
@@ -8,6 +8,7 @@ import CircularProgressBar from '../CircularProgressBar';
 import VolunteerNavBar from '../VolunteerNavBar';
 import "../VolunteerAssignment/index.css";
 import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
+import firebase from 'firebase';
 
 const useStyles = makeStyles ({
   borderGrid:{
@@ -31,128 +32,162 @@ const useStyles = makeStyles ({
 
 const App = () => {
   const [housesCompleted, setHousesCompleted] = useState(0);
+  const [totalHouses, setTotalHouses] = useState(0);
+  const [streets, setStreets] = useState();
+  const [teamRank, setTeamRank] = useState();
+  const [totalTeams, setTotalTeams] = useState();
+  const [donationTotal, setDonationTotal] = useState();
+  const [pctInterest, setPctInterest] = useState();
+  const [isAssigned, setIsAssigned] = useState(true);
   const classes = useStyles();
-  console.log(housesCompleted);
-  // gets the current user's UID
-  var user = auth.currentUser.uid;
-  console.log(user);
 
-  const getHouses = async () => {
-    // need to use firebase auth to fetch the currently logged in user
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(async function(user) {
+      let donationTotal;
+      if (user) {
+        console.log('user is signed in');
+        console.log(auth.currentUser.uid);
+        // const userRef = db.collection('User').doc(auth.currentUser.uid);
+        const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+        const userDoc = await userRef.get();
+        if (userDoc.exists) {
+          const assignment = userDoc.data().assignment;
+          if (assignment) {
+            const routesActiveRef = db.collection('RoutesActive').doc(assignment);
+            const routesActiveDoc = await routesActiveRef.get();
+            if (routesActiveDoc.exists) {
+              setIsAssigned(true); 
+              var streetArray = Object.keys(routesActiveDoc.data().streets).map((key) => {
+                return(
+                  {[key]: routesActiveDoc.data().streets[key]}
+                )
+              });
+              let totalDonated = routesActiveDoc.data().donationTotal;
+              db.collection('RoutesActive').get().then((snapshot) => {
+                let localTeamRank = 1;
+                let localTotalTeams = 0;
+                snapshot.forEach((doc) => {
+                  if (doc.data().donationTotal > totalDonated) {
+                    localTeamRank += 1;
+                  }
+                  localTotalTeams += 1;
+                });            
+                setTeamRank(localTeamRank);
+                setTotalTeams(localTotalTeams);
+              });
+              setStreets(streetArray);
+              setDonationTotal(totalDonated);
+              setHousesCompleted(routesActiveDoc.data().housesCompleted);
+              setPctInterest(routesActiveDoc.data().pctInterest);
+              setTotalHouses(routesActiveDoc.data().housesTotal);
+                
+            }
+          } else {
+            setIsAssigned(false);
+          } 
 
-    const userRef = db.collection('User').doc('3ytt1skUvlhMWmuGS8hsqGgpRbI2');
-    const userDoc = await userRef.get();
-    if (userDoc.exists) {
-      // do something with the data
-      console.log(userDoc.data());
-      const assignment = userDoc.data().assignment;
-      console.log(assignment);
-
-      const routesActiveRef = db.collection('RoutesActive').doc(assignment);
-      const routesActiveDoc = await routesActiveRef.get();
-      if (routesActiveDoc.exists) {
-        console.log(routesActiveDoc.data());
-        setHousesCompleted(routesActiveDoc.data().housesCompleted);
-        console.log(housesCompleted)
+        } else {
+          console.log("couldn't find user data")
+        }
+      } else {
+        console.log('user is not signed in');
       }
-    }
-
+    });
+  }, [])
+  
+  if (isAssigned) {
+    return (
+      <div className='volunteer-assignment-main'>
+        <div className='volunteer-assignment-content'>
+  
+        
+          <Grid container justify="center" spacing={3}>
+            <Grid item xs={12} justify="center"> 
+              <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
+            </Grid>  
+            <Grid item xs={12} align="center">
+                <CircularProgressBar housesCompleted={housesCompleted} totalHouses={totalHouses}/>
+            </Grid>
+  
+            {streets &&
+              streets.map((street) => {
+                let totalHouses;
+                let housesCompleted = 0;
+                let streetName = Object.keys(street)[0];
+                for (let key in street) {
+                  totalHouses = street[key].length;
+                  for (let houses in street[key]) {
+                    for (let houseKey in street[key][houses]) {
+                      if (street[key][houses][houseKey].donationAmt !== null) {
+                        housesCompleted += 1;
+                      }
+                    }
+                  }
+                }
+                let percentageCompleted = housesCompleted/totalHouses*100;
+                return(
+                <Fragment key={Object.keys(street)[0]}>
+                  <Grid item xs={6} justify="center">
+                    <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>{streetName}</Typography>
+                  </Grid>
+                  <Grid item xs={6} justify="center">
+                    <Typography align="center" style = {{ fontSize: 14}}>{housesCompleted}/{totalHouses} Houses</Typography>
+                  </Grid>
+                  <Grid item xs={3}></Grid>
+                    <Grid item xs={6} justify="center">
+                        <LinearProgress 
+                        classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
+                        className = {classes.bar} 
+                        variant="determinate" 
+                        value={percentageCompleted} />
+                    </Grid>
+                  <Grid item xs={3}></Grid>
+                </Fragment>
+                )
+              })
+            }
+  
+            <Grid item xs={3}></Grid>
+            <Grid item xs={6} justify="center">
+              <Typography align="left" style = {{ fontSize: 24, fontWeight: "bold"}}>Statistics</Typography>
+            </Grid>
+            <Grid item xs={3}></Grid>
+  
+            <Grid>
+              <Box pt={1}>
+                    <Box p={3} className = {classes.borderGrid}>
+                        <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>{donationTotal}</span> Dollars raised</Typography>
+                    </Box>
+              </Box>
+              <Box pt={1}>
+                    <Box p={3} className = {classes.borderGrid}>
+                        <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>{pctInterest}</span> Percentage of residents interested in learning about Carolina for The Kids</Typography>
+                    </Box>
+              </Box>
+              <Box pt={1}>
+                    <Box p={3} className = {classes.borderGrid}>
+                        <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>{teamRank}</span> Team Rank out of {totalTeams}</Typography>
+                    </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </div>
+  
+        <VolunteerNavBar tab="progress" />
+      </div>
+    )
+  } else {
+    return(
+      <div>
+      <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
+      <p>
+        You don't have a route assigned!
+      </p>
+      <VolunteerNavBar tab="progress" />
+      </div>
+    )
   }
 
-  getHouses();
-
-
-
-  
-  return (
-    <div className='volunteer-assignment-main'>
-      <div className='volunteer-assignment-content'>
-
-      
-        <Grid container justify="center" spacing={3}>
-          <Grid item xs={12} justify="center"> 
-            <Typography align="center" style = {{ fontSize: 32, fontWeight: "bold"}}>Performance</Typography>
-          </Grid>  
-          <Grid item xs={12} align="center">
-              <CircularProgressBar numHouses={housesCompleted} totalHouses="100"/>
-          </Grid>
-
-          <Grid item xs={6} justify="center">
-            <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Manor Ridge Road</Typography>
-          </Grid>
-          <Grid item xs={6} justify="center">
-            <Typography align="center" style = {{ fontSize: 14}}>0/15 Houses</Typography>
-          </Grid>
-          <Grid item xs={3}></Grid>
-            <Grid item xs={6} justify="center">
-                <LinearProgress 
-                classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
-                className = {classes.bar} 
-                variant="determinate" 
-                value={50} />
-            </Grid>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={6} justify="center">
-            <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Misty Pines Pl</Typography>
-          </Grid>
-          <Grid item xs={6} justify="center">
-            <Typography align="center" style = {{ fontSize: 14}}>0/8 Houses</Typography>
-          </Grid>
-          <Grid item xs={3}></Grid>
-          <Grid item xs={6} justify="center">
-              <LinearProgress 
-              classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
-              className = {classes.bar} 
-              variant="determinate" 
-              value={20} />
-          </Grid>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={6} justify="center">
-            <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>Morgan Hill Ct</Typography>
-          </Grid>
-          <Grid item xs={6} justify="center">
-            <Typography align="center" style = {{ fontSize: 14}}>0/23 Houses</Typography>
-          </Grid>  
-          <Grid item xs={3}></Grid>
-          <Grid item xs={6} justify="center">
-              <LinearProgress  
-              classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
-              className = {classes.bar} 
-              variant="determinate" 
-              value={75} />
-          </Grid>
-          <Grid item xs={3}></Grid>
-
-          <Grid item xs={3}></Grid>
-          <Grid item xs={6} justify="center">
-            <Typography align="left" style = {{ fontSize: 24, fontWeight: "bold"}}>Statistics</Typography>
-          </Grid>
-          <Grid item xs={3}></Grid>
-
-          <Grid>
-            <Box pt={1}>
-                  <Box p={3} className = {classes.borderGrid}>
-                      <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>138</span> Dollars raised</Typography>
-                  </Box>
-            </Box>
-            <Box pt={1}>
-                  <Box p={3} className = {classes.borderGrid}>
-                      <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>52</span> Percentage of residents interested in learning about Carolina for The Kids</Typography>
-                  </Box>
-            </Box>
-            <Box pt={1}>
-                  <Box p={3} className = {classes.borderGrid}>
-                      <Typography align="left" style = {{ fontSize: 10}}> <span style={{fontSize:36, fontWeight: "bold", color:"#0075A3" }}>n/a</span> Team Rank out of 15</Typography>
-                  </Box>
-            </Box>
-          </Grid>
-        </Grid>
-      </div>
-      <VolunteerNavBar tab="progress" />
-    </div>
-  )
 };
  
 export default App;
