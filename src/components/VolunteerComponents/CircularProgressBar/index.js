@@ -11,7 +11,7 @@ import "../CircularProgressBar/index.css";
 function CircularProgressWithLabel(props) {
   return (
     <Box position="relative" display="inline-flex">
-      <CircularProgress  variant="determinate" size="250px" value={props.progress}/>
+      <CircularProgress variant="determinate" size="250px" value={props.progress} />
       <Box
         top={0}
         left={20}
