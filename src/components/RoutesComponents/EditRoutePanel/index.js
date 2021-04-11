@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
-import { storeNewRouteData } from '../ReusableComponents/RouteModels/routes';
+import { storeEditRouteData } from '../ReusableComponents/RouteModels/routes';
 import { Link, useLocation } from 'react-router-dom'
 import { Typography, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -347,7 +347,7 @@ const EditRoutePanel = () => {
             alert('Please enter/add a street name');
             return;
         }
-        storeNewRouteData(routeName, houseNumbers, volNotes, cityName, canningDate, numDonated).then(msg => {
+        storeEditRouteData(routeName, houseNumbers, volNotes, cityName, canningDate, numDonated).then(msg => {
             setSnackBarState({
                 open: true,
                 severity: msg.state.toLowerCase(),
