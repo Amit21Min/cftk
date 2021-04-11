@@ -57,7 +57,8 @@ span.dashboard-metric-label{
 .data-container {
     padding: 32px;
     display: grid;
-    grid-template-columns: 65% 35%;
+    grid-template-columns: 55% 45%;
+    gap: 32px;
 }
 
 .stat-container {
@@ -92,4 +93,46 @@ span.dashboard-metric-label{
     right: 0;
     top: 0;
     border-radius: 30px;
+}
+
+.donationTitle {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 23px;
+    letter-spacing: 0em;
+    text-align: left;
+    margin-bottom: 26px;
+}
+
+.donation-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.group-stat-primary {
+    font-size: 16px;
+    line-height: 22px;
+    color: #051820;
+}
+
+.group-stat-secondary {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 15px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #6D6E71;
+}
+
+.group-leaderboard-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.group-stat-badge {
+    height: 27px;
+    width: 27px;
 }
