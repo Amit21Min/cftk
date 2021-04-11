@@ -31,7 +31,8 @@ export const unassignRouteAction = async function(route_id) {
           var users = groupDoc.data().users;
           users.forEach((user) => {
             db.collection('User').doc(user).update({
-              completedRoutes: firebase.firestore.FieldValue.arrayUnion(doc.id)
+              completedRoutes: firebase.firestore.FieldValue.arrayUnion(doc.id),
+              assignment: null
             });
           })
         }

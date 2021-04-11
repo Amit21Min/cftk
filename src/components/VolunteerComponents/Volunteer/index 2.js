@@ -12,13 +12,6 @@ const App = () => (
     <li>
         <Link to={ROUTES.HOME}>Home</Link>
     </li>
-    <li>
-        <Link to={ROUTES.VOLUNTEER_ASSIGNMENT}>Assignment</Link>
-    </li>
-    <li>
-        <Link to={ROUTES.VOLUNTEER_SETTINGS}>Volunteer Settings</Link>
-    </li>
-
   </div>
 );
  
