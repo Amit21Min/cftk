@@ -182,7 +182,7 @@ export const getMapAddresses = async (routeId) => {
                     for (const [key, value] of Object.entries(doc.data())) {
                         if (key === 'city') {
                             simplifiedStreet[key] = value;
-                        } else if ( key !== 'completed') {
+                        } else if ( key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
                             simplifiedStreet.addresses[key] = value.coordinates
                         }
                     }

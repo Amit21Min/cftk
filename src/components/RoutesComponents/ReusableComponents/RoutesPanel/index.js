@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import RouteMetrics from '../RouteMetrics';
 import ZeroResource from '../../../ReusableComponents/ZeroResource';
@@ -24,10 +24,11 @@ import * as overflow_actions from './overflow_actions.js';
 import * as helpers from './helpers.js';
 
 // These contexts allow for updating/re-rendering dynamically nested components, namely, the street tables nested within the route tables
-import {RouteColumnContext, RouteItemsContext,
-        StreetColumnContext, StreetItemsContext,
-        init_route_columns, init_street_columns
-       } from './contexts.js';
+import {
+  RouteColumnContext, RouteItemsContext,
+  StreetColumnContext, StreetItemsContext,
+  init_route_columns, init_street_columns
+} from './contexts.js';
 
 const RoutesPanel = (props) => {
   const [routes, setRoutes] = useState(null);
@@ -39,22 +40,22 @@ const RoutesPanel = (props) => {
     delta_from_last_canning: "$0"
   });
 
-  const findRouteStatistics = async function() {
+  const findRouteStatistics = async function () {
     let assignedCounter = 0;
     let readyAssignCounter = 0;
     db.collection("Routes").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-          if (doc.data().assignmentStatus === true) {
-            assignedCounter++;
-          }
+        if (doc.data().assignmentStatus === true) {
+          assignedCounter++;
+        }
 
-          else {
-            readyAssignCounter++;
-          }
+        else {
+          readyAssignCounter++;
+        }
       });
 
-      let newRouteMetrics = Object.assign(routeMetrics, 
-        { 
+      let newRouteMetrics = Object.assign(routeMetrics,
+        {
           total_assigned: assignedCounter,
           ready_to_be_assigned: readyAssignCounter,
         }
@@ -70,7 +71,7 @@ const RoutesPanel = (props) => {
     });
   }
 
-  const findDonorStatistics = async function() {
+  const findDonorStatistics = async function () {
     let eventDonationAmount = 0;
     let latestDate = "01-01-1800";
     let yearDonationAmount = 0;
@@ -83,7 +84,7 @@ const RoutesPanel = (props) => {
       let currentDateFormat = Date.parse(latestDate);
       querySnapshot.forEach((doc) => { // left off here
         let eventDateFormat = Date.parse(doc.data().visitDate)
-        let diff = (eventDateFormat - currentDateFormat) / (1000*60*60*24);
+        let diff = (eventDateFormat - currentDateFormat) / (1000 * 60 * 60 * 24);
         console.log(diff);
         if (diff <= 365) {
           for (const [key, value] of Object.entries(doc.data().streets)) { //gets each street (key) and array of houses objects (value)
@@ -95,7 +96,7 @@ const RoutesPanel = (props) => {
                   yearDonationAmount += value[i][houseObjects[j]].donationAmt; //add donation amount
                   // console.log(eventDonationAmount);
                 }
-       
+
               }
             }
           }
@@ -112,16 +113,16 @@ const RoutesPanel = (props) => {
                     eventDonationAmount += value[i][houseObjects[j]].donationAmt; //add donation amount
                     // console.log(eventDonationAmount);
                   }
-         
+
                 }
               }
-            } 
+            }
           }
         }
-        
+
       });
-      let newRouteMetrics = Object.assign(routeMetrics, 
-        { 
+      let newRouteMetrics = Object.assign(routeMetrics,
+        {
           donations_last_event: `$${eventDonationAmount}`,
           donations_from_year: `$${yearDonationAmount}`
         }
@@ -137,22 +138,23 @@ const RoutesPanel = (props) => {
     });
   }
 
-  useEffect(function() {
+  useEffect(function () {
     findRouteStatistics();
   }, []);
 
-  useEffect(function() {
+  useEffect(function () {
     findDonorStatistics();
   }, []);
 
   // This state object will be used to construct GET requests to our Routes resource. Takes a query string for text search, and a sort option.
-  const [queryState, setQueryState] = useState({sort: false, queryString: ""});
+  const [queryState, setQueryState] = useState({ sort: false, queryString: "" });
 
   // This is used by a ResourceIndexTable to define the column names of an html table, as well as to fit the data from each row into the appropriate column.
   // Provides its keys to resourceIndexItem(s) to be used as accessors to correctly match data to html table columns.
-  const [streetItems, setStreetItems]             = useState([]);
-  const [routeColumnNames, setRouteColumnNames]   = useState(init_route_columns);
+  const [streetItems, setStreetItems] = useState([]);
+  const [routeColumnNames, setRouteColumnNames] = useState(init_route_columns);
   const [streetColumnNames, setStreetColumnNames] = useState(init_street_columns);
+  const history = useHistory()
 
   // ===========================================================================
   //                        Callback Methods for Props
@@ -186,7 +188,7 @@ const RoutesPanel = (props) => {
     }
 
     let n = helpers.deepCopyFunction(routeColumnNames);
-    n[0] = Object.assign({}, n[0], {selected_items: newSelected});
+    n[0] = Object.assign({}, n[0], { selected_items: newSelected });
     setRouteColumnNames(n);
 
   }
@@ -196,15 +198,15 @@ const RoutesPanel = (props) => {
     let c = helpers.deepCopyFunction(routeColumnNames);
     if (event.target.checked) {
       const newSelected = routes.map((n) => n.name);
-      c[0] = Object.assign({}, c[0], {selected_items: newSelected});
+      c[0] = Object.assign({}, c[0], { selected_items: newSelected });
     } else {
-      c[0] = Object.assign({}, c[0], {selected_items: []});
+      c[0] = Object.assign({}, c[0], { selected_items: [] });
     }
     setRouteColumnNames(c);
   }
 
   // Does the same as selectRoute, but for the streets contained within Routes. This function is used by the ResourceIndexTable for streets which is nested
-   // within the routes ResourceIndexTable
+  // within the routes ResourceIndexTable
   const selectStreet = (event, column, street_data) => {
     const street_key = street_data.name;
     const selected = column.selected_items;
@@ -224,7 +226,7 @@ const RoutesPanel = (props) => {
     }
 
     let n = helpers.deepCopyFunction(streetColumnNames);
-    n[0] = Object.assign({}, n[0], {selected_items: newSelected});
+    n[0] = Object.assign({}, n[0], { selected_items: newSelected });
     setStreetColumnNames(n);
   }
 
@@ -232,16 +234,16 @@ const RoutesPanel = (props) => {
   const selectAllStreets = (event, data) => {
     let c = helpers.deepCopyFunction(streetColumnNames);
     if (event.target.checked) {
-      c[0] = Object.assign({}, c[0], {selected_items: data});
+      c[0] = Object.assign({}, c[0], { selected_items: data });
     } else {
-      c[0] = Object.assign({}, c[0], {selected_items: []});
+      c[0] = Object.assign({}, c[0], { selected_items: [] });
     }
     setStreetColumnNames(c);
   }
 
   // Uses the string of a column title to alter the routes query. When the routes query state object updates, a new request should be sent to firebase based on the params it specifies
   const sortRoutes = (column_string) => {
-    let new_query = Object.assign({}, queryState, {sort: column_string});
+    let new_query = Object.assign({}, queryState, { sort: column_string });
     setQueryState(new_query);
   }
 
@@ -254,12 +256,12 @@ const RoutesPanel = (props) => {
   // Requires cases for each of the different types of selectable columns
   const selectableItemCallbacksHandler = (event, column, data) => {
     let fn;
-    switch(column.type){
+    switch (column.type) {
       case 'selectbox':
-        fn = () => {selectRoute(event, data.name)};
+        fn = () => { selectRoute(event, data.name) };
         break;
       default:
-        fn = () => {return true};
+        fn = () => { return true };
     }
     fn();
   }
@@ -267,18 +269,18 @@ const RoutesPanel = (props) => {
   // Similar to above, but handles the click events for column headers instead of index items. This is where table sorting based on columns can be implemented.
   const selectableHeaderCallbacksHandler = (event, column) => {
     let fn;
-    switch(column.type){
+    switch (column.type) {
       case 'selectbox':
-        fn = () => {selectAllRoutes(event)};
+        fn = () => { selectAllRoutes(event) };
         break;
       case 'overflow-menu':
-        fn = () => {console.log('overflow has been clicked')};
+        fn = () => { console.log('overflow has been clicked') };
         break;
       case 'text':
-        fn = () => {sortRoutes(column.field)};
+        fn = () => { sortRoutes(column.field) };
         break;
       default:
-        fn = () => {console.log('default route was clicked')};
+        fn = () => { console.log('default route was clicked') };
     }
     fn();
   }
@@ -291,7 +293,7 @@ const RoutesPanel = (props) => {
   // This also pre-constructs all of the components used by the ResourceIndexTable, for example, each route will generate a ResourceIndexTable for its child streets to be rendered within each ResourceIndexItem
   const tableTransform = (raw_routes, streetData) => {
     let tabled_routes = [];
-    for(let i = 0; i < raw_routes.length; i++){
+    for (let i = 0; i < raw_routes.length; i++) {
       let data = raw_routes[i];
 
       let name, assignment_status, months_since_assigned, amount_collected, soliciting_pct, interest_pct, lastVisitDate;
@@ -301,7 +303,7 @@ const RoutesPanel = (props) => {
       } else {
         assignment_status = "Unassigned";
       }
-      
+
 
       amount_collected = data.total; // TODO: CREATE A SUM OF TOTAL DONATIONS
 
@@ -336,7 +338,7 @@ const RoutesPanel = (props) => {
         outreachSum += parseFloat(outreach_pct);
 
         streetItems.push(
-          {route: name, name: streetName, amount_collected, assignment_status: "", months_since_assigned: "", outreach_pct , soliciting_pct}
+          { route: name, name: streetName, amount_collected, assignment_status: "", months_since_assigned: "", outreach_pct, soliciting_pct }
         )
       });
 
@@ -345,27 +347,27 @@ const RoutesPanel = (props) => {
 
       console.log(streetItems);
 
-        // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
-      const street_contents = 
-                            <StreetColumnContext.Consumer>
-                            {columns => (
-                              <StreetItemsContext.Consumer>
-                                {items => (
-                                  <ResourceIndexTable
-                                    // selectableItemHandler={selectStreet}
-                                    // selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
-                                    items={streetItems}
-                                    columns={columns}
-                                  />
-                                )}
-                              </StreetItemsContext.Consumer>
-                            )}
-                          </StreetColumnContext.Consumer>
-      
-      
+      // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
+      const street_contents =
+        <StreetColumnContext.Consumer>
+          {columns => (
+            <StreetItemsContext.Consumer>
+              {items => (
+                <ResourceIndexTable
+                  // selectableItemHandler={selectStreet}
+                  // selectableColumnHandler={(event) => {selectAllStreets(event, ["Easy St", "Hard Knocks Alley"])}}
+                  items={streetItems}
+                  columns={columns}
+                />
+              )}
+            </StreetItemsContext.Consumer>
+          )}
+        </StreetColumnContext.Consumer>
+
+
       tabled_routes.push({
         selectbox: {},
-        drop_down: {open: false, contentsType: 'raw', contents: street_contents},
+        drop_down: { open: false, contentsType: 'raw', contents: street_contents },
         name: data.routeName,
         assignment_status: data.assignmentStatus ? data.assignmentStatus.toString() : assignment_status,
         months_since_assigned: months_since_assigned.toString(),
@@ -374,15 +376,16 @@ const RoutesPanel = (props) => {
         outreach_pct: outreachAvg.toString(),
         soliciting_pct: solicitAvg.toString(),
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
-        overflow: {overflow_items: [{text: "Edit",             action: () => overflow_actions.editRouteAction(data.routeName)}, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
-                                    {text: "Assign",           action: () => assignRouteAction(data.routeName)},
-                                    {text: "House Properties", action: () => onViewHouseProperties(data.routeName)},
-                                    {text: "Unassign",         action: () => overflow_actions.unassignRouteAction(data.routeName)},
-                                    {text: "Revision History", action: overflow_actions.revisionHistoryAction},
-                                    {text: "Delete",           action: () => overflow_actions.deleteRouteAction(raw_routes[i].name)}
-                                  ],
-                  hidden: true
-                  }
+        overflow: {
+          overflow_items: [{ text: "Edit", action: () => history.push(`${ROUTES.ADMIN_ROUTES_EDIT}?route=${data.routeName}`) }, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
+          { text: "Assign", action: () => assignRouteAction(data.routeName) },
+          { text: "House Properties", action: () => onViewHouseProperties(data.routeName) },
+          { text: "Unassign", action: () => overflow_actions.unassignRouteAction(data.routeName) },
+          { text: "Revision History", action: overflow_actions.revisionHistoryAction },
+          { text: "Delete", action: () => overflow_actions.deleteRouteAction(raw_routes[i].name) }
+          ],
+          hidden: true
+        }
       });
     }
     return tabled_routes;
@@ -404,7 +407,7 @@ const RoutesPanel = (props) => {
     var buildStreets = [];
     results.forEach((streetPromise, i) => {
       var street = allStreets[i]
-      buildStreets.push( {[street] : streetPromise.data() })
+      buildStreets.push({ [street]: streetPromise.data() })
     });
     return buildStreets;
   }
@@ -413,7 +416,7 @@ const RoutesPanel = (props) => {
     db.collection('Routes').onSnapshot(async snapshot => {
       const allRoutes = snapshot.docs.map((route) => {
         // TODO - fetch route visit date
-        return({
+        return ({
           ...(route.data()),
           routeName: route.id
         })
@@ -432,37 +435,37 @@ const RoutesPanel = (props) => {
   let screen;
 
 
-  if(routes){
+  if (routes) {
     screen = <div className="panel-screen">
-                <RouteMetrics metrics={routeMetrics}/>
-                <br/>
-                <div style={{width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                  <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes}/>
-                  <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW}/>
-                </div>
-                <StreetColumnContext.Provider value={streetColumnNames}>
-                  <StreetItemsContext.Provider value={streetItems}>
-                    <RouteColumnContext.Consumer>
-                      {columns => (
-                        <RouteItemsContext.Consumer>
-                          {routes => (
-                            <ResourceIndexTable
-                                items={routes}
-                                columns={columns}
-                                selectableItemHandler={selectableItemCallbacksHandler}
-                                selectableColumnHandler={selectableHeaderCallbacksHandler}
-                            />
-                          )}
-                        </RouteItemsContext.Consumer>
-                      )}
-                    </RouteColumnContext.Consumer>
-                  </StreetItemsContext.Provider>
-                </StreetColumnContext.Provider>
-             </div>;
+      <RouteMetrics metrics={routeMetrics} />
+      <br />
+      <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+        <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} />
+        <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW} />
+      </div>
+      <StreetColumnContext.Provider value={streetColumnNames}>
+        <StreetItemsContext.Provider value={streetItems}>
+          <RouteColumnContext.Consumer>
+            {columns => (
+              <RouteItemsContext.Consumer>
+                {routes => (
+                  <ResourceIndexTable
+                    items={routes}
+                    columns={columns}
+                    selectableItemHandler={selectableItemCallbacksHandler}
+                    selectableColumnHandler={selectableHeaderCallbacksHandler}
+                  />
+                )}
+              </RouteItemsContext.Consumer>
+            )}
+          </RouteColumnContext.Consumer>
+        </StreetItemsContext.Provider>
+      </StreetColumnContext.Provider>
+    </div>;
   } else {
     screen = <div className="panel-screen">
-                <ZeroResource name="routes" msg="Create routes to assign volunteers"/>
-             </div>;
+      <ZeroResource name="routes" msg="Create routes to assign volunteers" />
+    </div>;
   }
 
   // ===========================================================================
@@ -499,9 +502,9 @@ const RoutesPanel = (props) => {
 
 
 
-  return(
+  return (
     <div className="container">
-      <PanelBanner title="Routes"/>
+      <PanelBanner title="Routes" />
       <RouteColumnContext.Provider value={routeColumnNames}>
         <RouteItemsContext.Provider value={routes}>
           {screen}
@@ -521,14 +524,14 @@ const RoutesPanel = (props) => {
         </Button>
         <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
           open={open} onClose={handleClose}>
-          <AssignRoute routes={route} close={handleClose}/>
+          <AssignRoute routes={route} close={handleClose} />
         </Dialog>
         {/* TODO: Show a success snackbar after assigning successfully */}
       </div>
-      
+
 
       <div>
-        
+
       </div>
     </div>
   );
