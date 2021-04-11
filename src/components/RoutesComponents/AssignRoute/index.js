@@ -102,7 +102,7 @@ const AssignRoute = (props) => {
                 volunteerComments: null
             };
             Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
-                if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total')) {
+                if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total' || houseNumber === 'totalVisits')) {
                     routeHistory.housesTotal += 1;
                     gatherHouses.push({
                         [houseNumber] : houseInfo

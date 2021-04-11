@@ -120,15 +120,6 @@ export const storeStreetData = (streetName, streetData, city) => {
             [houseNumber]:
             {
                 "visitDates": [
-                    {
-                        "09/01/2020":
-                        {
-                            "donationAmt": 150,
-                            "solicitation": "True",
-                            "learnMore": "True",
-                            "volunteerComments": "comments"
-                        }
-                    }
                 ],
                 "coordinates": coords
             },
@@ -137,6 +128,7 @@ export const storeStreetData = (streetName, streetData, city) => {
             total: 0,
             perInterest: 0,
             perSoliciting: 0,
+            totalVisits: 0,
         }
 
         db.collection("Streets").doc(streetName).set(house, { merge: true });
