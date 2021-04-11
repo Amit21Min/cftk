@@ -107,7 +107,7 @@ export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
     return {
         state: validationStates.SUCCESS,
-        message: `${routeName} has been added successfully.`
+        message: `${routeName} has been edited successfully.`
     }
 
 
@@ -163,15 +163,15 @@ export const storeStreetData = (streetName, streetData, city) => {
         let coords = streetData[houseNumber]
         house[houseNumber] = {
                 "visitDates": [
-                    {
-                        "09/01/2020":
-                        {
-                            "donationAmt": 150,
-                            "solicitation": "True",
-                            "learnMore": "True",
-                            "volunteerComments": "comments"
-                        }
-                    }
+                    // {
+                    //     "09/01/2020":
+                    //     {
+                    //         "donationAmt": 150,
+                    //         "solicitation": "True",
+                    //         "learnMore": "True",
+                    //         "volunteerComments": "comments"
+                    //     }
+                    // }
                 ],
                 "coordinates": coords
         }
