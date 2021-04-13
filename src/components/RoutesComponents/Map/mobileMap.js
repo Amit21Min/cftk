@@ -6,6 +6,8 @@ import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
 import { getMapAddresses } from '../ReusableComponents/RouteModels/routes';
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
+import db from '../../FirebaseComponents/Firebase/firebase';
+
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
@@ -14,12 +16,42 @@ function useFirebaseStreetInfo(routeName) {
   const [streetInfo, setStreetInfo] = useState({});
 
   useEffect(() => {
-    getMapAddresses(routeName).then(newInfo => {
+    // getMapAddresses(routeName).then(newInfo => {
+    //   setStreetInfo({
+    //     routeName,
+    //     ...newInfo
+    //   })
+    // })
+
+    // Now listening to street data on firebase. Still looking for a way to listen to particular streets, but filtering afterwards will have to do
+    const unsubscibe = db.collection("Streets").onSnapshot(docs => {
+      let streetData = [];
+      docs.forEach(doc => {
+        const fullID = String(doc.id)
+        if (fullID.substring(fullID.indexOf('_') + 1) === routeName) {
+          let simplifiedStreet = {
+            name: fullID,
+            addresses: {}
+          };
+          for (const [key, value] of Object.entries(doc.data())) {
+            if (key === 'city') {
+              simplifiedStreet[key] = value;
+            } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
+              console.log(value)
+              simplifiedStreet.addresses[key] = value.coordinates
+            }
+          }
+          streetData.push(simplifiedStreet)
+
+        }
+      });
       setStreetInfo({
         routeName,
-        ...newInfo
+        streetData,
+        error: streetData.length > 0 ? "" : "Route does not exist"
       })
     })
+    return unsubscibe;
   }, [routeName]);
 
   return streetInfo
@@ -64,7 +96,6 @@ function Map(props) {
 
     // Exit if the map or google objects are not yet ready
     if (!map || !google || !streetData || streetData.length === 0) return;
-
     let tempMarkers = [];
     for (let street of streetData) {
       for (let [key, value] of Object.entries(street.addresses)) {

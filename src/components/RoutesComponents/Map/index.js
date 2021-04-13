@@ -104,71 +104,8 @@ function Map(props) {
 
   }, [coords, map, google]);
 
-  // useEffect(() => {
-  //   // Allows for adding markers on map click
-  //   if (!map) return;
-  //   const iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
-  //   const parkingIcon = iconBase + 'parking_lot_maps.png';
-  //   const geocoder = new google.maps.Geocoder();
-  //   let mapListener = map.addListener("click", (mapsMouseEvent) => {
-  //     let clickLoc = mapsMouseEvent.latLng;
-  //     let newMarker = new google.maps.Marker({
-  //       position: clickLoc,
-  //       icon: parkingIcon
-  //     });
-  //     geocoder.geocode({ location: clickLoc }, (results, status) => {
-  //       if (status === "OK") {
-  //         if (results[0]) {
-  //           // Reverse geocodes the coordinates to an address
-  //           let formatted = results[0].formatted_address
-  //           setMarkers2(prevState => {
-  //             if (prevState[formatted]) {
-  //               console.log('address already stored')
-  //               newMarker.setMap(null);
-  //               return prevState;
-  //             }
-  //             let newState = {
-  //               ...prevState,
-  //               [formatted]: clickLoc.toJSON()
-  //             };
-  //             let markerListener = newMarker.addListener("click", () => {
-  //               // Removes the listener and clears the address from the state
-  //               newMarker.setMap(null);
-  //               // The most convoluted code I've written lately. It has a setState within another setState. Probably should look into useReducer or something
-  //               // Update, useReducer does not work because reducers must be pure, and this sure ain't gonna be pure
-  //               setMarkers2(prevState => {
-  //                 delete prevState[formatted]
-  //                 return prevState;
-  //               })
-  //               google.maps.event.clearInstanceListeners(markerListener);
-  //             });
-  //             newMarker.setMap(map)
-  //             return newState
-  //           })
-  //         } else {
-  //           window.alert("No results found");
-  //         }
-  //       } else {
-  //         window.alert("Geocoder failed due to: " + status);
-  //       }
-  //     });    
-  //   });
-
-  //   return function cleanup() {
-  //     if (google) {
-  //       google.maps.event.clearInstanceListeners(mapListener)
-  //     }
-  //   }
-  // }, [map, google]);
-
   return (
     <div>
-      {/* <span>
-            Example from{" "}
-            <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
-              https://developers.google.com/maps/documentation/javascript/adding-a-google-map
-            </a>
-          </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
     </div>
   );

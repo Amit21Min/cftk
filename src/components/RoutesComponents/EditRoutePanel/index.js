@@ -369,6 +369,7 @@ const EditRoutePanel = () => {
             cityName: cityName,
             isValidCity: cityName.length > 0
         });
+        setVolNotes(streetInfo.comments ?? []);
         let tempInfo = {}
         for (let street of streetInfo.streetData) {
             if (Object.keys(street.addresses).length > 0) tempInfo[street.name.substring(0, street.name.indexOf("_"))] = street.addresses

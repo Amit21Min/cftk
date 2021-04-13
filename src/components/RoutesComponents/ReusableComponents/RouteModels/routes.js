@@ -139,7 +139,6 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
             comments: volNotes
         });
     for (let streetName of streets) {
-        console.log(streetName);
         storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city)
     }
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
@@ -162,18 +161,18 @@ export const storeStreetData = (streetName, streetData, city) => {
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]
         house[houseNumber] = {
-                "visitDates": [
-                    // {
-                    //     "09/01/2020":
-                    //     {
-                    //         "donationAmt": 150,
-                    //         "solicitation": "True",
-                    //         "learnMore": "True",
-                    //         "volunteerComments": "comments"
-                    //     }
-                    // }
-                ],
-                "coordinates": coords
+            "visitDates": [
+                // {
+                //     "09/01/2020":
+                //     {
+                //         "donationAmt": 150,
+                //         "solicitation": "True",
+                //         "learnMore": "True",
+                //         "volunteerComments": "comments"
+                //     }
+                // }
+            ],
+            "coordinates": coords
         }
 
     }
@@ -184,27 +183,28 @@ export const storeStreetData = (streetName, streetData, city) => {
 export const getMapAddresses = async (routeId) => {
     let returnObj = {
         streetData: [],
+        comments: [],
         error: ""
     }
 
     if (!routeId || routeId === "") return returnObj;
     try {
-        let streetNames = await new Promise((resolve, reject) => {
+        const { streets = [], comments = [] } = await new Promise((resolve, reject) => {
             db.collection("Routes")
                 .doc(routeId)
                 .get()
                 .then(doc => {
                     if (doc.exists) {
-                        resolve(doc.data().streets || [])
+                        const data = doc.data()
+                        resolve(data)
                     } else {
                         reject("Route does not exist")
                     }
                 })
         });
-
         let streetPromises = [];
-        for (let street in streetNames) {
-            const streetName = streetNames[street];
+        for (let street in streets) {
+            const streetName = streets[street];
             streetPromises.push(new Promise((resolve, reject) => {
                 db.collection("Streets")
                     .doc(streetName)
@@ -225,6 +225,8 @@ export const getMapAddresses = async (routeId) => {
                         resolve(simplifiedStreet)
                     })
             }))
+
+            returnObj.comments = comments;
         }
 
         const newData = await Promise.all(streetPromises);
