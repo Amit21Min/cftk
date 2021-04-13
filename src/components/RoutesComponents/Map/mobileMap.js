@@ -37,7 +37,6 @@ function useFirebaseStreetInfo(routeName) {
             if (key === 'city') {
               simplifiedStreet[key] = value;
             } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
-              console.log(value)
               simplifiedStreet.addresses[key] = value.coordinates
             }
           }

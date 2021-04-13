@@ -75,35 +75,36 @@ function isRouteInStore(routeName) {
     })
 }
 
-export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city, canningDate, numDonated) => {
+export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city, canningDate, numDonated, prevData) => {
 
     var streets = Object.keys(houseNumbers);
-    // const isOldRoute = await isRouteInStore(routeName);
-    // if (isOldRoute) return {
-    //     state: validationStates.ERROR,
-    //     message: `A route with the name: ${routeName} already exists. Please pick a new name.`
-    // }
+    const isOldRoute = await isRouteInStore(routeName);
+    if (!isOldRoute) return {
+        state: validationStates.ERROR,
+        message: `The Route: ${routeName} could not be found`
+    }
 
     streets = streets.map((street) => {
         return (street + '_' + routeName);
     });
-
     db.collection("Routes")
         .doc(routeName)
-        .set({
+        .update({
             streets: streets,
             assignmentStatus: false,
-            assingmentDates: {},
-            perInterest: 0.0,
-            perSoliciting: 0.0,
-            total: 0.0,
             city: city,
             comments: volNotes
         });
     for (let streetName of streets) {
-        console.log(streetName);
-        storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city)
+        let prevStreet = prevData.streetData.find(obj => obj.name === streetName)
+        storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city, prevStreet)
     }
+    for (let data of prevData.streetData) {
+        if (streets.indexOf(data.name) < 0) {
+            db.collection("Streets").doc(data.name).delete();
+        }
+    }
+
     // const isNewStreets = await isStreetInStore(Object.keys(houseNumbers), city);
     return {
         state: validationStates.SUCCESS,
@@ -121,7 +122,6 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
         state: validationStates.ERROR,
         message: `A route with the name: ${routeName} already exists. Please pick a new name.`
     }
-
     streets = streets.map((street) => {
         return (street + '_' + routeName);
     });
@@ -150,29 +150,34 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
 
 }
 
-export const storeStreetData = (streetName, streetData, city) => {
+export const storeStreetData = (streetName, streetData, city, prevStreet = null) => {
     let house = {
-        completed: true,
+        completed: prevStreet?.completed ?? false,
         city: city,
-        total: 0,
-        perInterest: 0,
-        perSoliciting: 0,
+        total: prevStreet?.total ?? 0,
+        perInterest: prevStreet?.perInterest ?? 0,
+        perSoliciting: prevStreet?.perSoliciting ?? 0,
     }
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]
-        house[houseNumber] = {
-            "visitDates": [
-                // {
-                //     "09/01/2020":
-                //     {
-                //         "donationAmt": 150,
-                //         "solicitation": "True",
-                //         "learnMore": "True",
-                //         "volunteerComments": "comments"
-                //     }
-                // }
-            ],
-            "coordinates": coords
+        
+        if (prevStreet && prevStreet[houseNumber]) {
+            house[houseNumber] = prevStreet[houseNumber]
+        } else {
+            house[houseNumber] = {
+                "visitDates": [
+                    // {
+                    //     "09/01/2020":
+                    //     {
+                    //         "donationAmt": 150,
+                    //         "solicitation": "True",
+                    //         "learnMore": "True",
+                    //         "volunteerComments": "comments"
+                    //     }
+                    // }
+                ],
+                "coordinates": coords
+            }
         }
 
     }
@@ -211,18 +216,10 @@ export const getMapAddresses = async (routeId) => {
                     .get()
                     .then(doc => {
                         if (!doc.exists) reject(`The data for the street ${streetName} cannot be found`);
-                        let simplifiedStreet = {
+                        resolve({
                             name: streetName,
-                            addresses: {}
-                        };
-                        for (const [key, value] of Object.entries(doc.data())) {
-                            if (key === 'city') {
-                                simplifiedStreet[key] = value;
-                            } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
-                                simplifiedStreet.addresses[key] = value.coordinates
-                            }
-                        }
-                        resolve(simplifiedStreet)
+                            ...doc.data()
+                        })
                     })
             }))
 
@@ -235,6 +232,7 @@ export const getMapAddresses = async (routeId) => {
     } catch (error) {
         returnObj = {
             streetData: [],
+            comments: [],
             error: error
         }
         return returnObj;

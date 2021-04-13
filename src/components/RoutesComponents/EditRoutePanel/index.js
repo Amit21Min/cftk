@@ -91,6 +91,13 @@ function useFirebaseStreetInfo(routeName) {
 
     useEffect(() => {
         getMapAddresses(routeName).then(newInfo => {
+            console.log(newInfo)
+            // for (const [key, value] of Object.entries(simplifiedStreet)) {
+            //     if (key === 'city') {
+            //     } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
+            //         simplifiedStreet.addresses[key] = value.coordinates
+            //     }
+            // }
             setStreetInfo({
                 routeName,
                 ...newInfo
@@ -347,7 +354,7 @@ const EditRoutePanel = () => {
             alert('Please enter/add a street name');
             return;
         }
-        storeEditRouteData(routeName, houseNumbers, volNotes, cityName, canningDate, numDonated).then(msg => {
+        storeEditRouteData(routeName, houseNumbers, volNotes, cityName, canningDate, numDonated, streetInfo).then(msg => {
             setSnackBarState({
                 open: true,
                 severity: msg.state.toLowerCase(),
@@ -372,7 +379,13 @@ const EditRoutePanel = () => {
         setVolNotes(streetInfo.comments ?? []);
         let tempInfo = {}
         for (let street of streetInfo.streetData) {
-            if (Object.keys(street.addresses).length > 0) tempInfo[street.name.substring(0, street.name.indexOf("_"))] = street.addresses
+            let addresses = {}
+            for (let key in street) {
+                if (street[key].coordinates && street[key].coordinates.lat && street[key].coordinates.lng) {
+                    addresses[key] = street[key].coordinates;
+                }
+            }
+            tempInfo[street.name.substring(0, street.name.indexOf("_"))] = addresses
         }
         setHouseNumbers(tempInfo)
         
