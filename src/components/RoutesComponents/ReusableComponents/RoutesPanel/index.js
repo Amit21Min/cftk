@@ -413,7 +413,7 @@ const RoutesPanel = (props) => {
   }
 
   useEffect(() => {
-    db.collection('Routes').onSnapshot(async snapshot => {
+    const unsubscribe = db.collection('Routes').onSnapshot(async snapshot => {
       const allRoutes = snapshot.docs.map((route) => {
         // TODO - fetch route visit date
         return ({
@@ -430,6 +430,7 @@ const RoutesPanel = (props) => {
 
       setRoutes(tableTransform(allRoutes, streetData));
     });
+    return unsubscribe;
   }, []);
 
   let screen;
