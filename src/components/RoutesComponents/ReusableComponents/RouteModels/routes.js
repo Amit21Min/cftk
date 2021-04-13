@@ -80,6 +80,7 @@ export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city
     var streets = Object.keys(houseNumbers);
     const isOldRoute = await isRouteInStore(routeName);
     if (!isOldRoute) return {
+        // Checks if the route still exists
         state: validationStates.ERROR,
         message: `The Route: ${routeName} could not be found`
     }
@@ -87,6 +88,7 @@ export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city
     streets = streets.map((street) => {
         return (street + '_' + routeName);
     });
+    // Update seems to work well here
     db.collection("Routes")
         .doc(routeName)
         .update({
@@ -96,7 +98,9 @@ export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city
             comments: volNotes
         });
     for (let streetName of streets) {
+        // Get the previous street's data
         let prevStreet = prevData.streetData.find(obj => obj.name === streetName)
+        // Store it
         storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city, prevStreet)
     }
 
@@ -154,6 +158,8 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
 
 export const storeStreetData = (streetName, streetData, city, prevStreet = null) => {
     // Supplants old data, if there is any
+    // PrevStreet is an optional parameter that defaults to null
+    // The values on the right side of the ?? are the default values
     let house = {
         completed: prevStreet?.completed ?? false,
         city: city,
