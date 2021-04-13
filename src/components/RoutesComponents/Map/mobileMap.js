@@ -224,7 +224,7 @@ function Map(props) {
   const innerStyle = props.innerStyle ? props.innerStyle : { bottom: '0px' };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
       {/* <span>
             Example from{" "}
             <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
@@ -232,7 +232,7 @@ function Map(props) {
             </a>
           </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
-      {props.children ? <div style={{ position: 'absolute', ...innerStyle }}>
+      {props.children ? <div style={{ position: 'absolute', overflow: 'hidden', ...innerStyle }}>
         {props.children}
       </div> : null}
       {!snackBarState.message || snackBarState.message === "" ? null : <AlertSnackbar
