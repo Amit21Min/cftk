@@ -389,7 +389,7 @@ const EditRoutePanel = () => {
         }
         setHouseNumbers(tempInfo)
 
-    }, [streetInfo])
+    }, [streetInfo, routeID])
 
     const classes = useStyles();
 
