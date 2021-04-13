@@ -23,7 +23,6 @@ function useFirebaseStreetInfo(routeName) {
     // })
 
     // Now listening to street data on firebase. Still looking for a way to listen to particular streets, but filtering afterwards will have to do
-    if (routeName === "") return;
     const unsubscribe = db.collection("Streets").onSnapshot(docs => {
       let streetData = [];
       docs.forEach(doc => {

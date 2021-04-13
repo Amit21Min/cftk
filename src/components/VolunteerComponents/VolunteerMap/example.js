@@ -73,7 +73,7 @@ function ExampleMap() {
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
 
-            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={styleExample} routeId={'R17'} onClickIcon={handleIconClick}>
+            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={styleExample} routeId={search} onClickIcon={handleIconClick}>
                 {/* To put a component on top of the map, put it inside the MobileMap component. The innerStyle prop allows for limited styling of inner component */}
                 {/* You can use the absolute positioning to position the element within the map relative to the map itself */}
                 <ClickAwayListener
