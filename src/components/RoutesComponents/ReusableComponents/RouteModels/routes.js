@@ -99,6 +99,8 @@ export const storeEditRouteData = async (routeName, houseNumbers, volNotes, city
         let prevStreet = prevData.streetData.find(obj => obj.name === streetName)
         storeStreetData(streetName, houseNumbers[streetName.split("_")[0]], city, prevStreet)
     }
+
+    // Remove this if no longer wanting to delete street docs
     for (let data of prevData.streetData) {
         if (streets.indexOf(data.name) < 0) {
             db.collection("Streets").doc(data.name).delete();
@@ -151,6 +153,7 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
 }
 
 export const storeStreetData = (streetName, streetData, city, prevStreet = null) => {
+    // Supplants old data, if there is any
     let house = {
         completed: prevStreet?.completed ?? false,
         city: city,
@@ -160,10 +163,11 @@ export const storeStreetData = (streetName, streetData, city, prevStreet = null)
     }
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]
-        
         if (prevStreet && prevStreet[houseNumber]) {
+            // Uses old data if the street was originally part of the route
             house[houseNumber] = prevStreet[houseNumber]
         } else {
+            // Initializes new one if not
             house[houseNumber] = {
                 "visitDates": [
                     // {
