@@ -3,6 +3,8 @@ import VolunteerNavBar from '../VolunteerNavBar';
 import MobileMap from '../../RoutesComponents/Map/mobileMap';
 import { TextField, Paper, IconButton, InputAdornment, Dialog, DialogTitle, DialogActions, Button } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
+import firebase from 'firebase';
 
 function ExampleMap() {
 
@@ -16,6 +18,22 @@ function ExampleMap() {
         bottom: '0px',
         transition: 'all 1s'
     })
+
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (user) {
+                const userRef = db.collection('User').doc(auth.currentUser.uid);
+                // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+                const userDoc = await userRef.get();
+                if (userDoc.exists) {
+                  const assignment = userDoc.data().assignment;
+                  if (assignment) {
+                      setSearch(assignment.split("_")[0])
+                  }
+                }
+            }
+        });
+    }, []);
 
     function handleSearch() {
         setSearch(input);

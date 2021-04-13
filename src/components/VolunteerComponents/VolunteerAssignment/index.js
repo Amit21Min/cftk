@@ -46,10 +46,9 @@ const App = () => {
     firebase.auth().onAuthStateChanged(async function(user) {
       let donationTotal;
       if (user) {
-        console.log('user is signed in');
-        console.log(auth.currentUser.uid);
-        // const userRef = db.collection('User').doc(auth.currentUser.uid);
-        const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+        console.log('user is signed in as ', auth.currentUser.uid);
+        const userRef = db.collection('User').doc(auth.currentUser.uid);
+        // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
         const userDoc = await userRef.get();
         if (userDoc.exists) {
           const assignment = userDoc.data().assignment;
