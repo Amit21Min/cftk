@@ -264,7 +264,7 @@ const NewRoutePanel = () => {
 
   const handleRoute = (e) => {
     setRouteName({
-      routeName: e.target.value,
+      routeName: e.target.value.replace('_', ''),
       isValidName: e.target.value.length > 0
     });
   }
@@ -278,7 +278,7 @@ const NewRoutePanel = () => {
 
   const handleStreet = (e) => {
     // setCurrStreet(e.target.value.replace(/[^A-Za-z]/g, ''))
-    setCurrStreet(e.target.value)
+    setCurrStreet(e.target.value.replace('_', ''))
   }
 
   const handleAddress = (e) => {

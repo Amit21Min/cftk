@@ -307,7 +307,7 @@ const EditRoutePanel = () => {
 
     const handleStreet = (e) => {
         // setCurrStreet(e.target.value.replace(/[^A-Za-z]/g, ''))
-        setCurrStreet(e.target.value)
+        setCurrStreet(e.target.value.replace('_', ''))
     }
 
     const handleAddress = (e) => {
