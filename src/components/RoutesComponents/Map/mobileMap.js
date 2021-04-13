@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
-import { getMapAddresses } from '../ReusableComponents/RouteModels/routes';
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
 import db from '../../FirebaseComponents/Firebase/firebase';
 
@@ -77,25 +76,26 @@ function Map(props) {
     message: ""
   });
   // const roads = useSnappedRoads(props.addresses);
-  function createMarkerListeners(marker, streetData) {
-    const markerIn = marker.addListener('mouseover', function () {
-      // Action on the way in
-      marker.setIcon(houseDefaultSelected)
-    });
-    const markerOut = marker.addListener('mouseout', function () {
-      // Reset on the way out
-      marker.setIcon(houseDefault)
-    });
-    const markerClick = marker.addListener('click', function () {
-      // Action on click
-      if (onClickIcon) {
-        onClickIcon(streetData)
-      }
-    })
-    return [markerIn, markerOut, markerClick]
-  }
 
   useEffect(() => {
+
+    function createMarkerListeners(marker, streetData) {
+      const markerIn = marker.addListener('mouseover', function () {
+        // Action on the way in
+        marker.setIcon(houseDefaultSelected)
+      });
+      const markerOut = marker.addListener('mouseout', function () {
+        // Reset on the way out
+        marker.setIcon(houseDefault)
+      });
+      const markerClick = marker.addListener('click', function () {
+        // Action on click
+        if (onClickIcon) {
+          onClickIcon(streetData)
+        }
+      })
+      return [markerIn, markerOut, markerClick]
+    }
 
     // Exit if the map or google objects are not yet ready
     if (!map || !google || !streetData || streetData.length === 0) return;
@@ -158,6 +158,7 @@ function Map(props) {
       }
     }
 
+    const defaultLoc = { lat: 35.9132, lng: -79.0558 }
     const marker = new google.maps.Marker({
       map: map,
       position: defaultLoc,

@@ -10,6 +10,7 @@ import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSe
 function useFlatAddress(addresses) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
   const [markerCoords, setMarkerCoords] = useState([]);
+  const asString = JSON.stringify(addresses);
 
   useEffect(() => {
     let temp = [];
@@ -21,7 +22,7 @@ function useFlatAddress(addresses) {
 
     setMarkerCoords(temp);
 
-  }, [JSON.stringify(addresses)]);
+  }, [asString, addresses]);
 
   return markerCoords
 }

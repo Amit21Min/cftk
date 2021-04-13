@@ -333,7 +333,8 @@ const NewRoutePanel = () => {
     });
   }
 
-  useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
+  const houseKeys = Object.keys(houseNumbers)
+  useEffect(validateForm, [routeName, cityName, houseNumbers, houseKeys]);
 
   const classes = useStyles();
 

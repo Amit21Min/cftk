@@ -362,7 +362,8 @@ const EditRoutePanel = () => {
         });
     }
 
-    useEffect(validateForm, [routeName, cityName, Object.keys(houseNumbers)]);
+    const houseKeys = Object.keys(houseNumbers)
+    useEffect(validateForm, [routeName, cityName, houseNumbers, houseKeys]);
     useEffect(() => {
         // Filling in data from firebase
         if (Object.keys(streetInfo).length === 0) return;
@@ -387,7 +388,7 @@ const EditRoutePanel = () => {
             tempInfo[street.name.substring(0, street.name.indexOf("_"))] = addresses
         }
         setHouseNumbers(tempInfo)
-        
+
     }, [streetInfo])
 
     const classes = useStyles();
