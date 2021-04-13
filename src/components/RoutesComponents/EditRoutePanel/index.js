@@ -91,7 +91,6 @@ function useFirebaseStreetInfo(routeName) {
 
     useEffect(() => {
         getMapAddresses(routeName).then(newInfo => {
-            console.log(newInfo)
             // for (const [key, value] of Object.entries(simplifiedStreet)) {
             //     if (key === 'city') {
             //     } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
