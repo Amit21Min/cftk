@@ -430,7 +430,10 @@ const RoutesPanel = (props) => {
 
       setRoutes(tableTransform(allRoutes, streetData));
     });
-    return unsubscribe;
+    return function cleanup() {
+      // Cleans up firebase listener when component unmounts
+      unsubscribe()
+    };
   }, []);
 
   let screen;

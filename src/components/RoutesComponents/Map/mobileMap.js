@@ -51,7 +51,10 @@ function useFirebaseStreetInfo(routeName) {
         error: streetData.length > 0 ? "" : "Route does not exist"
       })
     })
-    return unsubscribe;
+    return function cleanup() {
+      // Cleans up firebase listener before component unmounts
+      unsubscribe()
+    };
   }, [routeName]);
 
   return streetInfo
