@@ -8,12 +8,16 @@ import firebase from 'firebase';
 
 function ExampleMap() {
 
-    const styleExample = {
-        bottom: '0px'
-    }
+    // let styleExample = {
+
+    // }
     const [input, setInput] = useState("");
     const [search, setSearch] = useState("");
     const [addressData, setAddressData] = useState({});
+    const [styleExample, setStyleExample] = useState({
+        bottom: '0px',
+        transition: 'all 1s'
+    })
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged(async function(user) {
@@ -56,6 +60,20 @@ function ExampleMap() {
         setAddressData({});
     }
 
+    function handleFocus() {
+        setStyleExample({
+            bottom: '40vh',
+            transition: 'all 1s'
+        })
+    }
+
+    function handleBlur() {
+        setStyleExample({
+            bottom: '0px',
+            transition: 'all 1s'
+        })
+    }
+
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
 
@@ -70,6 +88,8 @@ function ExampleMap() {
                         InputProps={{
                             endAdornment: <InputAdornment><IconButton onClick={handleSearch}><SearchIcon></SearchIcon></IconButton></InputAdornment>
                         }}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
                     ></TextField>
                 </Paper>
             </MobileMap>
