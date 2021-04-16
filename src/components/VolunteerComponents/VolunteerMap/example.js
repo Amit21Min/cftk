@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import VolunteerNavBar from '../VolunteerNavBar';
 import MobileMap from '../../RoutesComponents/Map/mobileMap';
+import VolunteerHouseData from '../VolunteerHouseData';
 import { TextField, Paper, IconButton, InputAdornment, Dialog, DialogTitle, DialogActions, Button } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
 import firebase from 'firebase';
+
 
 function ExampleMap() {
 
@@ -74,6 +76,13 @@ function ExampleMap() {
         })
     }
 
+    const styles = {
+        dialogPaper: {
+            minHeight: '80vh',
+            maxHeight: '80vh',
+        },
+    };
+
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
 
@@ -95,12 +104,17 @@ function ExampleMap() {
             </MobileMap>
             <VolunteerNavBar tab="route-map"></VolunteerNavBar>
             {/* This is just a dialog to show that clicking an icon can open something */}
-            <Dialog open={Object.keys(addressData).length > 0}>
+            {/* <Dialog open={Object.keys(addressData).length > 0}>
                 <DialogTitle>{`${addressData.key} ${addressData.street}, ${addressData.city}`}</DialogTitle>
                 <DialogActions>
                     <Button onClick={handleDialogClose}>Close</Button>
                 </DialogActions>
+            </Dialog> */}
+            <Dialog fullWidth={true} maxWidth={'xl'}
+                open={Object.keys(addressData).length > 0} onClose={handleDialogClose}>
+                <VolunteerHouseData addr={addressData.street} close={handleDialogClose} />
             </Dialog>
+
         </div>
     )
 }
