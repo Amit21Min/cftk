@@ -10,8 +10,7 @@ function ExampleMap() {
     // let styleExample = {
 
     // }
-    const [input, setInput] = useState("");
-    const [search, setSearch] = useState("");
+    const [groupID, setGroupID] = useState("");
     const [addressData, setAddressData] = useState({});
     const [styleExample, setStyleExample] = useState({
         top: '100vh',
@@ -24,11 +23,10 @@ function ExampleMap() {
                 const userRef = db.collection('User').doc(auth.currentUser.uid);
                 // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
                 const userDoc = await userRef.get();
-                if (userDoc.exists) {
-                    const assignment = userDoc.data().assignment;
-                    if (assignment) {
-                        setSearch(assignment.split("_")[0])
-                    }
+                const assignment = userDoc.exists ? userDoc.data().assignment : '';
+                const groupDoc = await db.collection('Groups').where('assignment', '==', `${assignment}`).get();
+                if (groupDoc.exists && groupDoc.id) {
+                    setGroupID(`${groupDoc.id}`);
                 }
             }
         });
@@ -73,7 +71,7 @@ function ExampleMap() {
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
 
-            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={styleExample} routeId={search} onClickIcon={handleIconClick}>
+            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={styleExample} groupID={groupID} onClickIcon={handleIconClick}>
                 {/* To put a component on top of the map, put it inside the MobileMap component. The innerStyle prop allows for limited styling of inner component */}
                 {/* You can use the absolute positioning to position the element within the map relative to the map itself */}
                 <ClickAwayListener

@@ -10,41 +10,48 @@ import db from '../../FirebaseComponents/Firebase/firebase';
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useFirebaseStreetInfo(routeName) {
+function useFirebaseStreetInfo(groupID) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
   const [streetInfo, setStreetInfo] = useState({});
+  const [assignedRoute, setAssignedRoute] = useState("");
 
   useEffect(() => {
-    // getMapAddresses(routeName).then(newInfo => {
-    //   setStreetInfo({
-    //     routeName,
-    //     ...newInfo
-    //   })
-    // })
-
-    // Now listening to street data on firebase. Still looking for a way to listen to particular streets, but filtering afterwards will have to do
-    const unsubscribe = db.collection("Streets").onSnapshot(docs => {
-      let streetData = [];
+    // First get the route to listen to
+    db.collection("RoutesActive").where("assignedTo", "==", `${groupID}`).limit(1).get().then(docs => {
       docs.forEach(doc => {
-        const fullID = String(doc.id)
-        if (fullID.substring(fullID.indexOf('_') + 1) === routeName) {
-          let simplifiedStreet = {
-            name: fullID,
-            addresses: {}
-          };
-          for (const [key, value] of Object.entries(doc.data())) {
-            if (key === 'city') {
-              simplifiedStreet[key] = value;
-            } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
-              simplifiedStreet.addresses[key] = value.coordinates
-            }
-          }
-          streetData.push(simplifiedStreet)
+        setAssignedRoute(doc.id ?? "");
+      })
+    })
+  }, [groupID])
 
-        }
-      });
+  useEffect(() => {
+    // Create the listener for the route
+    if (assignedRoute.length === 0) {
       setStreetInfo({
-        routeName,
+        routeName: assignedRoute,
+        streetData: [],
+        error: "The Group's route either doesn't exist or is inactive"
+      })
+      return;
+    };
+    const unsubscribe = db.collection("RoutesActive").doc(`${assignedRoute}`).onSnapshot(doc => {
+      let streetData = [];
+      const { streets } = doc.data();
+      for (let streetName in streets) {
+        let simplifiedStreet = {
+          name: streetName,
+          addresses: {},
+          visited: false
+        }
+        const currStreet = streets[streetName];
+        for (let house of currStreet) {
+          const houseNum = Object.keys(house)[0];
+          if (house[houseNum]['coords']) simplifiedStreet.addresses[houseNum] = house[houseNum]['coords'];
+        }
+        streetData.push(simplifiedStreet);
+      }
+      setStreetInfo({
+        routeName: assignedRoute,
         streetData,
         error: streetData.length > 0 ? "" : "Route does not exist"
       })
@@ -53,7 +60,7 @@ function useFirebaseStreetInfo(routeName) {
       // Cleans up firebase listener before component unmounts
       unsubscribe()
     };
-  }, [routeName]);
+  }, [assignedRoute]);
 
   return streetInfo
 }
@@ -68,7 +75,7 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const { routeName, streetData, error } = useFirebaseStreetInfo(props.routeId);
+  const { routeName, streetData, error } = useFirebaseStreetInfo(props.groupID);
   const onClickIcon = props.onClickIcon;
   const [snackBarState, setSnackBarState] = useState({
     open: false,
@@ -191,6 +198,7 @@ function Map(props) {
   }, [google, map]);
 
   useEffect(() => {
+    handleSnackBarClose(null, null)
     if (error === "") {
       setSnackBarState({
         open: false,
@@ -247,7 +255,7 @@ function Map(props) {
 }
 
 Map.propTypes = {
-  routeId: PropTypes.string,
+  groupID: PropTypes.string,
   innerStyle: PropTypes.object,
   children: PropTypes.node,
   onClickIcon: PropTypes.func

@@ -137,7 +137,7 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
         .set({
             streets: streets,
             assignmentStatus: false,
-            assingmentDates: {},
+            assignmentDates: {},
             perInterest: 0.0,
             perSoliciting: 0.0,
             total: 0.0,
