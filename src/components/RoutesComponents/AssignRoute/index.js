@@ -98,17 +98,16 @@ const AssignRoute = (props) => {
             let streetRef = db.collection("Streets").doc(streets[i]);
             let streetDoc = await streetRef.get();
             let gatherHouses = [];
-            let houseInfo = {
-                donationAmt: null,
-                learnMore: null,
-                solicitation: null,
-                volunteerComments: null,
-                coords: null
-            };
             Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
                 if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total' || houseNumber === 'totalVisits')) {
                     routeHistory.housesTotal += 1;
-                    houseInfo["coords"] = streetDoc.data()[houseNumber]['coordinates']
+                    let houseInfo = {
+                        donationAmt: null,
+                        learnMore: null,
+                        solicitation: null,
+                        volunteerComments: null,
+                        coordinates: streetDoc.data()[houseNumber]['coordinates']
+                    };
                     gatherHouses.push({
                         [houseNumber] : houseInfo
                     });
