@@ -47,7 +47,7 @@ function ExampleMap() {
         // Hack to push to back of cycle
         setTimeout(() => {
             setStyleExample({
-                top: 'calc(100vh - 200px)',
+                top: 'calc(100vh - 250px)',
                 transition: 'all 1s'
             })
         }, 50)
@@ -77,11 +77,19 @@ function ExampleMap() {
                 <ClickAwayListener
                     onClickAway={handleClickAway} >
                     <Paper style={{ width: '100vw', height: '100vh', padding: '10px' }}>
-                        <div style={{ height: '128px', cursor: 'pointer' }} onClick={handleHeaderClick}>
+                        <div style={{ height: '178px', cursor: 'pointer' }} onClick={handleHeaderClick}>
                             <Typography variant="h5">
                                 {`${addressData.key ?? ''} ${addressData.street}, ${addressData.city ?? ''}`}
                             </Typography>
-                            <Typography variant="body1">Hello, this is your summary, Click me to see more</Typography>
+                            <div>
+                                <ul style={{listStyle: 'inherit', paddingLeft: '20px'}}>
+                                    <li>{addressData.solicitation}</li>
+                                    <li>Donated: {addressData.donation}</li>
+                                    {addressData.comments?.map(comment => (
+                                        <li>{comment}</li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                         <Divider></Divider>
                         <div>

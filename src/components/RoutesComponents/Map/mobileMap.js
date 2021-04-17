@@ -45,7 +45,7 @@ function useFirebaseStreetInfo(groupID) {
         let simplifiedStreet = {
           name: streetName,
           addresses: {},
-          city, 
+          city,
         }
         const currStreet = streets[streetName];
         for (let house of currStreet) {
@@ -53,7 +53,10 @@ function useFirebaseStreetInfo(groupID) {
           console.log(house[houseNum]['coordinates'])
           if (house[houseNum]['coordinates']) simplifiedStreet.addresses[houseNum] = {
             coords: house[houseNum]['coordinates'],
-            visited: house[houseNum]['donationAmt'] != null
+            complete: house[houseNum]['donationAmt'] != null,
+            donation: house[houseNum]['donationAmt'] ?? 'Not Yet Donated',
+            solicitation: house[houseNum]['solicitation'] ? 'Solicitation Allowed' :  house[houseNum]['solicitation'] == null ? 'No Solicitation Data' : 'Solicitation Not Allowed',
+            comments: house[houseNum]['volunteerComments']?.slice(0, 2) ?? []
           };
         }
         streetData.push(simplifiedStreet);
@@ -93,9 +96,9 @@ function Map(props) {
 
   useEffect(() => {
 
-    function createMarkerListeners(marker, streetData, visited) {
-      const normal = visited ? houseComplete : houseDefault;
-      const selected = visited ? houseCompleteSelected : houseDefaultSelected;
+    function createMarkerListeners(marker, streetData, complete) {
+      const normal = complete ? houseComplete : houseDefault;
+      const selected = complete ? houseCompleteSelected : houseDefaultSelected;
       const markerIn = marker.addListener('mouseover', function () {
         // Action on the way in
         marker.setIcon(selected)
@@ -122,9 +125,9 @@ function Map(props) {
         const marker = new google.maps.Marker({
           map: map,
           position: value.coords,
-          icon: value.visited ? houseComplete : houseDefault
+          icon: value.complete ? houseComplete : houseDefault
         });
-        createMarkerListeners(marker, { key, street: street.name, city: street.city, ...value }, value.visited ?? false);
+        createMarkerListeners(marker, { key, street: street.name, city: street.city, ...value }, value.complete ?? false);
         tempMarkers.push(marker);
       }
     }
