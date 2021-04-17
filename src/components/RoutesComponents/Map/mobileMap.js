@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
+import houseComplete from "../../../assets/images/MapIcons/houseComplete.svg";
+import houseCompleteSelected from "../../../assets/images/MapIcons/houseCompleteSelected.svg";
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
 import db from '../../FirebaseComponents/Firebase/firebase';
 
@@ -17,7 +19,7 @@ function useFirebaseStreetInfo(groupID) {
 
   useEffect(() => {
     // First get the route to listen to
-    db.collection("RoutesActive").where("assignedTo", "==", `${groupID}`).limit(1).get().then(docs => {
+    db.collection("RoutesActive").where("assignedTo", "==", `${'liyu-test'}`).limit(1).get().then(docs => {
       docs.forEach(doc => {
         setAssignedRoute(doc.id ?? "");
       })
@@ -35,18 +37,24 @@ function useFirebaseStreetInfo(groupID) {
       return;
     };
     const unsubscribe = db.collection("RoutesActive").doc(`${assignedRoute}`).onSnapshot(doc => {
+      if (!doc.exists) return;
       let streetData = [];
-      const { streets } = doc.data();
+      const { streets, city } = doc.data();
+      console.log(doc.data())
       for (let streetName in streets) {
         let simplifiedStreet = {
           name: streetName,
           addresses: {},
-          visited: false
+          city, 
         }
         const currStreet = streets[streetName];
         for (let house of currStreet) {
-          const houseNum = Object.keys(house)[0];
-          if (house[houseNum]['coords']) simplifiedStreet.addresses[houseNum] = house[houseNum]['coords'];
+          let houseNum = Object.keys(house)[0];
+          console.log(house[houseNum]['coordinates'])
+          if (house[houseNum]['coordinates']) simplifiedStreet.addresses[houseNum] = {
+            coords: house[houseNum]['coordinates'],
+            visited: house[houseNum]['donationAmt'] != null
+          };
         }
         streetData.push(simplifiedStreet);
       }
@@ -85,14 +93,16 @@ function Map(props) {
 
   useEffect(() => {
 
-    function createMarkerListeners(marker, streetData) {
+    function createMarkerListeners(marker, streetData, visited) {
+      const normal = visited ? houseComplete : houseDefault;
+      const selected = visited ? houseCompleteSelected : houseDefaultSelected;
       const markerIn = marker.addListener('mouseover', function () {
         // Action on the way in
-        marker.setIcon(houseDefaultSelected)
+        marker.setIcon(selected)
       });
       const markerOut = marker.addListener('mouseout', function () {
         // Reset on the way out
-        marker.setIcon(houseDefault)
+        marker.setIcon(normal)
       });
       const markerClick = marker.addListener('click', function () {
         // Action on click
@@ -111,10 +121,10 @@ function Map(props) {
         // console.log(`${key} ${street.name}, ${street.city}`);
         const marker = new google.maps.Marker({
           map: map,
-          position: value,
-          icon: houseDefault
+          position: value.coords,
+          icon: value.visited ? houseComplete : houseDefault
         });
-        createMarkerListeners(marker, { key, street: street.name, city: street.city });
+        createMarkerListeners(marker, { key, street: street.name, city: street.city, ...value }, value.visited ?? false);
         tempMarkers.push(marker);
       }
     }
