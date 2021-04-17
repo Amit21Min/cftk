@@ -34,8 +34,8 @@ const AssignRoute = (props) => {
 
     React.useEffect(() => {
         const getNames = async (users) => {
-            var userNames = [];
-            var userRefs = users.map(user => {
+            let userNames = [];
+            let userRefs = users.map(user => {
                 return db.collection('User').doc(user).get();
             })
             await Promise.all(userRefs)
@@ -48,12 +48,12 @@ const AssignRoute = (props) => {
         }
 
         const getGroupOptions = async () => {
-            var groupsRef = db.collection("Groups");
-            var groupsDoc = await groupsRef.get();
-            var groups = []
+            let groupsRef = db.collection("Groups");
+            let groupsDoc = await groupsRef.get();
+            let groups = []
             groupsDoc.forEach(async (doc) => {
-                var buildGroup = doc.id + ": ";
-                var userNames = await getNames(doc.data().users);
+                let buildGroup = doc.id + ": ";
+                let userNames = await getNames(doc.data().users);
                 userNames.forEach(user => {
                     buildGroup += user + ", "
                 })
@@ -80,9 +80,10 @@ const AssignRoute = (props) => {
         .catch(error => console.log(error))
       }
     // creates the document in RoutesActive
-    const setActiveRoute = function(input, streets, houses, users, city) {
-        var today = new Date();
-        var routeHistory = {
+    const setActiveRoute = async function(input, streets, houses, users, city) {
+        // let streetRef = db.collection("Streets").
+        let today = new Date();
+        let routeHistory = {
             assignedTo : input.group,
             housesCompleted: 0,
             housesTotal: 0,
@@ -94,16 +95,20 @@ const AssignRoute = (props) => {
             city: city
         }
         for (let i in streets) {
-            var gatherHouses = [];
+            let streetRef = db.collection("Streets").doc(streets[i]);
+            let streetDoc = await streetRef.get();
+            let gatherHouses = [];
             let houseInfo = {
                 donationAmt: null,
                 learnMore: null,
                 solicitation: null,
-                volunteerComments: null
+                volunteerComments: null,
+                coords: null
             };
             Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
                 if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total' || houseNumber === 'totalVisits')) {
                     routeHistory.housesTotal += 1;
+                    houseInfo["coords"] = streetDoc.data()[houseNumber]['coordinates']
                     gatherHouses.push({
                         [houseNumber] : houseInfo
                     });
@@ -129,11 +134,11 @@ const AssignRoute = (props) => {
     }
 
     const setGroupAssignment = async function(group, routeUID) {
-        var groupRef = db.collection('Groups').doc(group);
+        let groupRef = db.collection('Groups').doc(group);
         groupRef.update({
             assignment: routeUID
         })
-        var groupDoc = await groupRef.get();
+        let groupDoc = await groupRef.get();
         if (groupDoc.exists) {
             setUserAssignment(groupDoc.data().users, routeUID);
         }
@@ -141,7 +146,7 @@ const AssignRoute = (props) => {
 
     const setUserAssignment = async function(users, routeUID) {
         users.forEach((user) => {
-            var userRef = db.collection('User').doc(user);
+            let userRef = db.collection('User').doc(user);
             userRef.update({
                 assignment: routeUID
             })
@@ -149,7 +154,7 @@ const AssignRoute = (props) => {
     }
 
     const isGroupAssigned = async function(group) {
-        var groupRef = db.collection('Groups').doc(group);
+        let groupRef = db.collection('Groups').doc(group);
         const groupDoc = await groupRef.get();
         if (groupDoc.exists) {
             if (groupDoc.data().assignment) {
@@ -163,16 +168,16 @@ const AssignRoute = (props) => {
     }
 
     const isUserAssigned = async function(group) {
-        var userAssignment = false;
-        var groupRef = db.collection('Groups').doc(group);
+        let userAssignment = false;
+        let groupRef = db.collection('Groups').doc(group);
         const groupDoc = await groupRef.get();
         if (groupDoc.exists) {
-            var userRefs = groupDoc.data().users.map(user => {
+            let userRefs = groupDoc.data().users.map(user => {
                 return db.collection('User').doc(user).get();
             });
             await Promise.all(userRefs)
             .then(users => {
-                var userAssignments = users.map(user => user.data().assignment);
+                let userAssignments = users.map(user => user.data().assignment);
                 userAssignments.forEach((status) => {
                     if (status) {
                         userAssignment = true;
@@ -184,7 +189,7 @@ const AssignRoute = (props) => {
     }
 
     const isRouteAssigned = async function(route_id) {
-        var routeRef = db.collection('Routes').doc(route_id);
+        let routeRef = db.collection('Routes').doc(route_id);
         const routeDoc = await routeRef.get();
         if (routeDoc.exists) {
             if (routeDoc.data().assignmentStatus) {
@@ -340,7 +345,7 @@ const AssignRoute = (props) => {
                         setGroup(value);
                     }
                 }}
-                renderInput={(params) => <TextField {...params} id="group" label="Group Name" fullWidth autoFocus variant="filled" helperText="Choose an existing group from the volunteer database."/>}
+                renderInput={(params) => <TextField {...params} id="group" label="Group Name" fullWidth autoFocus letiant="filled" helperText="Choose an existing group from the volunteer database."/>}
             />
             <br /><br />
             <div>
@@ -349,7 +354,7 @@ const AssignRoute = (props) => {
                     label="Link"
                     defaultValue="www.cftkcanning.com/routes/example"
                     helperText="Link that anyone can access"
-                    variant="filled"
+                    letiant="filled"
                     InputProps={{
                         readOnly: true,
                     }}
@@ -366,7 +371,7 @@ const AssignRoute = (props) => {
                     id="phone"
                     label="Phone Number"
                     placeholder="1234567890"
-                    variant="filled"
+                    letiant="filled"
                     size='small'
                     fullWidth
                     helperText={inputs.phone_ht}
@@ -397,7 +402,7 @@ const AssignRoute = (props) => {
                     label="Email"
                     placeholder="example@example.com"
                     helperText={inputs.email_ht}
-                    variant="filled"
+                    letiant="filled"
                     size='small'
                     fullWidth
                     error={inputs.email_error}
@@ -427,14 +432,14 @@ const AssignRoute = (props) => {
                     multiline
                     rowsMax={3}
                     rows={3}
-                    variant="filled"
+                    letiant="filled"
                 />
             </div>
             <br />
             <Grid container justify="flex-end">
                 <Button color="primary" my={50} style={{ borderRadius: 50 }} onClick={props.close}>CLOSE</Button>
                 <p>&nbsp;&nbsp;&nbsp;</p>
-                <Button variant="contained" ml={50} style={{ borderRadius: 50 }} color="primary"
+                <Button letiant="contained" ml={50} style={{ borderRadius: 50 }} color="primary"
                     onClick={function (event) { assign(); props.close(); }}
                     disabled={(group === "" || group === null)}
                     >

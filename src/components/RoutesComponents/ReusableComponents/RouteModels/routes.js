@@ -166,6 +166,7 @@ export const storeStreetData = (streetName, streetData, city, prevStreet = null)
         total: prevStreet?.total ?? 0,
         perInterest: prevStreet?.perInterest ?? 0,
         perSoliciting: prevStreet?.perSoliciting ?? 0,
+        totalVisits: 0,
     }
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]

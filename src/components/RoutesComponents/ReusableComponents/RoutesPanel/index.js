@@ -85,7 +85,6 @@ const RoutesPanel = (props) => {
       querySnapshot.forEach((doc) => { // left off here
         let eventDateFormat = Date.parse(doc.data().visitDate)
         let diff = (eventDateFormat - currentDateFormat) / (1000 * 60 * 60 * 24);
-        console.log(diff);
         if (diff <= 365) {
           for (const [key, value] of Object.entries(doc.data().streets)) { //gets each street (key) and array of houses objects (value)
             // console.log(value[0]['104'].donationAmt);
@@ -345,7 +344,7 @@ const RoutesPanel = (props) => {
       var solicitAvg = solicitSum / streets.length;
       var outreachAvg = outreachSum / streets.length;
 
-      console.log(streetItems);
+      // console.log(streetItems);
 
       // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
       const street_contents =
