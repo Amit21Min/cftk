@@ -71,8 +71,10 @@ export const unassignRouteAction = async function(route_id) {
           let streetDoc = await streetRef.get();
           if (streetDoc.exists) {
             let totalVisits = streetDoc.data().totalVisits;
-            let newPctInterest = (pctInterest + (streetDoc.data().perInterest * totalVisits)) / (totalVisits + housesCompletedStreet);
-            let newPctSoliciting = (pctSoliciting + (streetDoc.data().perSoliciting * totalVisits)) / (totalVisits + housesCompletedStreet);
+            let oldPctInterest = streetDoc.data().perInterest;
+            let oldPctSoliciting = streetDoc.data().perSoliciting;
+            let newPctInterest = (pctInterest + (oldPctInterest * totalVisits)) / (totalVisits + housesCompletedStreet);
+            let newPctSoliciting = (pctSoliciting + (oldPctSoliciting * totalVisits)) / (totalVisits + housesCompletedStreet);
             if (housesCompletedStreet > 0) {
               db.collection('Streets').doc(streetFirebase).update({
                 perInterest: newPctInterest,
@@ -92,7 +94,6 @@ export const unassignRouteAction = async function(route_id) {
           let totalCompletions = routeDoc.data().assignmentDates.length - 1;
           let newPctInterest = ((routeDoc.data().perInterest * totalCompletions) + pctInterest) / (totalCompletions + 1);
           let newPctSoliciting = ((routeDoc.data().perSoliciting * totalCompletions) + pctSoliciting) / (totalCompletions + 1);
-          console.log(doc.data().donationTotal, routeDoc.data().total);
           db.collection('Routes').doc(routeName).update({
             perInterest: newPctInterest,
             perSoliciting: newPctSoliciting,
