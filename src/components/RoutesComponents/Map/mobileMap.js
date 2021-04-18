@@ -12,19 +12,9 @@ import db from '../../FirebaseComponents/Firebase/firebase';
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useFirebaseStreetInfo(groupID) {
+function useFirebaseStreetInfo(assignedRoute) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
   const [streetInfo, setStreetInfo] = useState({});
-  const [assignedRoute, setAssignedRoute] = useState("");
-
-  useEffect(() => {
-    // First get the route to listen to
-    db.collection("RoutesActive").where("assignedTo", "==", `${'liyu-test'}`).limit(1).get().then(docs => {
-      docs.forEach(doc => {
-        setAssignedRoute(doc.id ?? "");
-      })
-    })
-  }, [groupID])
 
   useEffect(() => {
     // Create the listener for the route
@@ -86,7 +76,7 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const { routeName, streetData, error } = useFirebaseStreetInfo(props.groupID);
+  const { routeName, streetData, error } = useFirebaseStreetInfo(props.assignedRoute);
   const onClickIcon = props.onClickIcon;
   const [snackBarState, setSnackBarState] = useState({
     open: false,

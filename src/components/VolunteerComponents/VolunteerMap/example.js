@@ -10,7 +10,7 @@ function ExampleMap() {
     // let styleExample = {
 
     // }
-    const [groupID, setGroupID] = useState("");
+    const [assignedRoute, setAssignedRoute] = useState("");
     const [addressData, setAddressData] = useState({});
     const [slide, setSlide] = useState({
         top: '100vh',
@@ -20,14 +20,25 @@ function ExampleMap() {
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(async function (user) {
             if (user) {
-                const userRef = db.collection('User').doc(auth.currentUser.uid);
-                // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+                // const userRef = db.collection('User').doc(auth.currentUser.uid);
+                const userRef = db.collection('User').doc("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1");
                 const userDoc = await userRef.get();
+                // Gets assignment
                 const assignment = userDoc.exists ? userDoc.data().assignment : '';
-                const groupDoc = await db.collection('Groups').where('assignment', '==', `${assignment}`).get();
-                if (groupDoc.exists && groupDoc.id) {
-                    setGroupID(`${groupDoc.id}`);
-                }
+                // Gets group id and saves it to state
+                const groupID = await new Promise((resolve, reject) => {
+                    db.collection('Groups').where('assignment', '==', `${assignment}`).limit(1).get().then(docs => {
+                        docs.forEach(doc => {
+                            if (doc.exists && doc.id) resolve(doc.id);
+                            else reject('No Group Found');
+                        })
+                    });
+                });
+                db.collection("RoutesActive").where("assignedTo", "==", `${groupID}`).limit(1).get().then(docs => {
+                    docs.forEach(doc => {
+                        setAssignedRoute(doc.id ?? "");
+                    })
+                })
             }
         });
         return function cleanup() {
@@ -40,11 +51,15 @@ function ExampleMap() {
         // key holds the house number
         // street holds the street name
         // city holds the city name
+        // comments holds the first 2 comments
+        // complete holds whether the address has been completed
+        // donation holds the donation amount, otherwise the text: "Not Yet Donated"
+        // solicitation holds true/false for
 
         // This example function makes it so that when you click a house Icon, you trigger something
         console.log(addressData);
         setAddressData(addressData);
-        // Hack to push to back of cycle
+        // Hack to push to back of execution cycle
         setTimeout(() => {
             setSlide({
                 top: 'calc(100vh - 250px)',
@@ -70,23 +85,26 @@ function ExampleMap() {
 
     return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
-
-            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={slide} groupID={groupID} onClickIcon={handleIconClick}>
+            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={slide} assignedRoute={assignedRoute} onClickIcon={handleIconClick}>
                 {/* To put a component on top of the map, put it inside the MobileMap component. The innerStyle prop allows for limited styling of inner component */}
                 {/* You can use the absolute positioning to position the element within the map relative to the map itself */}
                 <ClickAwayListener
                     onClickAway={handleClickAway} >
                     <Paper style={{ width: '100vw', height: '100vh', padding: '10px' }}>
+                        {/* This top div is revealed in the first stage */}
                         <div style={{ height: '178px', cursor: 'pointer' }} onClick={handleHeaderClick}>
                             <div style={{ display: 'flex' }}>
+                                {/* Title */}
                                 <Typography variant="h5">
                                     {`${addressData.key ?? ''} ${addressData.street}`}
                                 </Typography>
+                                {/* Complete/Incomplete text */}
                                 <Typography variant="h6" style={{ marginLeft: 'auto', marginRight: '10px', color: addressData.complete ? 'green' : 'lightgrey' }}>
                                     {addressData.complete ? 'Complete' : 'Incomplete'}
                                 </Typography>
                             </div>
                             <div>
+                                {/* List of summary data */}
                                 <ul style={{ listStyle: 'inherit', paddingLeft: '20px' }}>
                                     <li>{addressData.solicitation}</li>
                                     <li>Donated: {addressData.donation}</li>
@@ -97,6 +115,7 @@ function ExampleMap() {
                             </div>
                         </div>
                         <Divider></Divider>
+                        {/* This bottom most div is revealed in the second stage */}
                         <div>
                             We're no strangers to love;
                             You know the rules and so do I;
