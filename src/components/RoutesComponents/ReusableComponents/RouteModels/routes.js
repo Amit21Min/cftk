@@ -256,25 +256,7 @@ export const getAssignedRoute = async (uid) => {
         const userDoc = await userRef.get();
         // Gets assignment
         const assignment = userDoc.exists ? userDoc.data().assignment : '';
-        // Gets groupID
-        const groupID = await new Promise((resolve, reject) => {
-            db.collection('Groups').where('assignment', '==', `${assignment}`).limit(1).get().then(docs => {
-                docs.forEach(doc => {
-                    if (doc.exists && doc.id) resolve(doc.id);
-                })
-                reject('No Group Found');
-            });
-        });
-        // Gets doc id of the route in RoutesActive
-        const assignedRoute = await new Promise((resolve, reject) => {
-            db.collection("RoutesActive").where("assignedTo", "==", `${groupID}`).limit(1).get().then(docs => {
-                docs.forEach(doc => {
-                    if (doc.exists && doc.id) resolve(doc.id);
-                })
-                reject('No Route Found');
-            })
-        });
-        return assignedRoute;
+        return assignment;
     } catch (error) {
         console.error(error)
         return null;
