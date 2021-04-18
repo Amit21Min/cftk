@@ -4,48 +4,55 @@ import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
+import houseComplete from "../../../assets/images/MapIcons/houseComplete.svg";
+import houseCompleteSelected from "../../../assets/images/MapIcons/houseCompleteSelected.svg";
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
 import db from '../../FirebaseComponents/Firebase/firebase';
 
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useFirebaseStreetInfo(routeName) {
+function useFirebaseStreetInfo(assignedRoute) {
   // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
   const [streetInfo, setStreetInfo] = useState({});
 
   useEffect(() => {
-    // getMapAddresses(routeName).then(newInfo => {
-    //   setStreetInfo({
-    //     routeName,
-    //     ...newInfo
-    //   })
-    // })
-
-    // Now listening to street data on firebase. Still looking for a way to listen to particular streets, but filtering afterwards will have to do
-    if (routeName === "") return;
-    const unsubscribe = db.collection("Streets").onSnapshot(docs => {
-      let streetData = [];
-      docs.forEach(doc => {
-        const fullID = String(doc.id)
-        if (fullID.substring(fullID.indexOf('_') + 1) === routeName) {
-          let simplifiedStreet = {
-            name: fullID,
-            addresses: {}
-          };
-          for (const [key, value] of Object.entries(doc.data())) {
-            if (key === 'city') {
-              simplifiedStreet[key] = value;
-            } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
-              simplifiedStreet.addresses[key] = value.coordinates
-            }
-          }
-          streetData.push(simplifiedStreet)
-
-        }
-      });
+    // Create the listener for the route
+    if (assignedRoute.length === 0) {
       setStreetInfo({
-        routeName,
+        routeName: assignedRoute,
+        streetData: [],
+        error: "The Group's route either doesn't exist or is inactive"
+      })
+      return;
+    };
+    const unsubscribe = db.collection("RoutesActive").doc(`${assignedRoute}`).onSnapshot(doc => {
+      if (!doc.exists) return;
+      let streetData = [];
+      const { streets, city } = doc.data();
+      console.log(doc.data())
+      for (let streetName in streets) {
+        let simplifiedStreet = {
+          name: streetName,
+          addresses: {},
+          city,
+        }
+        const currStreet = streets[streetName];
+        for (let house of currStreet) {
+          let houseNum = Object.keys(house)[0];
+          console.log(house[houseNum]['coordinates'])
+          if (house[houseNum]['coordinates']) simplifiedStreet.addresses[houseNum] = {
+            coords: house[houseNum]['coordinates'],
+            complete: house[houseNum]['donationAmt'] != null,
+            donation: house[houseNum]['donationAmt'] ?? 'Not Yet Donated',
+            solicitation: house[houseNum]['solicitation'] ? 'Solicitation Allowed' :  house[houseNum]['solicitation'] == null ? 'No Solicitation Data' : 'Solicitation Not Allowed',
+            comments: house[houseNum]['volunteerComments']?.slice(0, 2) ?? []
+          };
+        }
+        streetData.push(simplifiedStreet);
+      }
+      setStreetInfo({
+        routeName: assignedRoute,
         streetData,
         error: streetData.length > 0 ? "" : "Route does not exist"
       })
@@ -54,7 +61,7 @@ function useFirebaseStreetInfo(routeName) {
       // Cleans up firebase listener before component unmounts
       unsubscribe()
     };
-  }, [routeName]);
+  }, [assignedRoute]);
 
   return streetInfo
 }
@@ -69,7 +76,7 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const { routeName, streetData, error } = useFirebaseStreetInfo(props.routeId);
+  const { routeName, streetData, error } = useFirebaseStreetInfo(props.assignedRoute);
   const onClickIcon = props.onClickIcon;
   const [snackBarState, setSnackBarState] = useState({
     open: false,
@@ -79,14 +86,16 @@ function Map(props) {
 
   useEffect(() => {
 
-    function createMarkerListeners(marker, streetData) {
+    function createMarkerListeners(marker, streetData, complete) {
+      const normal = complete ? houseComplete : houseDefault;
+      const selected = complete ? houseCompleteSelected : houseDefaultSelected;
       const markerIn = marker.addListener('mouseover', function () {
         // Action on the way in
-        marker.setIcon(houseDefaultSelected)
+        marker.setIcon(selected)
       });
       const markerOut = marker.addListener('mouseout', function () {
         // Reset on the way out
-        marker.setIcon(houseDefault)
+        marker.setIcon(normal)
       });
       const markerClick = marker.addListener('click', function () {
         // Action on click
@@ -105,10 +114,10 @@ function Map(props) {
         // console.log(`${key} ${street.name}, ${street.city}`);
         const marker = new google.maps.Marker({
           map: map,
-          position: value,
-          icon: houseDefault
+          position: value.coords,
+          icon: value.complete ? houseComplete : houseDefault
         });
-        createMarkerListeners(marker, { key, street: street.name, city: street.city });
+        createMarkerListeners(marker, { key, street: street.name, city: street.city, ...value }, value.complete ?? false);
         tempMarkers.push(marker);
       }
     }
@@ -192,6 +201,7 @@ function Map(props) {
   }, [google, map]);
 
   useEffect(() => {
+    handleSnackBarClose(null, null)
     if (error === "") {
       setSnackBarState({
         open: false,
@@ -224,7 +234,7 @@ function Map(props) {
   const innerStyle = props.innerStyle ? props.innerStyle : { bottom: '0px' };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
       {/* <span>
             Example from{" "}
             <a href="https://developers.google.com/maps/documentation/javascript/adding-a-google-map">
@@ -232,7 +242,7 @@ function Map(props) {
             </a>
           </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
-      {props.children ? <div style={{ position: 'absolute', ...innerStyle }}>
+      {props.children ? <div style={{ position: 'absolute', overflow: 'hidden', ...innerStyle }}>
         {props.children}
       </div> : null}
       {!snackBarState.message || snackBarState.message === "" ? null : <AlertSnackbar
@@ -248,7 +258,7 @@ function Map(props) {
 }
 
 Map.propTypes = {
-  routeId: PropTypes.string,
+  groupID: PropTypes.string,
   innerStyle: PropTypes.object,
   children: PropTypes.node,
   onClickIcon: PropTypes.func
