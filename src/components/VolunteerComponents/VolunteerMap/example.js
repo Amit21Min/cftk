@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import VolunteerNavBar from '../VolunteerNavBar';
 import MobileMap from '../../RoutesComponents/Map/mobileMap';
 import { Paper, ClickAwayListener, Typography, Divider } from '@material-ui/core';
-import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
+import { auth } from '../../FirebaseComponents/Firebase/firebase';
+import { getAssignedRoute } from '../../RoutesComponents/ReusableComponents/RouteModels/routes';
 import firebase from 'firebase';
 
 function ExampleMap() {
@@ -20,24 +21,9 @@ function ExampleMap() {
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(async function (user) {
             if (user) {
-                // const userRef = db.collection('User').doc(auth.currentUser.uid);
-                const userRef = db.collection('User').doc("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1");
-                const userDoc = await userRef.get();
-                // Gets assignment
-                const assignment = userDoc.exists ? userDoc.data().assignment : '';
-                // Gets group id and saves it to state
-                const groupID = await new Promise((resolve, reject) => {
-                    db.collection('Groups').where('assignment', '==', `${assignment}`).limit(1).get().then(docs => {
-                        docs.forEach(doc => {
-                            if (doc.exists && doc.id) resolve(doc.id);
-                            else reject('No Group Found');
-                        })
-                    });
-                });
-                db.collection("RoutesActive").where("assignedTo", "==", `${groupID}`).limit(1).get().then(docs => {
-                    docs.forEach(doc => {
-                        setAssignedRoute(doc.id ?? "");
-                    })
+                // The code is in routes.js in RouteModels
+                getAssignedRoute(auth.currentUser.uid).then(route => {
+                    setAssignedRoute(route ?? '');
                 })
             }
         });

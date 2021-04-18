@@ -249,3 +249,32 @@ export const getMapAddresses = async (routeId) => {
         return returnObj;
     }
 }
+
+export const getAssignedRoute = async (uid) => {
+    try {
+        const userRef = db.collection('User').doc(uid);
+        const userDoc = await userRef.get();
+        // Gets assignment
+        const assignment = userDoc.exists ? userDoc.data().assignment : '';
+        // Gets group id and saves it to state
+        const groupID = await new Promise((resolve, reject) => {
+            db.collection('Groups').where('assignment', '==', `${assignment}`).limit(1).get().then(docs => {
+                docs.forEach(doc => {
+                    if (doc.exists && doc.id) resolve(doc.id);
+                })
+                reject('No Group Found');
+            });
+        });
+        const assignedRoute = await new Promise((resolve, reject) => {
+            db.collection("RoutesActive").where("assignedTo", "==", `${groupID}`).limit(1).get().then(docs => {
+                docs.forEach(doc => {
+                    if (doc.exists && doc.id) resolve(doc.id);
+                })
+                reject('No Route Found');
+            })
+        });
+        return assignedRoute;
+    } catch (error) {
+
+    }
+}
