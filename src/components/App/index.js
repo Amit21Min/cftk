@@ -29,6 +29,12 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: '#7CC9AA'
+    },
+    progressPrimary: {
+      main: '#43A047'
+    },
+    progressSecondary: {
+      main: '#D7DBDD'
     }
   },
 });
