@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
-import { getMapAddresses } from '../ReusableComponents/RouteModels/routes';
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
+import db from '../../FirebaseComponents/Firebase/firebase';
+
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
@@ -14,12 +15,45 @@ function useFirebaseStreetInfo(routeName) {
   const [streetInfo, setStreetInfo] = useState({});
 
   useEffect(() => {
-    getMapAddresses(routeName).then(newInfo => {
+    // getMapAddresses(routeName).then(newInfo => {
+    //   setStreetInfo({
+    //     routeName,
+    //     ...newInfo
+    //   })
+    // })
+
+    // Now listening to street data on firebase. Still looking for a way to listen to particular streets, but filtering afterwards will have to do
+    if (routeName === "") return;
+    const unsubscribe = db.collection("Streets").onSnapshot(docs => {
+      let streetData = [];
+      docs.forEach(doc => {
+        const fullID = String(doc.id)
+        if (fullID.substring(fullID.indexOf('_') + 1) === routeName) {
+          let simplifiedStreet = {
+            name: fullID,
+            addresses: {}
+          };
+          for (const [key, value] of Object.entries(doc.data())) {
+            if (key === 'city') {
+              simplifiedStreet[key] = value;
+            } else if (key !== 'completed' && value.coordinates && value.coordinates.lng && value.coordinates.lat) {
+              simplifiedStreet.addresses[key] = value.coordinates
+            }
+          }
+          streetData.push(simplifiedStreet)
+
+        }
+      });
       setStreetInfo({
         routeName,
-        ...newInfo
+        streetData,
+        error: streetData.length > 0 ? "" : "Route does not exist"
       })
     })
+    return function cleanup() {
+      // Cleans up firebase listener before component unmounts
+      unsubscribe()
+    };
   }, [routeName]);
 
   return streetInfo
@@ -42,29 +76,29 @@ function Map(props) {
     message: ""
   });
   // const roads = useSnappedRoads(props.addresses);
-  function createMarkerListeners(marker, streetData) {
-    const markerIn = marker.addListener('mouseover', function () {
-      // Action on the way in
-      marker.setIcon(houseDefaultSelected)
-    });
-    const markerOut = marker.addListener('mouseout', function () {
-      // Reset on the way out
-      marker.setIcon(houseDefault)
-    });
-    const markerClick = marker.addListener('click', function () {
-      // Action on click
-      if (onClickIcon) {
-        onClickIcon(streetData)
-      }
-    })
-    return [markerIn, markerOut, markerClick]
-  }
 
   useEffect(() => {
 
+    function createMarkerListeners(marker, streetData) {
+      const markerIn = marker.addListener('mouseover', function () {
+        // Action on the way in
+        marker.setIcon(houseDefaultSelected)
+      });
+      const markerOut = marker.addListener('mouseout', function () {
+        // Reset on the way out
+        marker.setIcon(houseDefault)
+      });
+      const markerClick = marker.addListener('click', function () {
+        // Action on click
+        if (onClickIcon) {
+          onClickIcon(streetData)
+        }
+      })
+      return [markerIn, markerOut, markerClick]
+    }
+
     // Exit if the map or google objects are not yet ready
     if (!map || !google || !streetData || streetData.length === 0) return;
-
     let tempMarkers = [];
     for (let street of streetData) {
       for (let [key, value] of Object.entries(street.addresses)) {
@@ -124,6 +158,7 @@ function Map(props) {
       }
     }
 
+    const defaultLoc = { lat: 35.9132, lng: -79.0558 }
     const marker = new google.maps.Marker({
       map: map,
       position: defaultLoc,

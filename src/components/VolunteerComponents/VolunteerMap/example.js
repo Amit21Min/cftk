@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VolunteerNavBar from '../VolunteerNavBar';
 import MobileMap from '../../RoutesComponents/Map/mobileMap';
 import { TextField, Paper, IconButton, InputAdornment, Dialog, DialogTitle, DialogActions, Button } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
+import firebase from 'firebase';
 
 function ExampleMap() {
 
-    const styleExample = {
-        bottom: '0px'
-    }
+    // let styleExample = {
+
+    // }
     const [input, setInput] = useState("");
     const [search, setSearch] = useState("");
     const [addressData, setAddressData] = useState({});
+    const [styleExample, setStyleExample] = useState({
+        bottom: '0px',
+        transition: 'all 1s'
+    })
+
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (user) {
+                const userRef = db.collection('User').doc(auth.currentUser.uid);
+                // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+                const userDoc = await userRef.get();
+                if (userDoc.exists) {
+                  const assignment = userDoc.data().assignment;
+                  if (assignment) {
+                      setSearch(assignment.split("_")[0])
+                  }
+                }
+            }
+        });
+    }, []);
 
     function handleSearch() {
         setSearch(input);
@@ -38,6 +60,20 @@ function ExampleMap() {
         setAddressData({});
     }
 
+    function handleFocus() {
+        setStyleExample({
+            bottom: '40vh',
+            transition: 'all 1s'
+        })
+    }
+
+    function handleBlur() {
+        setStyleExample({
+            bottom: '0px',
+            transition: 'all 1s'
+        })
+    }
+
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
 
@@ -52,6 +88,8 @@ function ExampleMap() {
                         InputProps={{
                             endAdornment: <InputAdornment><IconButton onClick={handleSearch}><SearchIcon></SearchIcon></IconButton></InputAdornment>
                         }}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
                     ></TextField>
                 </Paper>
             </MobileMap>
