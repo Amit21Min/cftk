@@ -12,7 +12,7 @@ function ExampleMap() {
     // }
     const [groupID, setGroupID] = useState("");
     const [addressData, setAddressData] = useState({});
-    const [styleExample, setStyleExample] = useState({
+    const [slide, setSlide] = useState({
         top: '100vh',
         transition: 'all 1s'
     })
@@ -46,7 +46,7 @@ function ExampleMap() {
         setAddressData(addressData);
         // Hack to push to back of cycle
         setTimeout(() => {
-            setStyleExample({
+            setSlide({
                 top: 'calc(100vh - 250px)',
                 transition: 'all 1s'
             })
@@ -54,35 +54,40 @@ function ExampleMap() {
     }
 
     function handleHeaderClick() {
-        setStyleExample({
-            top: 'calc(100vh - 500px)',
+        setSlide({
+            top: 'calc(100vh - calc(100vh - 200px))',
             transition: 'all 1s'
         })
     }
 
     function handleClickAway() {
-        if (styleExample.top === '100vh') return
-        setStyleExample({
+        if (slide.top === '100vh') return
+        setSlide({
             top: '100vh',
             transition: 'all 1s'
         })
     }
 
     return (
-        <div style={{ width: '100vw', height: '100vh' }}>
+        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
 
-            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={styleExample} groupID={groupID} onClickIcon={handleIconClick}>
+            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={slide} groupID={groupID} onClickIcon={handleIconClick}>
                 {/* To put a component on top of the map, put it inside the MobileMap component. The innerStyle prop allows for limited styling of inner component */}
                 {/* You can use the absolute positioning to position the element within the map relative to the map itself */}
                 <ClickAwayListener
                     onClickAway={handleClickAway} >
                     <Paper style={{ width: '100vw', height: '100vh', padding: '10px' }}>
                         <div style={{ height: '178px', cursor: 'pointer' }} onClick={handleHeaderClick}>
-                            <Typography variant="h5">
-                                {`${addressData.key ?? ''} ${addressData.street}, ${addressData.city ?? ''}`}
-                            </Typography>
+                            <div style={{ display: 'flex' }}>
+                                <Typography variant="h5">
+                                    {`${addressData.key ?? ''} ${addressData.street}`}
+                                </Typography>
+                                <Typography variant="h6" style={{ marginLeft: 'auto', marginRight: '10px', color: addressData.complete ? 'green' : 'lightgrey' }}>
+                                    {addressData.complete ? 'Complete' : 'Incomplete'}
+                                </Typography>
+                            </div>
                             <div>
-                                <ul style={{listStyle: 'inherit', paddingLeft: '20px'}}>
+                                <ul style={{ listStyle: 'inherit', paddingLeft: '20px' }}>
                                     <li>{addressData.solicitation}</li>
                                     <li>Donated: {addressData.donation}</li>
                                     {addressData.comments?.map(comment => (
