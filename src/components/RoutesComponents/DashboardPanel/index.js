@@ -1,37 +1,46 @@
 import React, { useEffect, useState } from "react";
 import TitleCard from "../../ReusableComponents/TitleCard";
 import ZeroResource from "../../ReusableComponents/ZeroResource";
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles, withStyles } from "@material-ui/core";
+
+import {
+  Chart,
+  BarSeries,
+  Title,
+  ArgumentAxis,
+  ValueAxis
+} from "@devexpress/dx-react-chart-material-ui";
+import { Animation } from '@devexpress/dx-react-chart';
 
 import "./index.css";
 import AbstractOne from "../../../assets/images/stat-abstract-1.png";
 import AbstractTwo from "../../../assets/images/stat-abstract-2.png";
 import AbstractThree from "../../../assets/images/stat-abstract-3.png";
 import AbstractFour from "../../../assets/images/stat-abstract-4.png";
-import GoldBadge from '../../../assets/images/Gold Badge.png';
-import SilverBadge from '../../../assets/images/Silver Badge.png';
-import BronzeBadge from '../../../assets/images/Bronze Badge.png';
+import GoldBadge from "../../../assets/images/Gold Badge.png";
+import SilverBadge from "../../../assets/images/Silver Badge.png";
+import BronzeBadge from "../../../assets/images/Bronze Badge.png";
 import DashboardNoResource from "../../../assets/images/dashboard-no-resource.png";
 import db from "../../FirebaseComponents/Firebase/firebase";
-
-
 
 const useStyles = makeStyles((theme) => ({
   dashboardPaper: {
     backgroundColor: "white",
-    borderRadius: '24px',
-    height: '168px',
-    padding: '24px',
+    borderRadius: "24px",
+    height: "168px",
+    padding: "24px",
     display: "flex",
-    flexDirection: 'column',
-    justifyContent: 'space-evenly'
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+  },
+  chartPaper: {
+    marginBottom: '70px',
+    borderRadius: "24px"
   }
 }));
 
-
 const DashboardPanel = () => {
-
   const classes = useStyles();
 
   let data = true;
@@ -44,43 +53,54 @@ const DashboardPanel = () => {
   const [groupStatMap, setGroupStatMap] = useState(new Map());
   const [sortedGroupMap, setSortedGroupMap] = useState(new Map());
 
+  const [chartData, setChartData] = useState([]);
+  const styles = {
+    titleText: {
+      textAlign: 'left',
+      fontWeight: 600,
+      fontSize: '20px',
+      lineHeight: '23px'
+    },
+  }
+  const TextComponent = withStyles(styles)(({ classes, ...restProps }) => (
+    <Title.Text {...restProps} className={classes.titleText} />
+  ));
 
   useEffect(() => {
-    db.collection('RoutesComplete').onSnapshot(async snapshot => {
+    db.collection("RoutesComplete").onSnapshot(async (snapshot) => {
       snapshot.docs.map((doc) => {
-
         let route = doc.data();
-        
+
         // CALCULATIONS FOR STATS FOR ROUTES
-        let id = doc.id.split('_')[0];
+        let id = doc.id.split("_")[0];
         let stats = {
           perc_learn_more: 0,
           avg_donation: 0,
           total_donations: 0,
           total_learn_more: 0,
-          efficiency: 0
-        }
+          efficiency: 0,
+        };
 
-        for(let [key, houses] of Object.entries(route.streets)) {
-          for(let i = 0; i < houses.length; i++) {
+        for (let [key, houses] of Object.entries(route.streets)) {
+          for (let i = 0; i < houses.length; i++) {
             let houseNumber = Object.keys(houses[i])[0];
             let houseProps = houses[i][houseNumber];
 
-            if(houseProps.donationAmt != null) {
+            if (houseProps.donationAmt != null) {
               stats.total_donations += Number(houseProps.donationAmt);
             }
 
-            if(houseProps.learnMore != null) {
-              stats.total_learn_more += (houseProps.learnMore ? 1 : 0)
+            if (houseProps.learnMore != null) {
+              stats.total_learn_more += houseProps.learnMore ? 1 : 0;
             }
           }
         }
 
         // STATS FOR GROUP LEADERBOARD
         let group_name = route.assignedTo;
-      
-        if(group_name != null) {
-          if(!groupStatMap.has(group_name)) {
+
+        if (group_name != null) {
+          if (!groupStatMap.has(group_name)) {
             groupStatMap.set(group_name, stats.total_donations);
           } else {
             let old_total = groupStatMap.get(group_name);
@@ -90,11 +110,10 @@ const DashboardPanel = () => {
 
         // END OF GROUP LEADERBOARD STATS
 
-        stats.perc_learn_more = stats.total_learn_more/route.housesTotal;
-        stats.avg_donation = stats.total_donations/route.housesTotal;
+        stats.perc_learn_more = stats.total_learn_more / route.housesTotal;
+        stats.avg_donation = stats.total_donations / route.housesTotal;
 
-
-        if(!statsMap.has(id)) {
+        if (!statsMap.has(id)) {
           statsMap.set(id, stats);
         } else {
           let oldStats = statsMap.get(id);
@@ -102,20 +121,30 @@ const DashboardPanel = () => {
           stats.total_donations += oldStats.total_donations;
           stats.total_learn_more += oldStats.total_learn_more;
 
-          stats.perc_learn_more = stats.total_learn_more/route.housesTotal;
-          stats.avg_donation = stats.total_donations/route.housesTotal;
+          stats.perc_learn_more = stats.total_learn_more / route.housesTotal;
+          stats.avg_donation = stats.total_donations / route.housesTotal;
 
           statsMap.set(id, stats);
         }
-        
-
       });
+      
+      // setting chart data
+      let arr = []
+      for(let [key, value] of statsMap.entries()) {
+        let data_ = {
+          route: key,
+          total_amount: value.total_donations
+        }
+        arr.push(data_);
+      }
+      arr.sort((a, b) => b.total_amount - a.total_amount);
+      setChartData(arr);
 
       // highest learn more
       let currHigh = 0;
-      let currRouteHigh = ""
-      for(let [route, value] of statsMap) {
-        if(value.perc_learn_more > currHigh) {
+      let currRouteHigh = "";
+      for (let [route, value] of statsMap) {
+        if (value.perc_learn_more > currHigh) {
           currRouteHigh = route;
         }
       }
@@ -123,32 +152,31 @@ const DashboardPanel = () => {
 
       // highest Avg Donation
       currHigh = 0;
-      currRouteHigh = ""
-      for(let [route, stats] of statsMap) {
-        if(stats.avg_donation > currHigh) {
+      currRouteHigh = "";
+      for (let [route, stats] of statsMap) {
+        if (stats.avg_donation > currHigh) {
           currRouteHigh = route;
         }
       }
       setHighestAvgDonation(currRouteHigh);
 
-
       // total donations
       currHigh = 0;
-      currRouteHigh = ""
-      for(let [route, stats] of statsMap) {
-        if(stats.avg_donation > currHigh) {
+      currRouteHigh = "";
+      for (let [route, stats] of statsMap) {
+        if (stats.avg_donation > currHigh) {
           currRouteHigh = route;
         }
       }
       setHighestTotalDonations(currRouteHigh);
 
-
       // top 3 for group donations
-      let new_group_map = new Map([...groupStatMap].sort((a, b) => b[1] - a[1]))
-      setSortedGroupMap(new_group_map)
+      let new_group_map = new Map(
+        [...groupStatMap].sort((a, b) => b[1] - a[1])
+      );
+      setSortedGroupMap(new_group_map);
     });
   }, []);
-
 
   return (
     <div>
@@ -167,29 +195,67 @@ const DashboardPanel = () => {
         {data && (
           <div className="data-container">
             <div className="graph-container">
+              <Paper className={classes.chartPaper} variant="outlined">
+                <Chart data={chartData}>
+                  <ArgumentAxis/>
+                  <ValueAxis max={7} />
+                  <BarSeries 
+                    valueField="total_amount" 
+                    argumentField="route"
+                    color="#0075A3"
+                    barWidth={.5}
+                  />
+                  <Title text="Routes By Donation Total" textComponent={TextComponent}/>
+                  <Animation />
+                </Chart>
+              </Paper>
               <div className="group-stat-container">
                 <Paper variant="outlined" className={classes.dashboardPaper}>
                   <span className="donationTitle">Donation Leaderboard</span>
                   <div className="donation-wrapper">
-                    {Array.from([...sortedGroupMap.keys()]).slice(0,3).map((key, i) => {
-                      let place = "3rd Place";
-                      let img_src = BronzeBadge;
-                      if(i+1 === 1) { place = "1st Place"; img_src = GoldBadge}
-                      if(i+1 === 2) { place = "2nd Place"; img_src = SilverBadge}
-                      return (
-                        <div className="group-leaderboard-wrapper" key={`${place}`}>
-                          <img src={img_src} className="group-stat-badge" key={`img_src ${img_src}`}></img>
-                          <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <span key={key} className="group-stat-primary">{key}</span>
-                            <span key={i} className="group-stat-secondary">{place} | ${sortedGroupMap.get(key)} </span>
+                    {Array.from([...sortedGroupMap.keys()])
+                      .slice(0, 3)
+                      .map((key, i) => {
+                        let place = "3rd Place";
+                        let img_src = BronzeBadge;
+                        if (i + 1 === 1) {
+                          place = "1st Place";
+                          img_src = GoldBadge;
+                        }
+                        if (i + 1 === 2) {
+                          place = "2nd Place";
+                          img_src = SilverBadge;
+                        }
+                        return (
+                          <div
+                            className="group-leaderboard-wrapper"
+                            key={`${place}`}
+                          >
+                            <img
+                              src={img_src}
+                              className="group-stat-badge"
+                              key={`img_src ${img_src}`}
+                            ></img>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <span key={key} className="group-stat-primary">
+                                {key}
+                              </span>
+                              <span key={i} className="group-stat-secondary">
+                                {place} | ${sortedGroupMap.get(key)}{" "}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </Paper>
               </div>
-            </div>      
+            </div>
             <div className="stat-container">
               <div className="dashboard-metric-item dashboard-metric-general dashboard-metric-efficient">
                 <img className="abstractOne" src={AbstractOne}></img>
@@ -215,7 +281,9 @@ const DashboardPanel = () => {
               </div>
               <div className="dashboard-metric-item dashboard-metric-general dashboard-metric-totaldonation">
                 <img className="abstractFour" src={AbstractFour}></img>
-                <h4 className="dashboard-metric-main">{highestTotalDonations}</h4>
+                <h4 className="dashboard-metric-main">
+                  {highestTotalDonations}
+                </h4>
                 <span className="dashboard-metric-label">
                   Route with Greatest Total Donations
                 </span>
