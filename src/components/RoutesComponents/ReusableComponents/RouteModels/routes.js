@@ -275,6 +275,7 @@ export const getAssignedRoute = async (uid) => {
         });
         return assignedRoute;
     } catch (error) {
-
+        console.error(error)
+        return null;
     }
 }
