@@ -84,8 +84,8 @@ const App = () => {
       if (user) {
         console.log('user is signed in');
         console.log(auth.currentUser.uid);
-        // const userRef = db.collection('User').doc(auth.currentUser.uid);
-        const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+        const userRef = db.collection('User').doc(auth.currentUser.uid);
+        // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
         const userDoc = await userRef.get();
         if (userDoc.exists) {
           const assignment = userDoc.data().assignment;

@@ -18,6 +18,37 @@ import { positions } from '@material-ui/system';
 
 import NavBar from "../VolunteerNavBar/index.js";
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '100%',
+        height: '500px',
+        position: 'relative'
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+        bottom: 5
+    },
+    nextButton: {
+        position: 'absolute',
+        right: 0,
+        bottom: 5
+    },
+    instructions: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        padding: 10,
+    },
+    bigButton: {
+        fontWeight: "bold",
+        borderRadius: 10,
+        borderWidth: 3,
+        margin: "5px",
+        width: "45%",
+        height: "120px",
+    },
+}));
+
 const App = (props) => {
 
     // is all the information completed?
@@ -75,39 +106,21 @@ const App = (props) => {
         // document.getElementById('amount').value = a;
     }
 
+    React.useEffect(() => {
+        // This will reset everything back to it's default state
+        setSol(-1);
+        setInterest(-1);
+        setAmount(-1);
+        setMethod(-1);
+        setComment(-1);
+        setActiveStep(0);
+        setComplete(false);
+        setAmountstr("");
+    }, [props.addr])
+
 
     // styles and effects
     const timeout = 150; // button timeout to show it's selected before jumping to next step 
-
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            width: '100%',
-            height: '600px'
-        },
-        backButton: {
-            position: 'absolute',
-            left: 0,
-            bottom: 5
-        },
-        nextButton: {
-            position: 'absolute',
-            right: 0,
-            bottom: 5
-        },
-        instructions: {
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(1),
-            padding: 10,
-        },
-        bigButton: {
-            fontWeight: "bold",
-            borderRadius: 10,
-            borderWidth: 3,
-            margin: "5px",
-            width: "45%",
-            height: "120px",
-        },
-    }));
     const classes = useStyles();
 
     const asterisk = () => {
