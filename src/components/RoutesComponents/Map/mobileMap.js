@@ -30,7 +30,6 @@ function useFirebaseStreetInfo(assignedRoute) {
       if (!doc.exists) return;
       let streetData = [];
       const { streets, city } = doc.data();
-      console.log(doc.data())
       for (let streetName in streets) {
         let simplifiedStreet = {
           name: streetName,
@@ -40,7 +39,6 @@ function useFirebaseStreetInfo(assignedRoute) {
         const currStreet = streets[streetName];
         for (let house of currStreet) {
           let houseNum = Object.keys(house)[0];
-          console.log(house[houseNum]['coordinates'])
           if (house[houseNum]['coordinates']) simplifiedStreet.addresses[houseNum] = {
             coords: house[houseNum]['coordinates'],
             complete: house[houseNum]['donationAmt'] != null,

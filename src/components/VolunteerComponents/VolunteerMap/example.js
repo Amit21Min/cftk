@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import VolunteerNavBar from '../VolunteerNavBar';
 import MobileMap from '../../RoutesComponents/Map/mobileMap';
-import { Paper, ClickAwayListener, Typography, Divider } from '@material-ui/core';
+import { Paper, ClickAwayListener, Typography, Divider, IconButton } from '@material-ui/core';
 import { auth } from '../../FirebaseComponents/Firebase/firebase';
 import { getAssignedRoute } from '../../RoutesComponents/ReusableComponents/RouteModels/routes';
 import firebase from 'firebase';
+import VolunteerHouseData from '../VolunteerHouseData';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+
 
 function ExampleMap() {
 
@@ -14,8 +17,16 @@ function ExampleMap() {
     const [assignedRoute, setAssignedRoute] = useState("");
     const [addressData, setAddressData] = useState({});
     const [slide, setSlide] = useState({
-        top: '100vh',
-        transition: 'all 1s'
+        main: {
+            top: '100vh',
+            transition: 'all 1s'
+        },
+        summary: {
+            height: '0px',
+            cursor: 'pointer',
+            transition: 'all 1s',
+            overflow: 'hidden'
+        }
     })
 
     useEffect(() => {
@@ -25,6 +36,9 @@ function ExampleMap() {
                 getAssignedRoute(auth.currentUser.uid).then(route => {
                     setAssignedRoute(route ?? '');
                 })
+                // getAssignedRoute("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1").then(route => {
+                //     setAssignedRoute(route ?? '');
+                // })
             }
         });
         return function cleanup() {
@@ -48,39 +62,62 @@ function ExampleMap() {
         // Hack to push to back of execution cycle
         setTimeout(() => {
             setSlide({
-                top: 'calc(100vh - 250px)',
-                transition: 'all 1s'
+                main: {
+                    top: 'calc(100vh - 250px)',
+                    transition: 'all 1s'
+                },
+                summary: {
+                    height: '130px',
+                    cursor: 'pointer',
+                    transition: 'all 1s',
+                }
             })
         }, 50)
     }
 
     function handleHeaderClick() {
         setSlide({
-            top: 'calc(100vh - calc(100vh - 200px))',
-            transition: 'all 1s'
+            main: {
+                top: 'calc(100vh - 640px)',
+                transition: 'all 1s'
+            },
+            summary: {
+                height: '0px',
+                cursor: 'pointer',
+                transition: 'all 1s',
+                overflow: 'hidden'
+            }
         })
     }
 
     function handleClickAway() {
-        if (slide.top === '100vh') return
+        if (slide.main.top === '100vh') return
         setSlide({
-            top: '100vh',
-            transition: 'all 1s'
+            main: {
+                top: '100vh',
+                transition: 'all 1s'
+            },
+            summary: {
+                height: '0px',
+                cursor: 'pointer',
+                transition: 'all 1s'
+            }
         })
     }
 
     return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
-            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={slide} assignedRoute={assignedRoute} onClickIcon={handleIconClick}>
+            <MobileMap width={'100%'} height={'calc(100vh - 72px)'} innerStyle={slide.main} assignedRoute={assignedRoute} onClickIcon={handleIconClick}>
                 {/* To put a component on top of the map, put it inside the MobileMap component. The innerStyle prop allows for limited styling of inner component */}
                 {/* You can use the absolute positioning to position the element within the map relative to the map itself */}
                 <ClickAwayListener
                     onClickAway={handleClickAway} >
                     <Paper style={{ width: '100vw', height: '100vh', padding: '10px' }}>
                         {/* This top div is revealed in the first stage */}
-                        <div style={{ height: '178px', cursor: 'pointer' }} onClick={handleHeaderClick}>
-                            <div style={{ display: 'flex' }}>
+                        <div>
+                            <div style={{ display: 'flex', paddingBottom: '1rem', cursor: 'pointer' }} onClick={handleHeaderClick}>
                                 {/* Title */}
+                                {/* <IconButton><KeyboardArrowDownIcon></KeyboardArrowDownIcon></IconButton> */}
                                 <Typography variant="h5">
                                     {`${addressData.key ?? ''} ${addressData.street}`}
                                 </Typography>
@@ -89,7 +126,7 @@ function ExampleMap() {
                                     {addressData.complete ? 'Complete' : 'Incomplete'}
                                 </Typography>
                             </div>
-                            <div>
+                            <div style={slide.summary} onClick={handleHeaderClick}>
                                 {/* List of summary data */}
                                 <ul style={{ listStyle: 'inherit', paddingLeft: '20px' }}>
                                     <li>{addressData.solicitation}</li>
@@ -103,20 +140,8 @@ function ExampleMap() {
                         <Divider></Divider>
                         {/* This bottom most div is revealed in the second stage */}
                         <div>
-                            We're no strangers to love;
-                            You know the rules and so do I;
-                            A full commitment's what I'm thinking of;
-                            You wouldn't get this from any other guy;
-
-                            I just wanna tell you how I'm feeling;
-                            Gotta make you understand;
-
-                            Never gonna give you up;
-                            Never gonna let you down;
-                            Never gonna run around and desert you;
-                            Never gonna make you cry;
-                            Never gonna say goodbye;
-                            Never gonna tell a lie and hurt you;
+                            {/* {slide.main.top === '100vh' ? null : <VolunteerHouseData addr={`${addressData.key ?? ''}_${addressData.street}`} />} */}
+                            <VolunteerHouseData addr={`${addressData.key ?? ''}_${addressData.street}`} />
                         </div>
                     </Paper>
                 </ClickAwayListener>
