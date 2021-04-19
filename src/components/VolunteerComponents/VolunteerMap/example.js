@@ -112,7 +112,7 @@ function ExampleMap() {
             </Dialog> */}
             <Dialog fullWidth={true} maxWidth={'xl'}
                 open={Object.keys(addressData).length > 0} onClose={handleDialogClose}>
-                <VolunteerHouseData addr={addressData.street} close={handleDialogClose} />
+                <VolunteerHouseData house={addressData.key} addr={addressData.street} close={handleDialogClose} />
             </Dialog>
 
         </div>

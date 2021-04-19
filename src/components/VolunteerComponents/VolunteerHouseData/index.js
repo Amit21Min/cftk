@@ -14,6 +14,7 @@ import FormControl from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { positions } from '@material-ui/system';
+import { db } from '../../FirebaseComponents/Firebase/firebase';
 
 
 import NavBar from "../VolunteerNavBar/index.js";
@@ -39,7 +40,62 @@ const App = (props) => {
     const [activeStep, setActiveStep] = React.useState(4);
     const steps = getSteps();
 
+    const saveData = () => {
+        console.log(sol, interest, amount, method, comment);
+        console.log(props.addr);
+        console.log(props.house);
+        let newStreetData;
+        let oldStreetData;
+        let routeName = props.addr.split("_")[1];
+        db.collection("RoutesActive").get().then((querySnapshot) => {
+            querySnapshot.forEach(async (doc) => {
+                if (routeName === doc.id.split("_")[0]) {
+                    let routesActiveDoc = await db.collection("RoutesActive").doc(doc.id).get();
+                    if (routesActiveDoc.exists) {
+                        let street = routesActiveDoc.data().streets[props.addr.split("_")[0]];
+                        console.log(street);
+                        for (let i in street) {
+                            oldStreetData = JSON.parse(JSON.stringify(street));
+                            if (Object.keys(street[i])[0] === props.house) {
+                                console.log(street[i]);
+                                street[i] = { 
+                                    [Object.keys(street[i])[0]] : {
+                                        donationAmt : amount,
+                                        learnMore : interest === 1 ? true : false,
+                                        solicitation : sol === 1 ? true : false,
+                                        volunteerComments : comment.length > 0 ? comment : null,
+                                    }
+                                }
+                                newStreetData = street;
+                                console.log(newStreetData);
+                            }
+                        }
+                    }
+                    let newDocData = doc.data();
+                    newDocData.streets[props.addr.split("_")[0]] = newStreetData;
+
+                    console.log(oldStreetData);
+                    // newDocData.donationTotal += amount;
+                    // newDocData.housesCompleted += 1;
+                    db.collection('RoutesActive').doc(doc.id).set(newDocData);
+
+                    // console.log(newStreetData);
+                    // let fieldName = "streets." + props.addr.split("_")[0];
+                    // console.log(fieldName);
+                    // db.collection('RoutesActive').doc(doc.id).update({
+                    //     [fieldName] : newStreetData
+                    // });
+                }
+            })
+        })
+        // console.log(props.)
+        // let routesActiveRef = 
+    }
+
     const handleNext = () => {
+        if (activeStep === 3) {
+            saveData();
+        }
         if(activeStep===0 && sol===0){setActiveStep(3);} // jump to last step if solicitation not allowed
         else{setActiveStep((prevActiveStep) => prevActiveStep + 1);}
     };
@@ -203,6 +259,7 @@ const App = (props) => {
     return (
         <div className={classes.root}>
             <Typography variant="h5" style={{ margin: 10 }} gutterBottom>{props.addr}
+            {/* <Typography variant="h5" style={{ margin: 10 }} gutterBottom>{props.house} {props.addr.split('_')[0]} */}
             <IconButton aria-label="close" style={{ float: "right", display: "inline" }} onClick={props.close}>
                 <CloseIcon />
             </IconButton>
