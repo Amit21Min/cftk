@@ -45,7 +45,11 @@ const App = (props) => {
         console.log(props.addr);
         console.log(props.house);
         let newStreetData;
-        let oldStreetData;
+        let update = {
+            amount: null,
+            interest: null,
+            solicitation: null,
+        }
         let routeName = props.addr.split("_")[1];
         db.collection("RoutesActive").get().then((querySnapshot) => {
             querySnapshot.forEach(async (doc) => {
@@ -53,11 +57,13 @@ const App = (props) => {
                     let routesActiveDoc = await db.collection("RoutesActive").doc(doc.id).get();
                     if (routesActiveDoc.exists) {
                         let street = routesActiveDoc.data().streets[props.addr.split("_")[0]];
-                        console.log(street);
                         for (let i in street) {
-                            oldStreetData = JSON.parse(JSON.stringify(street));
                             if (Object.keys(street[i])[0] === props.house) {
                                 console.log(street[i]);
+                                // if the donationAmt that we are about to set is not null, then this is an update -> which means we need to perform our
+                                if (street[i][Object.keys(street[i])[0]].donationAmt !== null) {
+                                    // undoFunction(street[i][Object.keys(street[i])[0]].donationAmt, street[i][Object.keys(street[i])[0]].learnMore, street[i][Object.keys(street[i])[0]].solcitation)
+                                }
                                 street[i] = { 
                                     [Object.keys(street[i])[0]] : {
                                         donationAmt : amount,
@@ -73,8 +79,8 @@ const App = (props) => {
                     }
                     let newDocData = doc.data();
                     newDocData.streets[props.addr.split("_")[0]] = newStreetData;
+                    console.log(newDocData);
 
-                    console.log(oldStreetData);
                     // newDocData.donationTotal += amount;
                     // newDocData.housesCompleted += 1;
                     db.collection('RoutesActive').doc(doc.id).set(newDocData);
