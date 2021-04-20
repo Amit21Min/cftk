@@ -137,7 +137,7 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
         .set({
             streets: streets,
             assignmentStatus: false,
-            assingmentDates: {},
+            assignmentDates: {},
             perInterest: 0.0,
             perSoliciting: 0.0,
             total: 0.0,
@@ -166,6 +166,7 @@ export const storeStreetData = (streetName, streetData, city, prevStreet = null)
         total: prevStreet?.total ?? 0,
         perInterest: prevStreet?.perInterest ?? 0,
         perSoliciting: prevStreet?.perSoliciting ?? 0,
+        totalVisits: 0,
     }
     for (let houseNumber in streetData) {
         let coords = streetData[houseNumber]
@@ -246,5 +247,18 @@ export const getMapAddresses = async (routeId) => {
             error: error
         }
         return returnObj;
+    }
+}
+
+export const getAssignedRoute = async (uid) => {
+    try {
+        const userRef = db.collection('User').doc(uid);
+        const userDoc = await userRef.get();
+        // Gets assignment
+        const assignment = userDoc.exists ? userDoc.data().assignment : '';
+        return assignment;
+    } catch (error) {
+        console.error(error)
+        return null;
     }
 }

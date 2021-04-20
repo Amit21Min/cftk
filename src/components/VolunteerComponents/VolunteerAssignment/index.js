@@ -41,7 +41,6 @@ const App = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const classes = useStyles();
 
-
   useEffect(() => {
     firebase.auth().onAuthStateChanged(async function(user) {
       let donationTotal;

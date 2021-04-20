@@ -19,6 +19,37 @@ import { db } from '../../FirebaseComponents/Firebase/firebase';
 
 import NavBar from "../VolunteerNavBar/index.js";
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '100%',
+        height: '500px',
+        position: 'relative'
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+        bottom: 5
+    },
+    nextButton: {
+        position: 'absolute',
+        right: 0,
+        bottom: 5
+    },
+    instructions: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        padding: 10,
+    },
+    bigButton: {
+        fontWeight: "bold",
+        borderRadius: 10,
+        borderWidth: 3,
+        margin: "5px",
+        width: "45%",
+        height: "120px",
+    },
+}));
+
 const App = (props) => {
 
     // is all the information completed?
@@ -37,65 +68,63 @@ const App = (props) => {
         return ['Solicitation', 'Interest', 'Donation', 'Comments'];
     }
 
-    const [activeStep, setActiveStep] = React.useState(4);
+    const [activeStep, setActiveStep] = React.useState(0);
     const steps = getSteps();
 
-    const saveData = () => {
+    const saveData = async () => {
         console.log(sol, interest, amount, method, comment);
-        console.log(props.addr);
-        console.log(props.house);
+        let addr = props.addr;
+        let routeName = props.routeName;
         let newStreetData;
         let update = {
             amount: null,
             interest: null,
             solicitation: null,
         }
-        let routeName = props.addr.split("_")[1];
-        db.collection("RoutesActive").get().then((querySnapshot) => {
-            querySnapshot.forEach(async (doc) => {
-                if (routeName === doc.id.split("_")[0]) {
-                    let routesActiveDoc = await db.collection("RoutesActive").doc(doc.id).get();
-                    if (routesActiveDoc.exists) {
-                        let street = routesActiveDoc.data().streets[props.addr.split("_")[0]];
-                        for (let i in street) {
-                            if (Object.keys(street[i])[0] === props.house) {
-                                console.log(street[i]);
-                                // if the donationAmt that we are about to set is not null, then this is an update -> which means we need to perform our
-                                if (street[i][Object.keys(street[i])[0]].donationAmt !== null) {
-                                    // undoFunction(street[i][Object.keys(street[i])[0]].donationAmt, street[i][Object.keys(street[i])[0]].learnMore, street[i][Object.keys(street[i])[0]].solcitation)
-                                }
-                                street[i] = { 
-                                    [Object.keys(street[i])[0]] : {
-                                        donationAmt : amount,
-                                        learnMore : interest === 1 ? true : false,
-                                        solicitation : sol === 1 ? true : false,
-                                        volunteerComments : comment.length > 0 ? comment : null,
-                                    }
-                                }
-                                newStreetData = street;
-                                console.log(newStreetData);
-                            }
+        let routesActiveDoc = await db.collection("RoutesActive").doc(routeName).get();
+        if (routesActiveDoc.exists) {
+            let street = routesActiveDoc.data().streets[addr.split("_")[1]];
+            for (let i in street) {
+                if (Object.keys(street[i])[0] === addr.split("_")[0]) {
+                    // if the donationAmt that we are about to set is not null, then this is an update -> which means we need to perform our
+                    if (street[i][Object.keys(street[i])[0]].donationAmt !== null) {
+                        console.log("THIS WAS AN UPDATE - UNDO THE CALCULATION")
+                        // undoFunction(street[i][Object.keys(street[i])[0]].donationAmt, street[i][Object.keys(street[i])[0]].learnMore, street[i][Object.keys(street[i])[0]].solcitation)
+                    }
+                    street[i] = { 
+                        [Object.keys(street[i])[0]] : {
+                            donationAmt : amount,
+                            learnMore : interest === 1 ? true : false,
+                            solicitation : sol === 1 ? true : false,
+                            volunteerComments : comment.length > 0 ? comment : null,
                         }
                     }
-                    let newDocData = doc.data();
-                    newDocData.streets[props.addr.split("_")[0]] = newStreetData;
-                    console.log(newDocData);
-
-                    // newDocData.donationTotal += amount;
-                    // newDocData.housesCompleted += 1;
-                    db.collection('RoutesActive').doc(doc.id).set(newDocData);
-
-                    // console.log(newStreetData);
-                    // let fieldName = "streets." + props.addr.split("_")[0];
-                    // console.log(fieldName);
-                    // db.collection('RoutesActive').doc(doc.id).update({
-                    //     [fieldName] : newStreetData
-                    // });
+                    newStreetData = street;
                 }
-            })
-        })
-        // console.log(props.)
-        // let routesActiveRef = 
+            }
+        }
+        
+        let tempInterest = interest
+        if (!sol) {
+            tempInterest = false;
+        }
+        let newDocData = routesActiveDoc.data();
+        newDocData.streets[addr.split("_")[1]] = newStreetData;
+        console.log(newDocData);
+        if (tempInterest) {
+            newDocData.pctInterest = (newDocData.pctInterest * newDocData.housesCompleted + 100) / (newDocData.housesCompleted + 1);
+        } else {
+            newDocData.pctInterest = (newDocData.pctInterest * newDocData.housesCompleted) / (newDocData.housesCompleted + 1);
+        }
+        if (sol) {
+            newDocData.pctSoliciting = (newDocData.pctSoliciting * newDocData.housesCompleted + 100) / (newDocData.housesCompleted + 1);
+        } else {
+            newDocData.pctSoliciting = (newDocData.pctSoliciting * newDocData.housesCompleted) / (newDocData.housesCompleted + 1);
+        }
+        newDocData.donationTotal += amount;
+        newDocData.housesCompleted += 1;
+        db.collection('RoutesActive').doc(routeName).set(newDocData);
+
     }
 
     const handleNext = () => {
@@ -137,39 +166,21 @@ const App = (props) => {
         // document.getElementById('amount').value = a;
     }
 
+    React.useEffect(() => {
+        // This will reset everything back to it's default state
+        setSol(-1);
+        setInterest(-1);
+        setAmount(-1);
+        setMethod(-1);
+        setComment(-1);
+        setActiveStep(0);
+        setComplete(false);
+        setAmountstr("");
+    }, [props.addr])
+
 
     // styles and effects
     const timeout = 150; // button timeout to show it's selected before jumping to next step 
-
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            width: '100%',
-            height: '600px'
-        },
-        backButton: {
-            position: 'absolute',
-            left: 0,
-            bottom: 5
-        },
-        nextButton: {
-            position: 'absolute',
-            right: 0,
-            bottom: 5
-        },
-        instructions: {
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(1),
-            padding: 10,
-        },
-        bigButton: {
-            fontWeight: "bold",
-            borderRadius: 10,
-            borderWidth: 3,
-            margin: "5px",
-            width: "45%",
-            height: "120px",
-        },
-    }));
     const classes = useStyles();
 
     const asterisk = () => {
@@ -264,12 +275,11 @@ const App = (props) => {
 
     return (
         <div className={classes.root}>
-            <Typography variant="h5" style={{ margin: 10 }} gutterBottom>{props.addr}
-            {/* <Typography variant="h5" style={{ margin: 10 }} gutterBottom>{props.house} {props.addr.split('_')[0]} */}
+            {/* <Typography variant="h5" style={{ margin: 10 }} gutterBottom>{props.addr}
             <IconButton aria-label="close" style={{ float: "right", display: "inline" }} onClick={props.close}>
                 <CloseIcon />
             </IconButton>
-            </Typography>
+            </Typography> */}
             <div>
                 {activeStep === steps.length ? (
                     <div>
