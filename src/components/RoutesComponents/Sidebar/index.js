@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
@@ -79,7 +78,7 @@ const Sidebar = () => {
         classes={{ paper: classes.drawerPaper }}
       >
         <div className="logo-box">
-          <img src={logo}></img>
+          <img alt="logo" src={logo}></img>
         </div>
         <Box
           display="flex"

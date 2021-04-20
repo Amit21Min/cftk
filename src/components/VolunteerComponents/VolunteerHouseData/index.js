@@ -11,12 +11,7 @@ import FilledInput from '@material-ui/core/FilledInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { positions } from '@material-ui/system';
-
-
-import NavBar from "../VolunteerNavBar/index.js";
+import { db } from '../../FirebaseComponents/Firebase/firebase';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,15 +47,14 @@ const useStyles = makeStyles((theme) => ({
 const App = (props) => {
 
     // is all the information completed?
-    const [complete, setComplete] = React.useState(false);
+    // const [complete, setComplete] = React.useState(false);
     // user inputs
     const [sol, setSol] = React.useState(-1); // Solicitation allowed? -1: unselected, 0: no, 1: yes
     const [interest, setInterest] = React.useState(-1);
     const [amount, setAmount] = React.useState(-1); // Amount donated
-    const [amountstr, setAmountstr] = React.useState("");
+    // const [amountstr, setAmountstr] = React.useState("");
     const [method, setMethod] = React.useState(-1); // -1: unselected, 0: cash/check, 1: mobile
     const [comment, setComment] = React.useState("");
-
 
     // managing steps
     function getSteps() {
@@ -71,6 +65,9 @@ const App = (props) => {
     const steps = getSteps();
 
     const handleNext = () => {
+        if (activeStep === 3) {
+            saveData();
+        }
         if(activeStep===0 && sol===0){setActiveStep(3);} // jump to last step if solicitation not allowed
         else{setActiveStep((prevActiveStep) => prevActiveStep + 1);}
     };
@@ -90,20 +87,6 @@ const App = (props) => {
         a = parseFloat(a);
         if(a>0){setAmount(a);}        
         document.getElementById('amount').value = a;
-
-        // let a = document.getElementById('amount').value.trim();
-        // a = a.replace(/\D/g, ''); // delelte non-digits
-        // let len = a.length;
-        // console.log(a);
-        // console.log(len);
-        // for(let i=len-3; i<3; i++){
-        //     a = '0'+a;
-        // }
-        // a = a.substring(0,len-2)+'.'+a[len-2]+a[len-1];
-        // console.log(a)
-        // a = parseFloat(a);
-        // console.log(a);
-        // document.getElementById('amount').value = a;
     }
 
     React.useEffect(() => {
@@ -114,8 +97,8 @@ const App = (props) => {
         setMethod(-1);
         setComment(-1);
         setActiveStep(0);
-        setComplete(false);
-        setAmountstr("");
+        // setComplete(false);
+        // setAmountstr("");
     }, [props.addr])
 
 
@@ -125,6 +108,90 @@ const App = (props) => {
 
     const asterisk = () => {
         return <span style={{ color: "red" }}>*</span>;
+    }
+
+    // function that deals entirely with saving the house data to firebase when submit is pressed.
+    const saveData = async () => {
+        let addr = props.addr;
+        let routeName = props.routeName;
+        let newStreetData;
+        let update = false;
+        let routesActiveDoc = await db.collection("RoutesActive").doc(routeName).get();
+        if (routesActiveDoc.exists) {
+            let street = routesActiveDoc.data().streets[addr.split("_")[1]];
+            for (let i in street) {
+                if (Object.keys(street[i])[0] === addr.split("_")[0]) {
+                    // if the donationAmt that we are about to set is not null, then this is an update -> which means we need to undo the calculations for the
+                    // house that we are about to update information for.
+                    if (street[i][Object.keys(street[i])[0]].donationAmt !== null) {
+                        update = true;
+                        if (routesActiveDoc.data().housesCompleted - 1 === 0) {
+                            db.collection('RoutesActive').doc(routeName).update({
+                                donationTotal : 0,
+                                housesCompleted : 0,
+                                pctSoliciting : 0,
+                                pctInterest : 0
+                            })
+                        } else {
+                            let newPctSoliciting;
+                            let newPctInterest; 
+                            if (street[i][Object.keys(street[i])[0]].learnMore) {
+                                newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted - 100) / (routesActiveDoc.data().housesCompleted - 1)
+                            } else {
+                                newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
+                            }
+                            if (street[i][Object.keys(street[i])[0]].solicitation) {
+                                newPctSoliciting = (routesActiveDoc.data().pctSoliciting * routesActiveDoc.data().housesCompleted - 100) / (routesActiveDoc.data().housesCompleted - 1)
+                            } else {
+                                newPctSoliciting = (routesActiveDoc.data().pctSoliciting * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
+                                newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
+                            }
+                            db.collection('RoutesActive').doc(routeName).update({
+                                donationTotal : routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt,
+                                housesCompleted : routesActiveDoc.data().housesCompleted - 1,
+                                pctSoliciting : newPctSoliciting,
+                                pctInterest : newPctInterest
+                            })
+                        }
+                    }
+                    // stores the new information submitted in the street object. The street object is then inserted back into the entire doc.data() so that it can be set to firebase.
+                    street[i] = {
+                        [Object.keys(street[i])[0]] : {
+                            donationAmt : amount,
+                            learnMore : interest === 1 ? true : false,
+                            solicitation : sol === 1 ? true : false,
+                            volunteerComments : comment.length > 0 ? comment : null,
+                            coordinates : street[i][Object.keys(street[i])[0]].coordinates
+                        }
+                    }
+                    newStreetData = street;
+                }
+            }
+        }
+        // calculations for updating the RoutesActive document fields donationTotal, housesCompleted, pctInterest, and pctSoliciting
+        let tempInterest = interest
+        if (!sol) {
+            tempInterest = false;
+        }
+        if (update) {
+            routesActiveDoc = await db.collection("RoutesActive").doc(routeName).get();
+        }
+        let newDocData = routesActiveDoc.data();
+        newDocData.streets[addr.split("_")[1]] = newStreetData;
+        if (tempInterest) {
+            newDocData.pctInterest = (newDocData.pctInterest * newDocData.housesCompleted + 100) / (newDocData.housesCompleted + 1);
+        } else {
+            newDocData.pctInterest = (newDocData.pctInterest * newDocData.housesCompleted) / (newDocData.housesCompleted + 1);
+        }
+        if (sol) {
+            newDocData.pctSoliciting = (newDocData.pctSoliciting * newDocData.housesCompleted + 100) / (newDocData.housesCompleted + 1);
+        } else {
+            newDocData.pctSoliciting = (newDocData.pctSoliciting * newDocData.housesCompleted) / (newDocData.housesCompleted + 1);
+        }
+        newDocData.donationTotal += amount;
+        newDocData.housesCompleted += 1;
+        db.collection('RoutesActive').doc(routeName).set(newDocData);
+        setAmount(0);
     }
 
     function getStepContent(stepIndex) {

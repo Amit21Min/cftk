@@ -1,27 +1,27 @@
 import db from '../../../FirebaseComponents/Firebase/firebase.js';
 import { validationStates } from './routeConstants';
 
-const toStreet = (streetNames) => {
-    var i;
-    const streets = [];
-    for (i = 0; i < streetNames.length; i++) {
-        streets.push({
-            name: streetNames[i]
-        })
-    }
-    return streets;
-}
+// const toStreet = (streetNames) => {
+//     var i;
+//     const streets = [];
+//     for (i = 0; i < streetNames.length; i++) {
+//         streets.push({
+//             name: streetNames[i]
+//         })
+//     }
+//     return streets;
+// }
 
-const toComments = (notes) => {
-    var i;
-    const comments = [];
-    for (i = 0; i < notes.length; i++) {
-        comments.push({
-            note: notes[i]
-        })
-    }
-    return comments;
-}
+// const toComments = (notes) => {
+//     var i;
+//     const comments = [];
+//     for (i = 0; i < notes.length; i++) {
+//         comments.push({
+//             note: notes[i]
+//         })
+//     }
+//     return comments;
+// }
 
 
 
@@ -48,19 +48,19 @@ export const editRouteData = (routeName, streets, volNotes, city) => {
 //     street2: [1,2,3,4]
 // }
 
-function isStreetsInStore(streets, city) {
-    // Returns a Promise that will say whether or not a street of that id is already in the firestore
-    return new Promise(resolve => {
-        db.collection("Streets")
-            .where('__name__', 'in', streets)
-            .where('city', '==', city)
-            .get()
-            .then(querySnapshot => {
-                if (querySnapshot.empty) resolve(false);
-                else resolve(true);
-            });
-    })
-}
+// function isStreetsInStore(streets, city) {
+//     // Returns a Promise that will say whether or not a street of that id is already in the firestore
+//     return new Promise(resolve => {
+//         db.collection("Streets")
+//             .where('__name__', 'in', streets)
+//             .where('city', '==', city)
+//             .get()
+//             .then(querySnapshot => {
+//                 if (querySnapshot.empty) resolve(false);
+//                 else resolve(true);
+//             });
+//     })
+// }
 
 function isRouteInStore(routeName) {
     // Returns a Promise that will say whether or not a route of that id is already in the firestore

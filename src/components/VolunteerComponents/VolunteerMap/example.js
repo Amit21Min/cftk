@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import VolunteerNavBar from '../VolunteerNavBar';
 import MobileMap from '../../RoutesComponents/Map/mobileMap';
-import { Paper, ClickAwayListener, Typography, Divider, IconButton } from '@material-ui/core';
+import { Paper, ClickAwayListener, Typography, Divider } from '@material-ui/core';
 import { auth } from '../../FirebaseComponents/Firebase/firebase';
 import { getAssignedRoute } from '../../RoutesComponents/ReusableComponents/RouteModels/routes';
 import firebase from 'firebase';
 import VolunteerHouseData from '../VolunteerHouseData';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-
 
 function ExampleMap() {
 
@@ -141,7 +139,7 @@ function ExampleMap() {
                         {/* This bottom most div is revealed in the second stage */}
                         <div>
                             {/* {slide.main.top === '100vh' ? null : <VolunteerHouseData addr={`${addressData.key ?? ''}_${addressData.street}`} />} */}
-                            <VolunteerHouseData addr={`${addressData.key ?? ''}_${addressData.street}`} />
+                            <VolunteerHouseData routeName={assignedRoute} addr={`${addressData.key ?? ''}_${addressData.street}`} />
                         </div>
                     </Paper>
                 </ClickAwayListener>

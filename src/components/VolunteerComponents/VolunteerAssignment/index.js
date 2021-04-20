@@ -1,7 +1,4 @@
-import React, { useState, useEffect, Component, Fragment} from 'react';
-import { Link } from 'react-router-dom';
-
-import * as ROUTES from '../../../constants/routes';
+import React, { useState, useEffect, Fragment} from 'react';
 import { Typography, LinearProgress, Grid, Box, CircularProgress} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgressBar from '../CircularProgressBar';
@@ -43,7 +40,6 @@ const App = () => {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(async function(user) {
-      let donationTotal;
       if (user) {
         console.log('user is signed in as ', auth.currentUser.uid);
         const userRef = db.collection('User').doc(auth.currentUser.uid);

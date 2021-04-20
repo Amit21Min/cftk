@@ -15,7 +15,6 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import { auth, db } from "../Firebase/firebase";
-import { useHistory } from "react-router-dom";
 
 import '../SignUp/index.css'
 
@@ -47,9 +46,6 @@ function Alert(props) {
 
 const App = () => {
   const classes = useStyles();
-
-  const history = useHistory();
-
   const [values, setValues] = React.useState({
     firstName: "",
     lastName: "",
@@ -105,7 +101,7 @@ const App = () => {
   const signUp = () => {
 
     // Validation -----------------------------------------------
-    if(values.email == '' || values.firstName == '' || values.lastName == '') {
+    if(values.email === '' || values.firstName === '' || values.lastName === '') {
       setSnackBar({open: true, message: "Fill in the values", severity: "error"});
       return;
     }
@@ -124,7 +120,7 @@ const App = () => {
       return;
     }
 
-    if(values.password != values.confirmedPassword) {
+    if(values.password !== values.confirmedPassword) {
       setSnackBar({open: true, message: 'Passwords do not match', severity: "error"});
       return;
     } 
