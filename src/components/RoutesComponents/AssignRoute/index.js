@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
@@ -19,6 +20,7 @@ const AssignRoute = (props) => {
     const [emailData, setEmailData] = React.useState([]); // email list
     const [groupOptions, setGroupOptions] = React.useState([]);
     const [group, setGroup] = React.useState(null);
+    // console.log(props.routes);
 
     //validations
     const [inputs, setInputs] = React.useState({
@@ -118,6 +120,7 @@ const AssignRoute = (props) => {
         const id = ref.id;
         let routeUID = props.routes + '_' + id;
 
+        const res = db.collection('RoutesActive').doc(routeUID).set(routeHistory);
         setGroupAssignment(input.group, routeUID);
         setRouteAssignment(input.routeID);
 
@@ -254,7 +257,7 @@ const AssignRoute = (props) => {
         } else if (phoneData.includes(p)) { // no duplicates
             setInputs(prevState => ({ ...prevState, phone_ht: 'Phone number already exists', phone_error: true }));
             return;
-        } else if (p.toString().length !== 10 || !p.match(/^[0-9]+$/)) { //!Number.isInteger(p)?
+        } else if (p.toString().length != 10 || !p.match(/^[0-9]+$/)) { //!Number.isInteger(p)?
             setInputs(prevState => ({ ...prevState, phone_ht: 'Must be a 10-digit US phone number', phone_error: true }));
             return;
         }
@@ -305,7 +308,7 @@ const AssignRoute = (props) => {
         }
         let textfield = document.getElementById('phone');
         let p = textfield.value.trim();
-        if (p.toString().length === 10 && p.match(/^[0-9]+$/)) { // correct phone format
+        if (p.toString().length == 10 && p.match(/^[0-9]+$/)) { // correct phone format
             p = "(" + p.slice(0, 3) + ") " + p.slice(3, 6) + "-" + p.slice(6, 10); // format (123)456-7890
         } else {
             p = p.replace(/\D/g, ''); // delelte non-digits (only allow typing digits)
@@ -317,7 +320,7 @@ const AssignRoute = (props) => {
         if (inputs.email_error) {
             setInputs(prevState => ({ ...prevState, email_ht: email_helptext, email_error: false }));
         }
-        if (e.which === 13) {
+        if (e.which == 13) {
             addEmail();
         }
     }
@@ -372,7 +375,7 @@ const AssignRoute = (props) => {
                     fullWidth
                     helperText={inputs.phone_ht}
                     onChange={phoneChange}
-                    onKeyDown={(e) => { if (e.which === 13) { addPhone(); } }}
+                    onKeyDown={(e) => { if (e.which == 13) { addPhone(); } }}
                     error={inputs.phone_error}
                 ></TextField>
                 {/* <Button color="primary" size="large" onClick={addPhone}>ADD</Button> */}
