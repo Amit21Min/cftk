@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { display } from '@material-ui/system';
 
 // Is used to handle complex behavior in components passed to a drop-down
 import ComponentTransporter from '../ComponentTransporter';
@@ -17,7 +16,7 @@ import "./index.css";
 // Represents a row within a ResourceIndexTable
 const ResourceIndexItem = (props) => {
 
-  const [rowOptions, setRowOptions] = useState(props.options);
+  // const [rowOptions, setRowOptions] = useState(props.options);
 
   // go through each column first and initialize its corresponding options (like open in the case of drop-down-parents)
   let init_options = {};

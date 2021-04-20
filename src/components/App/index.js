@@ -7,16 +7,12 @@ import {
 } from 'react-router-dom';
 import 'bulma/css/bulma.css';
 import SignInPage from '../FirebaseComponents/SignIn';
-import AdminPage from '../Admin';
 import ViewHousePropertiesPage from '../RoutesComponents/ViewHouseProperties'
 import AdminLayout from '../../layouts/adminLayout';
 import VolunteerLayout from '../../layouts/volunteerLayout';
 import SignUpPage from '../FirebaseComponents/SignUp/index.js';
 import ForgotPasswordPage from '../ForgotPassword/index.js';
 import HomePage from '../Home/index';
-import Volunteer from '../VolunteerComponents/Volunteer/index.js';
-import VolunteerAssignment from '../VolunteerComponents/VolunteerAssignment/index.js';
-import VolunteerSettings from '../VolunteerComponents/VolunteerSettings/index.js';
 
 import * as ROUTES from '../../constants/routes';
 

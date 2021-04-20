@@ -1,11 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 
 import ResourceIndexItem from '../ResourceIndexItem';
 import ResourceIndexTableHeader from '../ResourceIndexTableHeader';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-
-import ZeroResource from '../../../ReusableComponents/ZeroResource';
 
 import "./index.css";
 
