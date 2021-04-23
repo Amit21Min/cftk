@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { db } from '../../FirebaseComponents/Firebase/firebase';
+import Autocomplete from "@material-ui/lab/Autocomplete";
 // https://www.npmjs.com/package/material-ui-chip-input
 // npm i --save material-ui-chip-input@next
 // import ChipInput from 'material-ui-chip-input' // not working well - hard to style
@@ -15,9 +16,10 @@ import { db } from '../../FirebaseComponents/Firebase/firebase';
 const AssignRoute = (props) => {
     const phone_helptext = "Enter a phone number, and press Enter to add it.";
     const email_helptext = "Enter an email address, and press Enter to add it.";
-    const [group, setGroup] = React.useState("");
     const [phoneData, setPhoneData] = React.useState([]); // phone number list
     const [emailData, setEmailData] = React.useState([]); // email list
+    const [groupOptions, setGroupOptions] = React.useState([]);
+    const [group, setGroup] = React.useState(null);
     // console.log(props.routes);
 
     //validations
@@ -29,6 +31,40 @@ const AssignRoute = (props) => {
         email_ht: email_helptext,
         complete: false
     });
+
+    React.useEffect(() => {
+        const getNames = async (users) => {
+            let userNames = [];
+            let userRefs = users.map(user => {
+                return db.collection('User').doc(user).get();
+            })
+            await Promise.all(userRefs)
+            .then(users => {
+                let test = users.map(doc => doc.data().firstName + " " + doc.data().lastName);
+                userNames.push(test);
+            })
+            .catch(error => console.log(error));
+            return userNames[0];
+        }
+
+        const getGroupOptions = async () => {
+            let groupsRef = db.collection("Groups");
+            let groupsDoc = await groupsRef.get();
+            let groups = []
+            groupsDoc.forEach(async (doc) => {
+                let buildGroup = doc.id + ": ";
+                let userNames = await getNames(doc.data().users);
+                userNames.forEach(user => {
+                    buildGroup += user + ", "
+                })
+                groups.push(buildGroup.slice(0, -2));
+            });
+            setGroupOptions(groups);
+        }
+        getGroupOptions();
+    }, []);
+
+
 
     // helper function that gets all house numbers on a street, used for building the RoutesActive document
     const getHouses = (item_ids, callback) => {
@@ -44,28 +80,34 @@ const AssignRoute = (props) => {
         .catch(error => console.log(error))
       }
     // creates the document in RoutesActive
-    const setActiveRoute = function(input, streets, houses, users, city) {
-        var today = new Date();
-        var routeHistory = {
+    const setActiveRoute = async function(input, streets, houses, users, city) {
+        // let streetRef = db.collection("Streets").
+        let today = new Date();
+        let routeHistory = {
             assignedTo : input.group,
             housesCompleted: 0,
             housesTotal: 0,
+            donationTotal: 0,
+            pctInterest: 0,
+            pctSoliciting: 0,
             streets: {},
             visitDate: String(parseInt(today.getMonth())+1) + '/' + today.getDate()  + '/' + today.getFullYear(),
             city: city
         }
         for (let i in streets) {
-            console.log(streets[i]);
-            var gatherHouses = [];
-            let houseInfo = {
-                donationAmt: null,
-                learnMore: null,
-                solicitation: null,
-                volunteerComments: null
-            };
+            let streetRef = db.collection("Streets").doc(streets[i]);
+            let streetDoc = await streetRef.get();
+            let gatherHouses = [];
             Object.keys(houses[i]).slice(0,-2).forEach(function(houseNumber) {
-                if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total')) {
+                if (!(houseNumber === 'city' || houseNumber === 'completed' || houseNumber === 'perInterest' || houseNumber === 'perSoliciting' || houseNumber === 'total' || houseNumber === 'totalVisits')) {
                     routeHistory.housesTotal += 1;
+                    let houseInfo = {
+                        donationAmt: null,
+                        learnMore: null,
+                        solicitation: null,
+                        volunteerComments: null,
+                        coordinates: streetDoc.data()[houseNumber]['coordinates']
+                    };
                     gatherHouses.push({
                         [houseNumber] : houseInfo
                     });
@@ -91,14 +133,27 @@ const AssignRoute = (props) => {
     }
 
     const setGroupAssignment = async function(group, routeUID) {
-        var groupRef = db.collection('Groups').doc(group);
+        let groupRef = db.collection('Groups').doc(group);
         groupRef.update({
             assignment: routeUID
+        })
+        let groupDoc = await groupRef.get();
+        if (groupDoc.exists) {
+            setUserAssignment(groupDoc.data().users, routeUID);
+        }
+    }
+
+    const setUserAssignment = async function(users, routeUID) {
+        users.forEach((user) => {
+            let userRef = db.collection('User').doc(user);
+            userRef.update({
+                assignment: routeUID
+            })
         })
     }
 
     const isGroupAssigned = async function(group) {
-        var groupRef = db.collection('Groups').doc(group);
+        let groupRef = db.collection('Groups').doc(group);
         const groupDoc = await groupRef.get();
         if (groupDoc.exists) {
             if (groupDoc.data().assignment) {
@@ -109,10 +164,31 @@ const AssignRoute = (props) => {
         } else {
             return false; // group name not found
         }
-        
     }
+
+    const isUserAssigned = async function(group) {
+        let userAssignment = false;
+        let groupRef = db.collection('Groups').doc(group);
+        const groupDoc = await groupRef.get();
+        if (groupDoc.exists) {
+            let userRefs = groupDoc.data().users.map(user => {
+                return db.collection('User').doc(user).get();
+            });
+            await Promise.all(userRefs)
+            .then(users => {
+                let userAssignments = users.map(user => user.data().assignment);
+                userAssignments.forEach((status) => {
+                    if (status) {
+                        userAssignment = true;
+                    }
+                })
+            });
+        }
+        return userAssignment;
+    }
+
     const isRouteAssigned = async function(route_id) {
-        var routeRef = db.collection('Routes').doc(route_id);
+        let routeRef = db.collection('Routes').doc(route_id);
         const routeDoc = await routeRef.get();
         if (routeDoc.exists) {
             if (routeDoc.data().assignmentStatus) {
@@ -149,7 +225,7 @@ const AssignRoute = (props) => {
     const assign = async () => {
         let input = {
             routeID: props.routes,
-            group: document.getElementById('group').value,
+            group: group,
             link: document.getElementById('link').value,
             phone_numbers: phoneData,
             emails: emailData,
@@ -157,10 +233,13 @@ const AssignRoute = (props) => {
         }
         let groupAssignment = await isGroupAssigned(input.group);
         let routeAssignment = await isRouteAssigned(input.routeID);
+        let userAssignment = await isUserAssigned(input.group);
         if (groupAssignment) {
-            console.log('group already assigned');
+            console.log('group already assigned to a route');
         } else if (routeAssignment) {
-            console.log('route is already assigned');
+            console.log('route is already assigned to another group');
+        } else if (userAssignment) {
+            console.log('one of the users is already assigned to a route')
         } else {  
             getStreets(input);
         }
@@ -168,9 +247,6 @@ const AssignRoute = (props) => {
         // TODO possibly change each user's 'assignment' status to the Route UID too, although it may not be necessary
     }
 
-    const addGroup = () => {
-        setGroup(document.getElementById('group').value);
-    }
 
     const addPhone = () => {
         let textfield = document.getElementById('phone');
@@ -258,15 +334,17 @@ const AssignRoute = (props) => {
                 </IconButton></h1>
 
             {/* TODO: Group name - should be autocomplete here but not yet*/}
-            <TextField
-                id="group"
-                label="Group Name"
-                helperText="Choose an existing group from the volunteer database."
-                fullWidth
-                variant="filled"
-                size='small'
-                autoFocus
-                onBlur={addGroup}
+            <Autocomplete
+                id="combo-box-demo"
+                options={groupOptions}
+                onChange={(event, value) => {
+                    if (value) {
+                        setGroup(value.match(/[^:]*/i)[0])
+                    } else {
+                        setGroup(value);
+                    }
+                }}
+                renderInput={(params) => <TextField {...params} id="group" label="Group Name" fullWidth autoFocus letiant="filled" helperText="Choose an existing group from the volunteer database."/>}
             />
             <br /><br />
             <div>
@@ -275,7 +353,7 @@ const AssignRoute = (props) => {
                     label="Link"
                     defaultValue="www.cftkcanning.com/routes/example"
                     helperText="Link that anyone can access"
-                    variant="filled"
+                    letiant="filled"
                     InputProps={{
                         readOnly: true,
                     }}
@@ -292,7 +370,7 @@ const AssignRoute = (props) => {
                     id="phone"
                     label="Phone Number"
                     placeholder="1234567890"
-                    variant="filled"
+                    letiant="filled"
                     size='small'
                     fullWidth
                     helperText={inputs.phone_ht}
@@ -323,7 +401,7 @@ const AssignRoute = (props) => {
                     label="Email"
                     placeholder="example@example.com"
                     helperText={inputs.email_ht}
-                    variant="filled"
+                    letiant="filled"
                     size='small'
                     fullWidth
                     error={inputs.email_error}
@@ -353,16 +431,16 @@ const AssignRoute = (props) => {
                     multiline
                     rowsMax={3}
                     rows={3}
-                    variant="filled"
+                    letiant="filled"
                 />
             </div>
             <br />
             <Grid container justify="flex-end">
                 <Button color="primary" my={50} style={{ borderRadius: 50 }} onClick={props.close}>CLOSE</Button>
                 <p>&nbsp;&nbsp;&nbsp;</p>
-                <Button variant="contained" ml={50} style={{ borderRadius: 50 }} color="primary"
+                <Button letiant="contained" ml={50} style={{ borderRadius: 50 }} color="primary"
                     onClick={function (event) { assign(); props.close(); }}
-                    // disabled={(phoneData.length == 0 && emailData.length == 0) || group === ""}
+                    disabled={(group === "" || group === null)}
                     >
                     ASSIGN</Button>
             </Grid>

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
@@ -35,6 +34,7 @@ import MessageIcon from '@material-ui/icons/Message';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { auth } from "../../FirebaseComponents/Firebase/firebase";
+import ViewHouseProperties from "../ViewHouseProperties";
 
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
@@ -78,7 +78,7 @@ const Sidebar = () => {
         classes={{ paper: classes.drawerPaper }}
       >
         <div className="logo-box">
-          <img src={logo}></img>
+          <img alt="logo" src={logo}></img>
         </div>
         <Box
           display="flex"
@@ -147,6 +147,7 @@ const Sidebar = () => {
           <Route exact path={ROUTES.ADMIN_ROUTES_NEW} component={NewRoutePanel} />
           <Route exact path={ROUTES.ADMIN_ROUTES_DEL} component={DeleteDialogs} />
           <Route exact path={ROUTES.ADMIN_ROUTES_EDIT} component={EditRoutePanel} />
+          <Route exact path={ROUTES.VIEW_HOUSE_PROPS} component={ViewHouseProperties} />
           <Route path={ROUTES.ASSIGN_ROUTE} component={AssignRoute} />
           <Route path={ROUTES.ADMIN} component={AdminPage} />
         </Switch>

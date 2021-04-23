@@ -12,7 +12,8 @@ import Popper from '@material-ui/core/Popper';
 
 import {Card, CardActions, CardContent} from '@material-ui/core';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import {FullScreenDialog, GroupTable, CardHolders} from '../VolunteersPanel/components';
+import { GroupTable, CardHolders} from '../VolunteersPanel/components';
+import {FullScreenDialog} from '../VolunteersPanel/newgroup';
 import * as ROUTES from '../../../constants/routes';
 import db from '../../FirebaseComponents/Firebase/firebase.js';
 

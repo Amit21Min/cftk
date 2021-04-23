@@ -16,7 +16,7 @@ const App = () => {
     const [phone, setPhone] = React.useState("");
 
     const user = auth.currentUser; // use this to get the user's userID when we add login functionality
-    
+    console.log(user);
 
     const handleTextChange = () => {
         setTextState(!textState);
