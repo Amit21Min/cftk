@@ -70,7 +70,6 @@ function useFirebaseStreetInfo(assignedRoute) {
 
 function Map(props) {
   const defaultLoc = { lat: 35.9132, lng: -79.0558 }
-  const [lastLoc, setLastLoc] = useState(defaultLoc);
   const { ref, map, google } = useGoogleMaps(
     process.env.REACT_APP_MAPS_API_KEY,
     {
@@ -173,7 +172,6 @@ function Map(props) {
 
     const marker = new google.maps.Marker({
       map: map,
-      position: lastLoc,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: 10,
@@ -187,7 +185,6 @@ function Map(props) {
     const tracker = trackLocation({
       onSuccess: ({ coords: { latitude: lat, longitude: lng } }) => {
         marker.setPosition({ lat, lng });
-        setLastLoc({ lat, lng })
         if (autoPan) map.panTo({ lat, lng });
       },
       onError: err =>
