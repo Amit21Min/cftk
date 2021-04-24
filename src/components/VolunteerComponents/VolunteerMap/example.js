@@ -31,12 +31,12 @@ function ExampleMap() {
         const unsubscribe = firebase.auth().onAuthStateChanged(async function (user) {
             if (user) {
                 // The code is in routes.js in RouteModels
-                getAssignedRoute(auth.currentUser.uid).then(route => {
-                    setAssignedRoute(route ?? '');
-                })
-                // getAssignedRoute("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1").then(route => {
+                // getAssignedRoute(auth.currentUser.uid).then(route => {
                 //     setAssignedRoute(route ?? '');
                 // })
+                getAssignedRoute("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1").then(route => {
+                    setAssignedRoute(route ?? '');
+                })
             }
         });
         return function cleanup() {

@@ -253,14 +253,14 @@ function Map(props) {
             </a>
           </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
-      {props.children ? <div style={{ position: 'absolute', overflow: 'hidden', ...innerStyle }}>
-        {props.children}
-      </div> : null}
       <Tooltip title={autoPan ? "Your Location" : "Show Your Location"}>
         <Fab color="primary" style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} onClick={resumeTracking}>
           {autoPan ? <GpsFixedIcon /> : <GpsNotFixedIcon />}
         </Fab>
       </Tooltip>
+      {props.children ? <div style={{ position: 'absolute', overflow: 'hidden', ...innerStyle }}>
+        {props.children}
+      </div> : null}
       {!snackBarState.message || snackBarState.message === "" ? null : <AlertSnackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackBarState.open}
