@@ -8,8 +8,9 @@ import houseComplete from "../../../assets/images/MapIcons/houseComplete.svg";
 import houseCompleteSelected from "../../../assets/images/MapIcons/houseCompleteSelected.svg";
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
 import db from '../../FirebaseComponents/Firebase/firebase';
-import { Fab } from '@material-ui/core';
-import GpsFixed from '@material-ui/icons/GpsFixed';
+import { Fab, Tooltip } from '@material-ui/core';
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
+import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
 
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
@@ -258,7 +259,11 @@ function Map(props) {
       {props.children ? <div style={{ position: 'absolute', overflow: 'hidden', ...innerStyle }}>
         {props.children}
       </div> : null}
-      <Fab color="primary" style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} onClick={resumeTracking}><GpsFixed></GpsFixed></Fab>
+      <Tooltip title={autoPan ? "Your Location" : "Show Your Location"}>
+        <Fab color="primary" style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} onClick={resumeTracking}>
+          {autoPan ? <GpsFixedIcon /> : <GpsNotFixedIcon />}
+        </Fab>
+      </Tooltip>
       {!snackBarState.message || snackBarState.message === "" ? null : <AlertSnackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={snackBarState.open}
