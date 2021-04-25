@@ -72,7 +72,6 @@ function Map(props) {
     });
     const markerClick = marker.addListener('click', function() {
       // Action on click
-      console.log('click');
     })
     return [markerIn, markerOut, markerClick]
   }

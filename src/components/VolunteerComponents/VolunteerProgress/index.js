@@ -1,8 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Link } from 'react-router-dom';
-
-import * as ROUTES from '../../../constants/routes';
-import { Typography, LinearProgress, Grid, Box, CircularProgress } from '@material-ui/core';
+import { Typography, LinearProgress, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { sizing } from '@material-ui/system';
 import CircularProgressBar from '../CircularProgressBar';
@@ -10,6 +7,14 @@ import VolunteerNavBar from '../VolunteerNavBar';
 import "./index.css";
 import { db, auth } from '../../FirebaseComponents/Firebase/firebase';
 import firebase from 'firebase';
+
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import * as overflow_actions from '../../RoutesComponents/ReusableComponents/RoutesPanel/overflow_actions.js';
 
 const useStyles = makeStyles(theme => ({
   borderGrid: {
@@ -78,13 +83,29 @@ const App = () => {
   const [pctInterest, setPctInterest] = useState();
   const [isAssigned, setIsAssigned] = useState(true);
   const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCloseFinish = async () => {
+    const userRef = db.collection('User').doc(auth.currentUser.uid);
+    const userDoc = await userRef.get();
+    const assignment = userDoc.data().assignment.split("_")[0];
+    overflow_actions.unassignRouteAction(assignment);
+    setOpen(false);
+    setIsAssigned(false);
+  };
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(async function (user) {
-      let donationTotal;
       if (user) {
-        console.log('user is signed in');
-        console.log(auth.currentUser.uid);
+        console.log('user is signed in', auth.currentUser.uid);
         const userRef = db.collection('User').doc(auth.currentUser.uid);
         // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
         const userDoc = await userRef.get();
@@ -119,8 +140,6 @@ const App = () => {
               setHousesCompleted(routesActiveDoc.data().housesCompleted);
               setPctInterest(routesActiveDoc.data().pctInterest);
               setTotalHouses(routesActiveDoc.data().housesTotal);
-              console.log("Houses completed: " + housesCompleted);
-              console.log("Total houses: " + totalHouses);
 
             }
           } else {
@@ -149,7 +168,7 @@ const App = () => {
               let streetTotalHouses = street[streetName].length;
               for (let houses in street[streetName]) {
                 let houseData = street[streetName][houses][Object.keys(street[streetName][houses])[0]];
-                if (houseData.donationAmt) streetHousesCompleted += 1;
+                if (houseData.donationAmt !== null) streetHousesCompleted += 1;
               }
               let percentageCompleted = streetHousesCompleted / streetTotalHouses * 100;
               return (
@@ -187,6 +206,32 @@ const App = () => {
                 <Typography align="left" className={classes.cardMain}>{teamRank}</Typography>
                 <p className={classes.cardText}>Team Rank out of {totalTeams}</p>
               </Box>
+            </Box>
+            <Box p={1}>
+              <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                Finish Route
+              </Button>
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">{"Are you sure you are finished with this route?"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                     Your collection info will be saved and you will no longer be able to edit any house data.
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    Go Back
+                  </Button>
+                  <Button onClick={handleCloseFinish} color="primary" autoFocus>
+                    I'm Finished!
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Box>
           </div>
 

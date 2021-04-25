@@ -75,6 +75,8 @@ export const unassignRouteAction = async function(route_id) {
             let oldPctSoliciting = streetDoc.data().perSoliciting;
             let newPctInterest = (pctInterest + (oldPctInterest * totalVisits)) / (totalVisits + housesCompletedStreet);
             let newPctSoliciting = (pctSoliciting + (oldPctSoliciting * totalVisits)) / (totalVisits + housesCompletedStreet);
+            // console.log(newPctInterest, newPctSoliciting)
+            // console.log(pctInterest, oldPctInterest, totalVisits, housesCompletedStreet)
             if (housesCompletedStreet > 0) {
               db.collection('Streets').doc(streetFirebase).update({
                 perInterest: newPctInterest,

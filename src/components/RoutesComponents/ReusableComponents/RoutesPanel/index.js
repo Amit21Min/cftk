@@ -10,10 +10,8 @@ import PanelBanner from '../PanelBanner';
 
 import AssignRoute from '../../AssignRoute';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 
-import Box from '@material-ui/core/Box';
 import { db } from '../../../FirebaseComponents/Firebase/firebase';
 
 import { Link, useHistory } from 'react-router-dom';
@@ -206,39 +204,39 @@ const RoutesPanel = (props) => {
 
   // Does the same as selectRoute, but for the streets contained within Routes. This function is used by the ResourceIndexTable for streets which is nested
   // within the routes ResourceIndexTable
-  const selectStreet = (event, column, street_data) => {
-    const street_key = street_data.name;
-    const selected = column.selected_items;
-    const selectedIndex = selected.indexOf(street_key);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, street_key);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+  // const selectStreet = (event, column, street_data) => {
+  //   const street_key = street_data.name;
+  //   const selected = column.selected_items;
+  //   const selectedIndex = selected.indexOf(street_key);
+  //   let newSelected = [];
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, street_key);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
 
-    let n = helpers.deepCopyFunction(streetColumnNames);
-    n[0] = Object.assign({}, n[0], { selected_items: newSelected });
-    setStreetColumnNames(n);
-  }
+  //   let n = helpers.deepCopyFunction(streetColumnNames);
+  //   n[0] = Object.assign({}, n[0], { selected_items: newSelected });
+  //   setStreetColumnNames(n);
+  // }
 
   // Same as selectAllRoutes, but for streets
-  const selectAllStreets = (event, data) => {
-    let c = helpers.deepCopyFunction(streetColumnNames);
-    if (event.target.checked) {
-      c[0] = Object.assign({}, c[0], { selected_items: data });
-    } else {
-      c[0] = Object.assign({}, c[0], { selected_items: [] });
-    }
-    setStreetColumnNames(c);
-  }
+  // const selectAllStreets = (event, data) => {
+  //   let c = helpers.deepCopyFunction(streetColumnNames);
+  //   if (event.target.checked) {
+  //     c[0] = Object.assign({}, c[0], { selected_items: data });
+  //   } else {
+  //     c[0] = Object.assign({}, c[0], { selected_items: [] });
+  //   }
+  //   setStreetColumnNames(c);
+  // }
 
   // Uses the string of a column title to alter the routes query. When the routes query state object updates, a new request should be sent to firebase based on the params it specifies
   const sortRoutes = (column_string) => {
