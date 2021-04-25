@@ -1,7 +1,7 @@
 import React from 'react';
 import {DataGrid} from '@material-ui/data-grid';
 
-const columns: ColDef[] = [
+const columns = [
   {field: 'name', headerName: 'Name'},
   {field: 'assignment_status', headerName: 'Assignment Status'},
   {field: 'months_since_assigned', headerName: 'Months Since Last Assigned'},
