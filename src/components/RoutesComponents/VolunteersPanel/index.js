@@ -3,31 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { storeRouteData } from '../ReusableComponents/RouteModels/routes';
 import { Link } from 'react-router-dom'
 import { Typography, Grid, TextField, Button, Toolbar, AppBar, Fab, List, ListItem, ListItemText } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add'
 
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import Add from '@material-ui/icons/Add';
-import Map from '../Map';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { TrainRounded } from '@material-ui/icons';
-import ImportCSVDialog from '../VolunteersPanel/dialog';
-import Card from '@material-ui/core/Card';
-
-import {FullScreenDialog, AddMemberDialog} from '../VolunteersPanel/newgroup';
+import {Card, CardActions, CardContent} from '@material-ui/core';
+import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import { GroupTable, CardHolders} from '../VolunteersPanel/components';
+import {FullScreenDialog} from '../VolunteersPanel/newgroup';
 import * as ROUTES from '../../../constants/routes';
 import db from '../../FirebaseComponents/Firebase/firebase.js';
+
+import { lighten, makeStyles } from '@material-ui/core/styles';
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,11 +38,13 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   button: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - 200px)`,
-      marginLeft: 200,
-      height: 88
-    }
+    display: 'flex',
+    //marginLeft:'200',
+    alignItems: 'right',
+    margin: '0',
+    width: '100%'
+ 
+
   },
   pageContainer: {
 
@@ -77,7 +71,11 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
    
-  }
+  }, 
+  grid: {
+    flexGrow: 1,
+  },
+  
 }));
 
 const options = [
@@ -98,11 +96,12 @@ const VolunteersPanel = () => {
   const onOpen = () => setOpen(true);
   const [clicked, setClicked] = useState(false);
 
+  const [groups, setGroups] = React.useState([]);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-
+  
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -131,74 +130,50 @@ const VolunteersPanel = () => {
     setOpenDialog(true);
   };
 
-  
-  
+  function createData(name, calories, fat, carbs, protein) {
+    return { name, calories, fat, carbs, protein };
+  }
+
+  const rows = [
+    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+    createData('Eclair', 262, 16.0, 24, 6.0),
+    createData('Cupcake', 305, 3.7, 67, 4.3),
+    createData('Gingerbread', 356, 16.0, 49, 3.9),
+  ];
   
 
   return (
-    <div className={classes.root}>
-      <div>
-        {/* <AppBar className={classes.appBar} position='fixed' color='transparent'>
-          <Toolbar>
-            <Typography variant="h4" style={{ fontWeight: 'bold', marginTop: 'auto' }}>Volunteer Groups</Typography>
-          </Toolbar>
-        </AppBar> */}
+    <div className={classes.root}> 
 
+
+      <div>
+        
         <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>Volunteer Groups</Typography></div>
-        <FullScreenDialog></FullScreenDialog>
+        
         <br/>
+
+
+        <div>
+          <CardHolders></CardHolders>
+        </div>
+
+        <br/>
+
+        <div className={classes.button}> 
+          <FullScreenDialog></FullScreenDialog>
+          <Button color="secondary" variant = "outlined"> Import CSV </Button>
+        </div>
+
+        <div>
         
-        
+          <GroupTable></GroupTable>
+        </div>
       </div>
-      <br />
+      
 
-      <div>
-        <Grid container spacing={2}>
-          <Grid>
-            <Card>
+    </div>
 
-            </Card>
-          </Grid>
-          
-        </Grid>
-      </div>
-    
-      <div className={classes.fab}>
-        <Fab ref={anchorRef} color="primary" aria-label='add' aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}>
-          <AddIcon />
-          <Popper align='left' open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-              >
-                <Paper>
-                  <ClickAwayListener onClickAway={handleClose}>
-                    <List onKeyDown={handleListKeyDown}>
-                      <ListItem onClick={handleClick} button>
-                        <ListItemText primary="Custom Group" />
-                      </ListItem>
-                      <ListItem onClick={(event) => handleMenuItemClick(event)} button>
-                        <ListItemText>Import CSV</ListItemText>
-                        {/*<Dialog disableBackdropClick disableEscapeKeyDown aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
-                          open={open} onClose={handleClose}>
-                          <ImportCSVDialog close={handleClose} />
-            </Dialog>*/}
-                      </ListItem>
-                    </List>
-
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </Fab>
-      </div>
-
-
-    </div >
 
   );
 
