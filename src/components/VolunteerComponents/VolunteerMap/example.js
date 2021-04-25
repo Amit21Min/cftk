@@ -4,7 +4,6 @@ import MobileMap from '../../RoutesComponents/Map/mobileMap';
 import { Paper, ClickAwayListener, Typography, Divider } from '@material-ui/core';
 import { auth } from '../../FirebaseComponents/Firebase/firebase';
 import { getAssignedRoute } from '../../RoutesComponents/ReusableComponents/RouteModels/routes';
-import firebase from 'firebase';
 import VolunteerHouseData from '../VolunteerHouseData';
 
 function ExampleMap() {
@@ -28,15 +27,15 @@ function ExampleMap() {
     })
 
     useEffect(() => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(async function (user) {
+        const unsubscribe = auth.onAuthStateChanged(async function (user) {
             if (user) {
                 // The code is in routes.js in RouteModels
-                // getAssignedRoute(auth.currentUser.uid).then(route => {
-                //     setAssignedRoute(route ?? '');
-                // })
-                getAssignedRoute("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1").then(route => {
+                getAssignedRoute(auth.currentUser.uid).then(route => {
                     setAssignedRoute(route ?? '');
                 })
+                // getAssignedRoute("oGDv0N9Ra0bDj4peHT4EdMZ7Pso1").then(route => {
+                //     setAssignedRoute(route ?? '');
+                // })
             }
         });
         return function cleanup() {

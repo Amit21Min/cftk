@@ -185,7 +185,9 @@ function Map(props) {
     const tracker = trackLocation({
       onSuccess: ({ coords: { latitude: lat, longitude: lng } }) => {
         marker.setPosition({ lat, lng });
-        if (autoPan) map.panTo({ lat, lng });
+        if (autoPan) {
+          map.panTo({ lat, lng });
+        }
       },
       onError: err =>
         setSnackBarState({
@@ -195,17 +197,27 @@ function Map(props) {
       // alert(`Error: ${getPositionErrorMessage(err.code) || err.message}`)
     });
 
-    const dragListener = map.addListener('drag', () => {
-      setAutoPan(false)
-    })
 
     return function cleanup() {
       if (navigator.geolocation) navigator.geolocation.clearWatch(tracker)
-      if (dragListener) google.maps.event.removeListener(dragListener);
       if (marker) marker.setMap(null);
     }
 
   }, [google, map, autoPan]);
+
+  useEffect(() => {
+    if (!map || !google) return;
+    const dragListener = map.addListener('drag', () => {
+      setAutoPan(false)
+    });
+    const zoomListener = map.addListener('zoom_changed', () => {
+      setAutoPan(false)
+    })
+    return function cleanup() {
+      if (dragListener) google.maps.event.removeListener(dragListener);
+      if (zoomListener) google.maps.event.removeListener(zoomListener);
+    }
+  }, [google, map])
 
   useEffect(() => {
     handleSnackBarClose(null, null)
@@ -239,6 +251,7 @@ function Map(props) {
   }
 
   function resumeTracking() {
+    map.setZoom(18);
     setAutoPan(true);
   }
 
