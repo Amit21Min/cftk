@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 /* div {
     padding-top: 12px;
     padding-bottom: 12px
 } */
+=======
+>>>>>>> master
 
-div.page {
+.volunteer-assignment-main {
     height: 100vh;
+}
+
+.volunteer-assignment-content {
+    height: 90%;
+    overflow: scroll;
 }

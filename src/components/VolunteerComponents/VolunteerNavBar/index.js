@@ -3,7 +3,7 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import ChatIcon from '@material-ui/icons/Chat';
 import SettingsIcon from '@material-ui/icons/Settings';
 import NearMeOutlinedIcon from '@material-ui/icons/NearMeOutlined';
-import { Button, IconButton } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import "../VolunteerNavBar/index.css";
 import { indigo } from '@material-ui/core/colors';
 import { Link } from 'react-router-dom';
@@ -22,7 +22,7 @@ const NavBar = (props) => {
     const tab = props.tab;
 
     const selectedTab = () => {
-        if (tab == "settings") {
+        if (tab === "settings") {
             return (
                 <div className="vol-nav-button-row">
                     <Link to={ROUTES.VOLUNTEER_PROGRESS}>
@@ -43,7 +43,7 @@ const NavBar = (props) => {
                 </div>
             );
         }
-        else if (tab == "messages") {
+        else if (tab === "messages") {
             return (
                 <div className="vol-nav-button-row">
                     <Link to={ROUTES.VOLUNTEER_PROGRESS}>
@@ -65,7 +65,7 @@ const NavBar = (props) => {
             );
         }
 
-        else if (tab == "progress") {
+        else if (tab === "progress") {
             return (
                 <div className="vol-nav-button-row">
                     <div className="vol-nav-selected">
@@ -85,7 +85,7 @@ const NavBar = (props) => {
             );
         }
 
-        else if (tab== "route-map") {
+        else if (tab === "route-map") {
             return (
                 <div className="vol-nav-button-row">
                     <Link to={ROUTES.VOLUNTEER_PROGRESS}>
