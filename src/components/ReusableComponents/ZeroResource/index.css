@@ -1,9 +1,16 @@
 .zero-resource-heading{
+  font-style: normal;
   font-weight: bold;
-  font-size: 2em;
-
+  font-size: 29px;
+  line-height: 32px;
+  color: black;
 }
 
 .zero-resource-message{
-  
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  color: #6D6E71;
 }

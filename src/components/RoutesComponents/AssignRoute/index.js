@@ -94,7 +94,7 @@ const AssignRoute = (props) => {
             visitDate: String(parseInt(today.getMonth())+1) + '/' + today.getDate()  + '/' + today.getFullYear(),
             city: city
         }
-        for (let i in streets) {
+        for (let i = 0; i < streets.length; i++) {
             let streetRef = db.collection("Streets").doc(streets[i]);
             let streetDoc = await streetRef.get();
             let gatherHouses = [];

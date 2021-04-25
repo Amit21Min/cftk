@@ -41,13 +41,13 @@ export const unassignRouteAction = async function(route_id) {
         let routeName = route_id.split("_")[0];
         let visitDate = doc.data().visitDate;
 
-        for (let street in streets) {
+        for (let street = 0; street < streets.length; streets++) {
           let pctInterest = 0;
           let pctSoliciting = 0;
           let totalDonationsStreet = 0;
           let housesCompletedStreet = 0;
           let streetFirebase = street + "_" + routeName;
-          for (let houseNumber in streets[street]) {
+          for (let houseNumber = 0; houseNumber < streets[street].length; houseNumber++) {
             let key = Object.keys(streets[street][houseNumber])[0] + "." + "visitDates";
             let visitEntry = {[visitDate] : streets[street][houseNumber][Object.keys(streets[street][houseNumber])[0]]}
             // if donationAmt is not null for this house
