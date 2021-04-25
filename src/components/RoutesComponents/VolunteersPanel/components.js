@@ -437,7 +437,6 @@ function Row(props) {
         //console.log(doc.id, " => ", doc.data());
         const user=doc.data();
         user.id=doc.id;
-        console.log(user.lastName);
         if (row.users.find(o => o === user.id) === user.id) {
           setUsers(prevState=> [...prevState,user]);
         }
