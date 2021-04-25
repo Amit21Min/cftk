@@ -441,8 +441,8 @@ const RoutesPanel = (props) => {
     screen = <div className="panel-screen">
       <RouteMetrics metrics={routeMetrics} />
       <br />
-      <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-        <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} />
+      <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+        {/* <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} /> */}
         <Button component={Link} to={ROUTES.ADMIN_ROUTES_NEW} variant="contained" color="primary">
           Create New Route
         </Button>
