@@ -22,19 +22,11 @@ import * as overflow_actions from './overflow_actions.js';
 import * as helpers from './helpers.js';
 
 // These contexts allow for updating/re-rendering dynamically nested components, namely, the street tables nested within the route tables
-<<<<<<< HEAD
 import {RouteColumnContext, RouteItemsContext,
         StreetColumnContext, StreetItemsContext,
         init_route_columns, init_street_columns
        } from './contexts.js';
 import TitleCard from '../../../ReusableComponents/TitleCard';
-=======
-import {
-  RouteColumnContext, RouteItemsContext,
-  StreetColumnContext, StreetItemsContext,
-  init_route_columns, init_street_columns
-} from './contexts.js';
->>>>>>> master
 
 const RoutesPanel = (props) => {
   const [routes, setRoutes] = useState(null);

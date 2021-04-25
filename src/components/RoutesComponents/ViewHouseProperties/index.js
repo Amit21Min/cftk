@@ -188,57 +188,53 @@ const ViewHouseProperties = (props) => {
       .then((doc) => {
         const data = doc.data();
         setStreets(data.streets);
-    })
-    }, [])
-   
-    //runs every time street or house number is changed
-    useEffect(() => {
-        if (street_selected) {
-            db.collection("Streets").doc(street).get().then(doc => {
-                const data = doc.data();
-                let _numbers = []
-               for (let address in data) {
-                   if (!isNaN(address)) {  
-                    _numbers.push(address)
-                   }
-               //established house number options and data for google map
-                setNumbers(_numbers);
-               setCity(data.city);
-                }
-               if (house_selected) {
-                //set data according to street and house number
-                let address = data[number]
-                let _comments = []
-                let _solicitation = []
-                let _learnMore = []
-                let _donations = []
-                for(let i = 0; i < address.visitDates.length; i++){
-                    for (let _date in address.visitDates[i]) {
-                        let _address = address.visitDates[i][_date]
-                        _comments.push({
-                            comment: _address.volunteerComments,
-                            date: _date,
-                        }); 
-                        _solicitation.push({
-                            allowed: _address.solicitationAllowed,
-                            date: _date,
-                        });
-                        _learnMore.push({
-                            learn: _address.learnMore,
-                            date: _date,
-                        })
-                        _donations.push({
-                            amount: _address.donationAmt,
-                            date: _date,
-                        }) 
-                    }
-                }
-                setData({
-                    donations: _donations,
-                    solicitation: _solicitation,
-                    learnMore: _learnMore,
-                    comments: _comments,
-                }) 
+      });
+  }, []);
+
+  //runs every time street or house number is changed
+  useEffect(() => {
+    if (street_selected) {
+      db.collection("Streets")
+        .doc(street)
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          let _numbers = [];
+          for (let address in data) {
+            if (!isNaN(address)) {
+              _numbers.push(address);
+            }
+            //established house number options and data for google map
+            setNumbers(_numbers);
+            setCity(data.city);
+          }
+          if (house_selected) {
+            //set data according to street and house number
+            let address = data[number];
+            let _comments = [];
+            let _solicitation = [];
+            let _learnMore = [];
+            let _donations = [];
+            for (let i = 0; i < address.visitDates.length; i++) {
+              for (let _date in address.visitDates[i]) {
+                let _address = address.visitDates[i][_date];
+                _comments.push({
+                  comment: _address.volunteerComments,
+                  date: _date,
+                });
+                _solicitation.push({
+                  allowed: _address.solicitation,
+                  date: _date,
+                });
+                _learnMore.push({
+                  learn: _address.learnMore,
+                  date: _date,
+                });
+                _donations.push({
+                  amount: _address.donationAmt,
+                  date: _date,
+                });
+              }
             }
 
             // Sorting all of the data by date

@@ -1,5 +1,3 @@
-import React from 'react';
-import TitleCard from '../../ReusableComponents/TitleCard';
 import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeRouteData } from '../ReusableComponents/RouteModels/routes';
@@ -207,11 +205,5 @@ const VolunteersPanel = () => {
 };
 
 
-const VolunteersPanel = () => (
-  <div>
-    {/* <PanelBanner title="Volunteers"/> */}
-    <TitleCard title="Volunteers"></TitleCard>
-  </div>
-);
 
 export default VolunteersPanel;
