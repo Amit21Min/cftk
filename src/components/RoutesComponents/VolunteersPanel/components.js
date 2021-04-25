@@ -511,34 +511,31 @@ function Row(props) {
     setDeleteDialog(true);
   }
 
+  
+  
   const handleDeleteGroup = () => {
     const id=row.id
-    function deleteGroup(id) {
-      db.collection('Groups').doc(id).delete().then(() => {
-        return {
-          state:validationStates.SUCCESS,
-          message:`${id} has been deleted successfully.`
-        }
-        
-      }
-      ).catch((error) => {
-        return {
-          state:validationStates.ERROR,
-          message:`Error occurred when trying to delete ${id}.`
-        }
-       
-      })
-
-    }
-    deleteGroup(id).then(msg=>{
-      setSnackBarState({
-        open: true,
-        severity: msg.state.toLowerCase(),
-        message: msg.message
-      })
-    });
-    
     setDeleteDialog(false);
+    db.collection('Groups').doc(id).delete().then(() => {
+      return {
+        state:validationStates.SUCCESS,
+        message:`${id} has been deleted successfully.`
+      }
+      
+    }
+    ).catch((error) => {
+      return {
+        state:validationStates.ERROR,
+        message:`Error occurred when trying to delete ${id}.`
+      }
+     
+    })
+    return {
+      state:validationStates.SUCCESS,
+      message:`${id} has been deleted successfully.`
+    }
+
+    
   }
 
   return (
@@ -581,7 +578,13 @@ function Row(props) {
                   <Button onClick={() => setDeleteDialog(false)} color="secondary">
                     Cancel
                   </Button>
-                  <Button onClick={handleDeleteGroup} color="primary">
+                  <Button onClick={() => {handleDeleteGroup().then(msg=>{
+                          setSnackBarState({
+                            open: true,
+                            severity: msg.state.toLowerCase(),
+                            message: msg.message
+                          })
+                        });}} color="primary">
                     Delete
                   </Button>
                   </DialogActions>
@@ -627,6 +630,7 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   {foundUsers.map((user) => (
+                    
                     
                     <TableRow key={user.id}>
                       <TableCell padding="checkbox"> 
@@ -817,6 +821,9 @@ export const GroupTable = (props) => {
       return row.id.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setData(filteredRows);
+    if (searchedVal.length==0){
+      setData(rows);
+    }
    
     };
   const cancelSearch = () => {
