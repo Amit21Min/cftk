@@ -7,11 +7,17 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import "../CircularProgressBar/index.css";
 
+const useStyles = makeStyles ({
+  progressBar: {
+    backgroundColor: '#D7DBDD',
+  }
+});
 
 function CircularProgressWithLabel(props) {
+  const classes = useStyles();
   return (
     <Box position="relative" display="inline-flex">
-      <CircularProgress variant="determinate" size="250px" value={props.progress} />
+      <CircularProgress variant="determinate" size="250px" value={props.progress} className = {classes.progressBar}/>
       <Box
         top={0}
         left={20}
@@ -41,5 +47,5 @@ export default function CircularStatic(props) {
   if (props.housesCompleted === undefined) {
     props.housesCompleted = 0;
   }
-  return <CircularProgressWithLabel progress={0} housesCompleted={props.housesCompleted} totalHouses={props.totalHouses} />;
+  return <CircularProgressWithLabel progress={progress} housesCompleted={props.housesCompleted} totalHouses={props.totalHouses} />;
 }

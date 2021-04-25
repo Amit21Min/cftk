@@ -3,6 +3,6 @@
 }
 
 .MuiCircularProgress-circle {
-    border: 3px solid white;
+    border: 3px solid black;
     border-radius: 100%;
   }

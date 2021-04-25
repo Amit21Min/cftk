@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../../constants/routes';
 import { Typography, LinearProgress, Grid, Box, CircularProgress} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { sizing } from '@material-ui/system';
 import CircularProgressBar from '../CircularProgressBar';
 import VolunteerNavBar from '../VolunteerNavBar';
 import "../VolunteerAssignment/index.css";
@@ -47,8 +48,8 @@ const App = () => {
       if (user) {
         console.log('user is signed in');
         console.log(auth.currentUser.uid);
-        // const userRef = db.collection('User').doc(auth.currentUser.uid);
-        const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
+        const userRef = db.collection('User').doc(auth.currentUser.uid);
+        // const userRef = db.collection('User').doc("HSb6gOQ9zFSu242i4uCgifiE1Tq1");
         const userDoc = await userRef.get();
         if (userDoc.exists) {
           const assignment = userDoc.data().assignment;
@@ -117,11 +118,11 @@ const App = () => {
                 let streetHousesCompleted = 0;
                 let streetName = Object.keys(street)[0];
                 for (let key in street) {
-                  totalHouses = street[key].length;
+                  streetTotalHouses = street[key].length;
                   for (let houses in street[key]) {
                     for (let houseKey in street[key][houses]) {
                       if (street[key][houses][houseKey].donationAmt !== null) {
-                        housesCompleted += 1;
+                        streetHousesCompleted += 1;
                       }
                     }
                   }
@@ -133,16 +134,18 @@ const App = () => {
                     <Typography align="center" style = {{ fontSize: 14, fontWeight: "bold"}}>{streetName}</Typography>
                   </Grid>
                   <Grid item xs={6} justify="center">
-                    <Typography align="center" style = {{ fontSize: 14}}>{housesCompleted}/{totalHouses} Houses</Typography>
+                    <Typography align="center" style = {{ fontSize: 14}}>{streetHousesCompleted}/{streetTotalHouses} Houses</Typography>
                   </Grid>
                   <Grid item xs={3}></Grid>
-                    <Grid item xs={6} justify="center" >
-                        <LinearProgress 
+                  <Grid item xs={6} justify="center">
+                    <Box height="100%">
+                      <LinearProgress 
                         classes={{colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary}} 
                         className = {classes.bar} 
                         variant="determinate" 
                         value={percentageCompleted} />
-                    </Grid>
+                    </Box>   
+                  </Grid>
                   <Grid item xs={3}></Grid>
                 </Fragment>
                 )
