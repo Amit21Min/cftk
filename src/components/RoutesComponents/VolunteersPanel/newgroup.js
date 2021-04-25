@@ -98,7 +98,7 @@ export function FullScreenDialog() {
   const [membersList, setMembers] = React.useState([]);
   const [id, setId] = React.useState('');
   const [clicked, setclicks] = React.useState(false);
-
+  const [validForm, setValidForm] = React.useState(false);
 
   const Names = [
     { name: "Tina Smith", phone: '9190000001', email: 'email1@gm.com', id: '001' },
@@ -200,13 +200,22 @@ export function FullScreenDialog() {
     }
   }
 
+  const validateForm = () => {
+    if (membersList.length===0 | groupName.length===0){
+      setValidForm(false);
+    } else {
+      setValidForm(true);
+    }
+  }
+
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={() => {handleClickOpen(); getUsers();}}>
         Create New Group
       </Button>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <AppBar className={classes.appBar} color="primary">
+      <Dialog fullWidth maxWidth='md' style={{height:'100%'}} open={open} onClose={handleClose} TransitionComponent={Transition}>
+        
+        <AppBar className={classes.appBar} color="secondary">
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
               <CloseIcon />
@@ -214,25 +223,26 @@ export function FullScreenDialog() {
             <Typography variant="h6" className={classes.title}>
               New Group
             </Typography>
-            <Button autoFocus color="inherit" onClick={saveForm}>
+            <Button autoFocus variant='contained' color="inherit" onClick={saveForm} disabled={!validForm}>
               save
             </Button>
           </Toolbar>
         </AppBar>
+        <DialogContent>
         <br></br>
         <TextField required id="standard-required"
           className={classes.textField}
           label="Name" size="small"
           style={{ margin: 8 }}
-          onChange={(e) => { setGroupName(e.target.value); }} />
-        <TextField label="Description" />
+          onChange={(e) => { setGroupName(e.target.value); }} onBlur={validateForm}/>
+         
         <br></br>
         
         <Grid container className={classes.grid} spacing={2}>
           
         <Grid item xs={3} mx='auto' my='auto'>
-        <Card className={classes.card} style={{width:250, height: 250}}>
-          <CardActions className={classes.margin} justify="center">
+        <Card className={classes.card} style={{width:200, height: 200}}>
+          <CardActions className={classes.margin} jstyle={{justifyContent: 'center'}}>
             <Button className={classes.addButton} aria-label="add" variant="outlined" color="primary" onClick={() => {handleSecondClickOpen();}}> 
               <AddIcon></AddIcon>
             </Button>
@@ -270,15 +280,15 @@ export function FullScreenDialog() {
                 <Button onClick={handleSecondClose} color="primary">
                   Cancel
                   </Button>
-                <Button onClick={saveMember} color="primary">
+                <Button onClick={saveMember} color="primary" onBlur={validateForm}>
                   Save
                   </Button>
               </DialogActions>
             </Dialog>
           </CardActions>
           <CardContent>
-            <Typography variant="h6" component="h2" style={{ color: "#bdbdbd", mx: "auto" }}>
-              Add another item
+            <Typography variant="h6" component="h2" align='center' style={{ color: "#bdbdbd", mx: "auto" }}>
+              Add another member
             </Typography>
           </CardContent>
         </Card>
@@ -286,15 +296,17 @@ export function FullScreenDialog() {
       
       {membersList.map(member => (
         <Grid item xs={3} mx='auto' my='auto' key = {member.id}>
-        <Card className={classes.card} style={{width:250, height: 250}}>
+        <Card className={classes.card} style={{width:'200', height: '200'}}>
           <CardContent>
-            <Typography variant="h6" component="h2" align='center'>
+            <Typography variant="h6" component="p1" align='center'>
                 {member.name}
             </Typography>
-            <Typography variant="subtitle1" component="h2" align='center'>
+            <br/>
+            <Typography variant="subtitle2" component="h3" align='center'>
                 {member.email}
             </Typography>
-            <Typography variant="subtitle1" component="h2" align='center'>
+            <br/>
+            <Typography variant="subtitle2" component="h3" align='center'>
                 {member.phone}
             </Typography>
           </CardContent>
@@ -313,6 +325,7 @@ export function FullScreenDialog() {
       
       
       </Grid>
+      </DialogContent>
       </Dialog>
     </div>
   );

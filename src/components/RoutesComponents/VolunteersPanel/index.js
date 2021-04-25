@@ -166,14 +166,7 @@ const VolunteersPanel = () => {
         </div>
 
         <div>
-        <Grid container spacing={1} alignItems="flex-end">
-          <Grid item>
-            <SearchOutlinedIcon />
-          </Grid>
-          <Grid item>
-            <TextField id="input-with-icon-grid" label="Search Group" />
-          </Grid>
-        </Grid>
+        
           <GroupTable></GroupTable>
         </div>
       </div>

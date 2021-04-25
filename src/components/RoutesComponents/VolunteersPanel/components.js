@@ -24,7 +24,7 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
-
+import Searchbar from 'material-ui-search-bar';
 import db from '../../FirebaseComponents/Firebase/firebase.js';
 import { database } from 'firebase';
 import AlertSnackbar from '../../ReusableComponents/AlertSnackbar';
@@ -443,6 +443,7 @@ function Row(props) {
         }
         //setIdList(prevState=> [...prevState,doc.id]);
         //console.log(user);
+        
       })
       
     })
@@ -568,7 +569,24 @@ function Row(props) {
             keepMounted
             open={openMore}
             onClose={handleMoreClose}>
-            <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+            <MenuItem onClick={handleEditClick}>Edit
+              <Dialog open = {deleteDialog} onClose = {() => setDeleteDialog(false)} >
+                  <DialogTitle id="form-dialog-title">Delete Group</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Do you want to delete group: {row.id}?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                  <Button onClick={() => setDeleteDialog(false)} color="secondary">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleDeleteGroup} color="primary">
+                    Delete
+                  </Button>
+                  </DialogActions>
+              </Dialog>
+            </MenuItem>
             <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
               <Dialog open = {deleteDialog} onClose = {() => setDeleteDialog(false)} >
                 <DialogTitle id="form-dialog-title">Delete Group</DialogTitle>
@@ -732,7 +750,9 @@ TablePaginationActions.propTypes = {
 ////////////////////////
 export const GroupTable = (props) => {
   const [data, setData] = useState([]);
+  const [rows,setRows] = useState([]);
   const classes = useStyles();
+  const [searched, setSearched] = useState("");
   useEffect(() => {
     async function getGroups() {
       
@@ -747,6 +767,7 @@ export const GroupTable = (props) => {
           })
         } else {
           setData(prevState=> [...prevState,group]);
+          setRows(prevState=>[...prevState,group]);
         }
         
       
@@ -791,9 +812,29 @@ export const GroupTable = (props) => {
     setPage(0);
   };
 
-
+  const requestSearch = (searchedVal) => {
+    const filteredRows = data.filter((row) => {
+      return row.id.toLowerCase().includes(searchedVal.toLowerCase());
+    });
+    setData(filteredRows);
+   
+    };
+  const cancelSearch = () => {
+    setSearched("");
+    requestSearch(searched);
+    setData(rows);
+  };
   return (
     <div>
+    <Searchbar
+      value={searched}
+      onChange={(searchVal) => requestSearch(searchVal)}
+      onCancelSearch={() => cancelSearch()}
+      cancelOnEscape={true}
+      style={{
+        margin: '0 auto',
+        width: '100%'
+      }}/>
     <TableContainer component = {Paper}>
       <Table aria-label="collapsible table">
         {}
