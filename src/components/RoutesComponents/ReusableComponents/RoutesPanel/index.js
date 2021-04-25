@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import RouteMetrics from '../RouteMetrics';
 import ZeroResource from '../../../ReusableComponents/ZeroResource';
 import SearchBar from '../../SearchBar';
-import AddButton from '../../../ReusableComponents/AddButton';
 import ResourceIndexTable from '../ResourceIndexTable';
 
 import PanelBanner from '../PanelBanner';
@@ -334,6 +333,8 @@ const RoutesPanel = (props) => {
         solicitSum += parseFloat(soliciting_pct);
         outreachSum += parseFloat(outreach_pct);
 
+        console.log(queryState);
+
         streetItems.push(
           { route: name, name: streetName, amount_collected, assignment_status: "", months_since_assigned: "", outreach_pct, soliciting_pct }
         )
@@ -442,7 +443,9 @@ const RoutesPanel = (props) => {
       <br />
       <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
         <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} />
-        <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW} />
+        <Button component={Link} to={ROUTES.ADMIN_ROUTES_NEW} variant="contained" color="primary">
+          Create New Route
+        </Button>
       </div>
       <StreetColumnContext.Provider value={streetColumnNames}>
         <StreetItemsContext.Provider value={streetItems}>
