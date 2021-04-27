@@ -340,7 +340,7 @@ const NewRoutePanel = () => {
 
   return (
     <div className={classes.pageContainer}>
-      <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>New Route</Typography></div>
+      <div><Typography style={{ fontSize: 32, fontWeight: "bold", color: "black" }}>New Route</Typography></div>
       <div className={classes.gridContainer}>
         <div className={classes.gridRequired}>
           <Grid container spacing={3}>
