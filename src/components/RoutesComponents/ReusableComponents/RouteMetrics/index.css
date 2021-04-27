@@ -3,6 +3,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .route-metric-assign {
@@ -22,8 +23,9 @@
 }
 
 .route-metric-general {
-  width: 257px;
+  width: 280px;
   height: 136px;
   border-radius: 25px;
   box-shadow: 5px 15px 25px #b0b0b0;
+  padding: 8px
 }

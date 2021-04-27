@@ -9,7 +9,8 @@ import PanelBanner from '../PanelBanner';
 
 import AssignRoute from '../../AssignRoute';
 import Dialog from '@material-ui/core/Dialog';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab'
 
 import { db } from '../../../FirebaseComponents/Firebase/firebase';
 
@@ -21,10 +22,11 @@ import * as overflow_actions from './overflow_actions.js';
 import * as helpers from './helpers.js';
 
 // These contexts allow for updating/re-rendering dynamically nested components, namely, the street tables nested within the route tables
-import {RouteColumnContext, RouteItemsContext,
-        StreetColumnContext, StreetItemsContext,
-        init_route_columns, init_street_columns
-       } from './contexts.js';
+import {
+  RouteColumnContext, RouteItemsContext,
+  StreetColumnContext, StreetItemsContext,
+  init_route_columns, init_street_columns
+} from './contexts.js';
 import TitleCard from '../../../ReusableComponents/TitleCard';
 
 const RoutesPanel = (props) => {
@@ -117,6 +119,7 @@ const RoutesPanel = (props) => {
         }
 
       });
+      console.log(yearDonationAmount)
       let newRouteMetrics = Object.assign(routeMetrics,
         {
           donations_last_event: `$${eventDonationAmount}`,
@@ -443,9 +446,9 @@ const RoutesPanel = (props) => {
       <br />
       <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
         {/* <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} /> */}
-        <Button component={Link} to={ROUTES.ADMIN_ROUTES_NEW} variant="contained" color="primary">
+        <Fab component={Link} to={ROUTES.ADMIN_ROUTES_NEW} color="primary" variant="extended">
           Create New Route
-        </Button>
+        </Fab>
       </div>
       <StreetColumnContext.Provider value={streetColumnNames}>
         <StreetItemsContext.Provider value={streetItems}>
@@ -507,38 +510,42 @@ const RoutesPanel = (props) => {
 
 
   return (
-    <div className="container">
-      {/* <PanelBanner title="Routes"/> */}
+    <>
       <TitleCard title="Routes"></TitleCard>
-      <RouteColumnContext.Provider value={routeColumnNames}>
-        <RouteItemsContext.Provider value={routes}>
-          {screen}
-        </RouteItemsContext.Provider>
-      </RouteColumnContext.Provider>
-      <ul>
-        {/* <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li> */}
-      </ul>
-      <ul>
-        <li><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></li>
-      </ul>
 
-      {/* assign route dialog */}
-      <div>
-        <Button color="primary" onClick={handleClickOpen}>
-          Assign Route
-        </Button>
-        <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
-          open={open} onClose={handleClose}>
-          <AssignRoute routes={route} close={handleClose} />
-        </Dialog>
-        {/* TODO: Show a success snackbar after assigning successfully */}
+      <div className="container">
+        {/* <PanelBanner title="Routes"/> */}
+        <div style={{height: '50px'}}></div>
+        <RouteColumnContext.Provider value={routeColumnNames}>
+          <RouteItemsContext.Provider value={routes}>
+            {screen}
+          </RouteItemsContext.Provider>
+        </RouteColumnContext.Provider>
+        <ul>
+          {/* <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li> */}
+        </ul>
+        <ul>
+          {/* <li><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></li> */}
+        </ul>
+
+        {/* assign route dialog */}
+        <div>
+          {/* <Button color="primary" onClick={handleClickOpen}>
+            Assign Route
+        </Button> */}
+          <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
+            open={open} onClose={handleClose}>
+            <AssignRoute routes={route} close={handleClose} />
+          </Dialog>
+          {/* TODO: Show a success snackbar after assigning successfully */}
+        </div>
+
+
+        <div>
+
+        </div>
       </div>
-
-
-      <div>
-
-      </div>
-    </div>
+    </>
   );
 
 
