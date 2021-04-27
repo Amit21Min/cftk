@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeNewRouteData } from '../ReusableComponents/RouteModels/routes';
-import { Link } from 'react-router-dom'
-import { Typography, Grid, TextField } from '@material-ui/core';
+import { useHistory } from 'react-router-dom'
+import { Typography, Grid, TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import GroupedTextField from '../../ReusableComponents/GroupedTextField';
 import DualGroupedTextField from '../../ReusableComponents/GroupedTextField/DualGroupedTextField';
@@ -113,6 +113,7 @@ const NewRoutePanel = () => {
     severity: "",
     message: ""
   })
+  const history = useHistory()
 
 
   const defaultLoc = { lat: 35.9132, lng: -79.0558 }
@@ -333,6 +334,10 @@ const NewRoutePanel = () => {
     });
   }
 
+  function leave() {
+    history.push(ROUTES.ADMIN_ROUTES)
+  }
+
   const houseKeys = Object.keys(houseNumbers)
   useEffect(validateForm, [routeName, cityName, houseNumbers, houseKeys]);
 
@@ -394,7 +399,11 @@ const NewRoutePanel = () => {
         </div>
       </div>
       <div className={classes.buttonContainer}>
-        <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
+        <div className={classes.formButton}>
+          <PillButton onClick={leave}>
+            Cancel
+          </PillButton>
+        </div>
         <div className={classes.formButton}>
           <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
             Save
