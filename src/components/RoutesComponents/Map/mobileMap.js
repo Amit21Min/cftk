@@ -1,6 +1,6 @@
 // import { AddCircle } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
@@ -286,11 +286,11 @@ function Map(props) {
   );
 }
 
-Map.propTypes = {
-  groupID: PropTypes.string,
-  innerStyle: PropTypes.object,
-  children: PropTypes.node,
-  onClickIcon: PropTypes.func
-}
+// Map.propTypes = {
+//   groupID: PropTypes.string,
+//   innerStyle: PropTypes.object,
+//   children: PropTypes.node,
+//   onClickIcon: PropTypes.func
+// }
 
 export default Map;
