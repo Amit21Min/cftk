@@ -3,7 +3,6 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: 1rem;
 }
 
 .route-metric-assign {
@@ -27,9 +26,19 @@
 
 }
 
+.route-metric-abstract {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
 .route-metric-general {
   width: 280px;
   height: 136px;
   border-radius: 25px;
-  padding: 8px
+  padding: 8px;
+  margin: 8px;
+  overflow: hidden;
+  position: relative;
+  color: #051820;
 }
