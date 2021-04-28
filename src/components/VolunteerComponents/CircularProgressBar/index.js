@@ -32,14 +32,12 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     gridColumn: '1',
     gridRow: '1'
-  }
-}));
-
-const useStyles = makeStyles ({
+  },
   progressBar: {
     backgroundColor: '#D7DBDD',
   }
-});
+}));
+
 
 function CircularProgressWithLabel(props) {
   const classes = useStyles();
