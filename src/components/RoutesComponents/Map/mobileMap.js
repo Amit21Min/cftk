@@ -118,7 +118,8 @@ function Map(props) {
         const marker = new google.maps.Marker({
           map: map,
           position: value.coords,
-          icon: value.complete ? houseComplete : houseDefault
+          icon: value.complete ? houseComplete : houseDefault,
+          title: `${key || ""} ${street.name || ""}, ${street.city || ""}`
         });
         createMarkerListeners(marker, { key, street: street.name, city: street.city, ...value }, value.complete ?? false);
         tempMarkers.push(marker);
