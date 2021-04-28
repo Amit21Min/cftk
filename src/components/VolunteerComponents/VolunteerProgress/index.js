@@ -97,6 +97,7 @@ const App = () => {
     const userDoc = await userRef.get();
     const assignment = userDoc.data().assignment.split("_")[0];
     overflow_actions.unassignRouteAction(assignment);
+    console.log('done');
     setOpen(false);
     setIsAssigned(false);
   };

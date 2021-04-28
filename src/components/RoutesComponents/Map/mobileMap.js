@@ -1,6 +1,6 @@
 // import { AddCircle } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { useGoogleMaps } from "react-hook-google-maps";
 import houseDefault from "../../../assets/images/MapIcons/houseDefault.svg";
 import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSelected.svg";
@@ -22,11 +22,11 @@ function useFirebaseStreetInfo(assignedRoute) {
   useEffect(() => {
     // Create the listener for the route
     if (assignedRoute.length === 0) {
-      setStreetInfo({
-        routeName: assignedRoute,
-        streetData: [],
-        error: "The Group's route either doesn't exist or is inactive"
-      })
+      // setStreetInfo({
+      //   routeName: assignedRoute,
+      //   streetData: [],
+      //   error: "The Group's route either doesn't exist or is inactive"
+      // })
       return;
     };
     const unsubscribe = db.collection("RoutesActive").doc(`${assignedRoute}`).onSnapshot(doc => {
@@ -118,7 +118,8 @@ function Map(props) {
         const marker = new google.maps.Marker({
           map: map,
           position: value.coords,
-          icon: value.complete ? houseComplete : houseDefault
+          icon: value.complete ? houseComplete : houseDefault,
+          title: `${key || ""} ${street.name || ""}, ${street.city || ""}`
         });
         createMarkerListeners(marker, { key, street: street.name, city: street.city, ...value }, value.complete ?? false);
         tempMarkers.push(marker);
@@ -286,11 +287,11 @@ function Map(props) {
   );
 }
 
-Map.propTypes = {
-  groupID: PropTypes.string,
-  innerStyle: PropTypes.object,
-  children: PropTypes.node,
-  onClickIcon: PropTypes.func
-}
+// Map.propTypes = {
+//   groupID: PropTypes.string,
+//   innerStyle: PropTypes.object,
+//   children: PropTypes.node,
+//   onClickIcon: PropTypes.func
+// }
 
 export default Map;
