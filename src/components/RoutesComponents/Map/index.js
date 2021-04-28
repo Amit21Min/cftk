@@ -7,25 +7,6 @@ import houseDefaultSelected from "../../../assets/images/MapIcons/houseDefaultSe
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
-function useFlatAddress(addresses) {
-  // Custom hook that splits the addresses object into 3 lists, the new ones that were added, the ones that were removed, and the currently existing ones
-  const [markerCoords, setMarkerCoords] = useState([]);
-  const asString = JSON.stringify(addresses);
-
-  useEffect(() => {
-    let temp = [];
-    for (let street in addresses) {
-      for (let address in addresses[street]) {
-        temp.push(addresses[street][address]);
-      }
-    }
-
-    setMarkerCoords(temp);
-
-  }, [asString, addresses]);
-
-  return markerCoords
-}
 // To look at in the future, use snap to roads api to convert addresses to a road, but API key seems to be rejected
 // function useSnappedRoads(addresses) {
 
@@ -59,7 +40,8 @@ function Map(props) {
       center: defaultLoc
     },
   );
-  const coords = useFlatAddress(props.addresses);
+  // const coords = useFlatAddress(props.addresses);
+  const addresses = props.addresses;
   // const roads = useSnappedRoads(props.addresses);
   function createMarkerListeners(marker) {
     const markerIn = marker.addListener('mouseover', function() {
@@ -79,20 +61,37 @@ function Map(props) {
   useEffect(() => {
 
     // Exit if the map or google objects are not yet ready
-    if (!map || !google || coords.length === 0) return;
+    if (!map || !google || Object.keys(addresses).length === 0) return;
 
-    map.panTo(coords[0]);
 
-    let tempMarkers = []
-    for (let address of coords) {
-      const marker = new google.maps.Marker({
-        map: map,
-        position: address,
-        icon: houseDefault
-      });
-      createMarkerListeners(marker);
-      tempMarkers.push(marker);
+    let tempMarkers = [];
+
+    for (let street in addresses) {
+      for (let address in addresses[street]) {
+        // temp.push(addresses[street][address]);
+        let marker = new google.maps.Marker({
+          map: map,
+          position: addresses[street][address],
+          icon: houseDefault,
+          title: `${address} ${street}`
+        });
+        createMarkerListeners(marker);
+        tempMarkers.push(marker);
+      }
     }
+
+    if (tempMarkers[0]) map.panTo(tempMarkers[0].getPosition().toJSON());
+
+
+    // for (let address of coords) {
+    //   let marker = new google.maps.Marker({
+    //     map: map,
+    //     position: address,
+    //     icon: houseDefault,
+    //   });
+    //   createMarkerListeners(marker);
+    //   tempMarkers.push(marker);
+    // }
 
     return function cleanup() {
       for (let marker of tempMarkers) {
@@ -102,7 +101,7 @@ function Map(props) {
       }
     }
 
-  }, [coords, map, google]);
+  }, [map, google, addresses]);
 
   return (
     <div>

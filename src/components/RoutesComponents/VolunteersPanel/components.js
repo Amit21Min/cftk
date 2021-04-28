@@ -5,7 +5,7 @@ import {Card, CardActions, CardContent} from '@material-ui/core';
 //import { AddIcon, CloseIcon, EditIcon, DeleteIcon, KeyboardArrowDownIcon, KeyboardArrowUpIcon,MessageIcon,MailOutlineIcon}  from '@material-ui/icons';
 import {DialogActions, DialogContent, DialogTitle, Switch, FormGroup, FormControlLabel, Grid, DialogContentText} from '@material-ui/core';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Collapse,TableFooter} from '@material-ui/core';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import EmailIcon from '@material-ui/icons/Email';
@@ -556,12 +556,12 @@ function TablePaginationActions(props) {
   );
 }
 
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
+// TablePaginationActions.propTypes = {
+//   count: PropTypes.number.isRequired,
+//   onChangePage: PropTypes.func.isRequired,
+//   page: PropTypes.number.isRequired,
+//   rowsPerPage: PropTypes.number.isRequired,
+// };
 ////////////////////////
 export const GroupTable = (props) => {
   const [data, setData] = useState([]);

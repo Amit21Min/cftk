@@ -219,8 +219,7 @@ export const getMapAddresses = async (routeId) => {
                 })
         });
         let streetPromises = [];
-        for (let street in streets) {
-            const streetName = streets[street];
+        for (let streetName of streets) {
             streetPromises.push(new Promise((resolve, reject) => {
                 db.collection("Streets")
                     .doc(streetName)

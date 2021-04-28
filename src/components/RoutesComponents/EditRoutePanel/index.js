@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // import db from '../Firebase/firebase.js';
 import { storeEditRouteData } from '../ReusableComponents/RouteModels/routes';
-import { Link, useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Typography, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import GroupedTextField from '../../ReusableComponents/GroupedTextField';
@@ -142,6 +142,7 @@ const EditRoutePanel = () => {
     })
 
     const routeID = useQuery().get("route");
+    const history = useHistory();
     const streetInfo = useFirebaseStreetInfo(routeID);
 
     const defaultLoc = { lat: 35.9132, lng: -79.0558 }
@@ -391,11 +392,15 @@ const EditRoutePanel = () => {
 
     }, [streetInfo, routeID])
 
+    function leave() {
+        history.push(ROUTES.ADMIN_ROUTES)
+    }
+
     const classes = useStyles();
 
     return (
         <div className={classes.pageContainer}>
-            <div><Typography style={{ fontSize: 32, fontWeight: "bold" }}>Edit Route</Typography></div>
+            <div><Typography style={{ fontSize: 32, fontWeight: "bold", color: "black" }}>Edit Route</Typography></div>
             <div className={classes.gridContainer}>
                 <div className={classes.gridRequired}>
                     <Grid container spacing={3}>
@@ -449,7 +454,11 @@ const EditRoutePanel = () => {
                 </div>
             </div>
             <div className={classes.buttonContainer}>
-                <div className={classes.formButton}><Link to={ROUTES.ADMIN_ROUTES} component={PillButton}>Cancel</Link></div>
+                <div className={classes.formButton}>
+                    <PillButton onClick={leave}>
+                        Cancel
+                    </PillButton>
+                </div>
                 <div className={classes.formButton}>
                     <PillButton variant="contained" color="primary" onClick={saveForm} disabled={!validForm}>
                         Save
