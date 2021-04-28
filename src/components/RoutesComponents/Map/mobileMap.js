@@ -22,11 +22,11 @@ function useFirebaseStreetInfo(assignedRoute) {
   useEffect(() => {
     // Create the listener for the route
     if (assignedRoute.length === 0) {
-      setStreetInfo({
-        routeName: assignedRoute,
-        streetData: [],
-        error: "The Group's route either doesn't exist or is inactive"
-      })
+      // setStreetInfo({
+      //   routeName: assignedRoute,
+      //   streetData: [],
+      //   error: "The Group's route either doesn't exist or is inactive"
+      // })
       return;
     };
     const unsubscribe = db.collection("RoutesActive").doc(`${assignedRoute}`).onSnapshot(doc => {
