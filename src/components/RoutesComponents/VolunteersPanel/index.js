@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
     //marginLeft:'200',
     alignItems: 'left',
     margin: '0',
-    width: '100%'
+    width: '100%',
+    paddingLeft:'25px'
   },
 
   appBar: {
@@ -75,6 +76,9 @@ const useStyles = makeStyles((theme) => ({
   grid: {
     flexGrow: 1,
   },
+  table: {
+    paddingLeft:'25px'
+  }
   
 }));
 
@@ -161,11 +165,11 @@ const VolunteersPanel = () => {
         <br/>
 
         <div className={classes.button}> 
-          <FullScreenDialog></FullScreenDialog>
-          <Button color="secondary" variant = "outlined"> Import CSV </Button>
+          
+          
         </div>
 
-        <div>
+        <div className={classes.table}>
         
           <GroupTable></GroupTable>
         </div>

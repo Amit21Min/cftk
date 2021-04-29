@@ -1,0 +1,29 @@
+.metric-list-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .group-metric-total{
+    background-color: #7CC9AA; 
+  }
+  
+  .group-metric-assignment {
+    background-color: #F78A72;
+  }
+  
+  .group-metric-volunteers {
+    background-color: #BFBAFF;
+  }
+  
+  .group-metric-ungrouped {
+    background-color: #89D9E0;
+  }
+  
+  .group-metric-general {
+    width: 257px;
+    height: 136px;
+    border-radius: 25px;
+    box-shadow: 5px 15px 25px #b0b0b0;
+  }
