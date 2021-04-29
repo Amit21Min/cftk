@@ -142,6 +142,7 @@ export const storeNewRouteData = async (routeName, houseNumbers, volNotes, city,
             perSoliciting: 0.0,
             total: 0.0,
             city: city,
+            lastAssigned: null,
             comments: volNotes
         });
     for (let streetName of streets) {
