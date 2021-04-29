@@ -54,7 +54,6 @@ function ExampleMap() {
         // solicitation holds true/false for
 
         // This example function makes it so that when you click a house Icon, you trigger something
-        console.log(addressData);
         setAddressData(addressData);
         // Hack to push to back of execution cycle
         setTimeout(() => {

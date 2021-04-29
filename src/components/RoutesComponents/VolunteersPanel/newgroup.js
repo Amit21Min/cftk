@@ -67,6 +67,9 @@ const useStyles = makeStyles((theme) => ({
   },
   labelAsterisk: {
     color: "#b71c1c"
+  },
+  button: {
+
   }
 
 
@@ -109,16 +112,39 @@ export function FullScreenDialog() {
   ]
 
   const [users, setUsers] = React.useState([]);
+  const [groups, setGroups] = React.useState([]);
+  const [usersInGroup, setUsersInGroup]=React.useState([]);
+  const getGroups = () => {
+    setGroups([]);
+    db.collection('Groups').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const group=doc.data();
+        group.id=doc.id;
+        //console.log(doc.id, " => ", doc.data());
+        setGroups(prevState=>[...prevState,group]);
+        setUsersInGroup(prevState=>[...prevState,group.users]);
+      
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })}
+  
   
   const getUsers = () => {
     //const users = [];
-
+    getGroups();
     db.collection('User').get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         //console.log(doc.id, " => ", doc.data());
         const user=doc.data();
         user.id=doc.id;
-        setUsers(prevState=> [...prevState,user]);
+        if (!usersInGroup.includes(user.id)){
+          setUsers(prevState=> [...prevState,user]);
+        }
+       
         //setIdList(prevState=> [...prevState,doc.id]);
       })
       
@@ -208,10 +234,19 @@ export function FullScreenDialog() {
     }
   }
 
+  const handleMemberDelete = e => {
+    const member={id: id, checked: checked, name: name, email: email, phone: phone}
+    var filtered = membersList.filter(function(value, index, arr){ 
+      return value != id;
+    });
+    setMembers((membersList) => membersList.filter((chip) => chip.id !==e.id));
+    //setMembers(filtered);
+  }
+
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={() => {handleClickOpen(); getUsers();}}>
-        Create New Group
+      <Button variant="outlined" color="primary" onClick={() => {handleClickOpen(); getUsers();}} label={"Create New Group"}>
+      Create New Group
       </Button>
       <Dialog fullWidth maxWidth='md' style={{height:'100%'}} open={open} onClose={handleClose} TransitionComponent={Transition}>
         
@@ -242,10 +277,10 @@ export function FullScreenDialog() {
           
         <Grid item xs={3} mx='auto' my='auto'>
         <Card className={classes.card} style={{width:200, height: 200}}>
-          <CardActions className={classes.margin} jstyle={{justifyContent: 'center'}}>
-            <Button className={classes.addButton} aria-label="add" variant="outlined" color="primary" onClick={() => {handleSecondClickOpen();}}> 
+          <CardActions className={classes.margin} style={{justifyContent: 'center'}}>
+            <Fab style={{alignSelf:'center'}} aria-label="add" variant="outlined" color="primary" onClick={() => {handleSecondClickOpen();}}> 
               <AddIcon></AddIcon>
-            </Button>
+            </Fab>
             <Dialog fullWidth open={secondOpen}
               onClose={handleClose}
               TransitionComponent={Transition}
@@ -314,7 +349,7 @@ export function FullScreenDialog() {
             <Button>
               <EditIcon></EditIcon>
             </Button>
-            <Button>
+            <Button onClick={handleMemberDelete}>
               <DeleteIcon></DeleteIcon>
             </Button>
           </CardActions>
