@@ -6,6 +6,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import Grid from '@material-ui/core/Grid';
 import FilledInput from '@material-ui/core/FilledInput';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -42,6 +43,20 @@ const useStyles = makeStyles((theme) => ({
         width: "45%",
         height: "120px",
     },
+    finished: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative',
+        height: '500px'
+    },
+    finishTitle: {
+        padding: '1rem'
+    },
+    closeButton: {
+        width: '90%',
+        marginTop: 'auto'
+    }
 }));
 
 const App = (props) => {
@@ -68,24 +83,24 @@ const App = (props) => {
         if (activeStep === 3) {
             saveData();
         }
-        if(activeStep===0 && sol===0){setActiveStep(3);} // jump to last step if solicitation not allowed
-        else{setActiveStep((prevActiveStep) => prevActiveStep + 1);}
+        if (activeStep === 0 && sol === 0) { setActiveStep(3); } // jump to last step if solicitation not allowed
+        else { setActiveStep((prevActiveStep) => prevActiveStep + 1); }
     };
 
     const handleBack = () => {
-        if(activeStep===3 && sol===0){setActiveStep(0);} // back to first step if solicitation not allowed
-        else{setActiveStep((prevActiveStep) => prevActiveStep - 1);}
+        if (activeStep === 3 && sol === 0) { setActiveStep(0); } // back to first step if solicitation not allowed
+        else { setActiveStep((prevActiveStep) => prevActiveStep - 1); }
     };
 
     const handleUpdate = () => {
         setActiveStep(0);
     };
 
-    const handleAmountChange =(e)=>{
+    const handleAmountChange = (e) => {
         let a = document.getElementById('amount').value.trim();
         // a = a.replace(/\D/g, ''); // delelte non-digits
         a = parseFloat(a);
-        if(a>0){setAmount(a);}        
+        if (a > 0) { setAmount(a); }
         document.getElementById('amount').value = a;
     }
 
@@ -127,14 +142,14 @@ const App = (props) => {
                         update = true;
                         if (routesActiveDoc.data().housesCompleted - 1 === 0) {
                             db.collection('RoutesActive').doc(routeName).update({
-                                donationTotal : 0,
-                                housesCompleted : 0,
-                                pctSoliciting : 0,
-                                pctInterest : 0
+                                donationTotal: 0,
+                                housesCompleted: 0,
+                                pctSoliciting: 0,
+                                pctInterest: 0
                             })
                         } else {
                             let newPctSoliciting;
-                            let newPctInterest; 
+                            let newPctInterest;
                             if (street[i][Object.keys(street[i])[0]].learnMore) {
                                 newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted - 100) / (routesActiveDoc.data().housesCompleted - 1)
                             } else {
@@ -147,21 +162,21 @@ const App = (props) => {
                                 newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
                             }
                             db.collection('RoutesActive').doc(routeName).update({
-                                donationTotal : routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt,
-                                housesCompleted : routesActiveDoc.data().housesCompleted - 1,
-                                pctSoliciting : newPctSoliciting,
-                                pctInterest : newPctInterest
+                                donationTotal: routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt,
+                                housesCompleted: routesActiveDoc.data().housesCompleted - 1,
+                                pctSoliciting: newPctSoliciting,
+                                pctInterest: newPctInterest
                             })
                         }
                     }
                     // stores the new information submitted in the street object. The street object is then inserted back into the entire doc.data() so that it can be set to firebase.
                     street[i] = {
-                        [Object.keys(street[i])[0]] : {
-                            donationAmt : amount,
-                            learnMore : interest === 1 ? true : false,
-                            solicitation : sol === 1 ? true : false,
-                            volunteerComments : comment.length > 0 ? comment : null,
-                            coordinates : street[i][Object.keys(street[i])[0]].coordinates
+                        [Object.keys(street[i])[0]]: {
+                            donationAmt: amount,
+                            learnMore: interest === 1 ? true : false,
+                            solicitation: sol === 1 ? true : false,
+                            volunteerComments: comment.length > 0 ? comment : null,
+                            coordinates: street[i][Object.keys(street[i])[0]].coordinates
                         }
                     }
                     newStreetData = street;
@@ -204,10 +219,10 @@ const App = (props) => {
                             <Typography variant="subtitle1" align='center'> Was <b>solicitation</b> allowed?{asterisk()} </Typography>
                         </Grid>
                         <Grid container justify="space-between">
-                            <Button variant="outlined" color={sol===1?"primary":"default"} className={classes.bigButton} 
-                            onClick={function (event) {setSol(1);setTimeout(()=>{setActiveStep(1);}, timeout);}}>Yes</Button>
-                            <Button variant="outlined" color={sol===0?"primary":"default"} className={classes.bigButton} 
-                            onClick={function (event) {setSol(0);setTimeout(()=>{setActiveStep(3);}, timeout);}}>No</Button>
+                            <Button variant="outlined" color={sol === 1 ? "primary" : "default"} className={classes.bigButton}
+                                onClick={function (event) { setSol(1); setTimeout(() => { setActiveStep(1); }, timeout); }}>Yes</Button>
+                            <Button variant="outlined" color={sol === 0 ? "primary" : "default"} className={classes.bigButton}
+                                onClick={function (event) { setSol(0); setTimeout(() => { setActiveStep(3); }, timeout); }}>No</Button>
                         </Grid>
                     </div>
 
@@ -220,10 +235,10 @@ const App = (props) => {
                         </Grid>
 
                         <Grid container justify="space-between">
-                            <Button variant="outlined" color={interest===1?"primary":"default"} className={classes.bigButton} 
-                            onClick={function (event) {setInterest(1);setTimeout(()=>{setActiveStep(2);}, timeout);}}>Yes</Button>
-                            <Button variant="outlined" color={interest===0?"primary":"default"} className={classes.bigButton}
-                            onClick={function (event) {setInterest(0);setTimeout(()=>{setActiveStep(2);}, timeout);}}>No</Button>
+                            <Button variant="outlined" color={interest === 1 ? "primary" : "default"} className={classes.bigButton}
+                                onClick={function (event) { setInterest(1); setTimeout(() => { setActiveStep(2); }, timeout); }}>Yes</Button>
+                            <Button variant="outlined" color={interest === 0 ? "primary" : "default"} className={classes.bigButton}
+                                onClick={function (event) { setInterest(0); setTimeout(() => { setActiveStep(2); }, timeout); }}>No</Button>
                         </Grid>
                     </div>
 
@@ -241,7 +256,7 @@ const App = (props) => {
                                 id="amount"
                                 // value={values.amount}
                                 // onChange={handleAmountChange}
-                                onBlur = {handleAmountChange}
+                                onBlur={handleAmountChange}
                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                             />
                         </FormControl>
@@ -251,10 +266,10 @@ const App = (props) => {
                         </Grid>
 
                         <Grid container justify="space-between">
-                            <Button variant="outlined" className={classes.bigButton} color={method===0?"primary":"default"}
-                            onClick={function (event) {setMethod(0);}} disabled={amount<=-10}>CASH/CHECK</Button>
-                            <Button variant="outlined" className={classes.bigButton} color={method===1?"primary":"default"}
-                            onClick={function (event) {setMethod(1);}} disabled={amount<=-10}>MOBILE PAYMENT</Button>
+                            <Button variant="outlined" className={classes.bigButton} color={method === 0 ? "primary" : "default"}
+                                onClick={function (event) { setMethod(0); }} disabled={amount <= -10}>CASH/CHECK</Button>
+                            <Button variant="outlined" className={classes.bigButton} color={method === 1 ? "primary" : "default"}
+                                onClick={function (event) { setMethod(1); }} disabled={amount <= -10}>MOBILE PAYMENT</Button>
                         </Grid>
 
                     </div>
@@ -271,7 +286,7 @@ const App = (props) => {
                             rowsMax={5}
                             rows={1}
                             variant="filled"
-                            onBlur={function(event){console.log("record message"); setComment(document.getElementById("message").value)}}
+                            onBlur={function (event) { console.log("record message"); setComment(document.getElementById("message").value) }}
                         />
                     </div>
                 );
@@ -289,30 +304,37 @@ const App = (props) => {
             </Typography> */}
             <div>
                 {activeStep === steps.length ? (
-                    <div>
+                    <div className={classes.finished}>
                         {/* summary screen •*/}
                         {/* <div className={classes.instructions}>COMPLETE</div> */}
-                        <Button variant="contained" color="primary" style={{ borderRadius: 50 }} onClick={handleUpdate}>
-                            Update
-                        </Button>
+                        <Typography variant='h6' className={classes.finishTitle}>
+                            You've Finished this Address!
+                        </Typography>
+
+                        <Typography variant='h6' className={classes.finishTitle}>
+                            Address Summary
+                        </Typography>
                         <ul>
-                            <li>● Solicitation {sol===1?"allowed":"not allowed"}</li>
-                            {sol===1?(
+                            <li>● Solicitation {sol === 1 ? "allowed" : "not allowed"}</li>
+                            {sol === 1 ? (
                                 <div>
-                                <li>{interest===1?"● Interested":"● Not interested"} in learning more</li>
-                                <li>
-                                    {amount>0?(
-                                        "● Donated $"+amount+" via "+(method===0?"cash or check":"mobile payment")
-                                    ):("● No donation provided")}
-                                </li>
+                                    <li>{interest === 1 ? "● Interested" : "● Not interested"} in learning more</li>
+                                    <li>
+                                        {amount > 0 ? (
+                                            "● Donated $" + amount + " via " + (method === 0 ? "cash or check" : "mobile payment")
+                                        ) : ("● No donation provided")}
+                                    </li>
                                 </div>
-                            ):("")}
-                            <li>● Additional Comments: {comment===""?"None":comment}</li>
+                            ) : ("")}
+                            <li>● Additional Comments: {comment === "" || comment === -1 ? "None" : comment}</li>
                         </ul>
+                        <Fab variant="extended" color="primary" onClick={props.onClose} className={classes.closeButton}>
+                            Close
+                        </Fab>
                     </div>
                 ) : (
                     <div>
-                        <Stepper activeStep={activeStep} alternativeLabel style={{margin:'-5px'}}>
+                        <Stepper activeStep={activeStep} alternativeLabel style={{ margin: '-5px' }}>
                             {steps.map((label) => (
                                 <Step key={label}>
                                     <StepLabel>{label}</StepLabel>
