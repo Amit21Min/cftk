@@ -32,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     gridColumn: '1',
     gridRow: '1'
+  },
+  progressBar: {
+    backgroundColor: '#D7DBDD',
   }
 }));
 

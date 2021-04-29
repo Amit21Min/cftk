@@ -13,6 +13,7 @@ import VolunteerLayout from '../../layouts/volunteerLayout';
 import SignUpPage from '../FirebaseComponents/SignUp/index.js';
 import ForgotPasswordPage from '../ForgotPassword/index.js';
 import HomePage from '../Home/index';
+import VolunteerProgress from '../VolunteerComponents/VolunteerProgress/index.js';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -49,7 +50,6 @@ const App = () => {
           {/* <Route path={ROUTES.ACCOUNT} component={AccountPage} /> */}
 
           {/* --------------------------------------------------------------------- */}
-
 
           {/* The HOME Page is the root now, so please navigate to /home for finding the main stuff */}
           <Route exact path="/">
