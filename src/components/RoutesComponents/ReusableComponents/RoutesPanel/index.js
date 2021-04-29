@@ -317,22 +317,22 @@ const RoutesPanel = (props) => {
         amount_collected = "No History";
       }
 
-      var streets = [];
-      for (var x in streetData) {
+      let streets = [];
+      for (let x in streetData) {
         if (data.streets.includes(Object.keys(streetData[x])[0])) {
           streets.push(streetData[x]);
         }
       }
 
-      var solicitSum = 0;
-      var outreachSum = 0;
+      let solicitSum = 0;
+      let outreachSum = 0;
 
-      var streetItems = [];
+      let streetItems = [];
       streets.forEach((street) => {
-        var streetName = Object.keys(street)[0].split("_")[0];
-        var amount_collected = street[Object.keys(street)[0]].total.toString();
-        var soliciting_pct = street[Object.keys(street)[0]].perSoliciting.toString();
-        var outreach_pct = street[Object.keys(street)[0]].perInterest.toString();
+        let streetName = Object.keys(street)[0].split("_")[0];
+        let amount_collected = street[Object.keys(street)[0]].total.toString();
+        let soliciting_pct = street[Object.keys(street)[0]].perSoliciting.toString();
+        let outreach_pct = street[Object.keys(street)[0]].perInterest.toString();
         solicitSum += parseFloat(soliciting_pct);
         outreachSum += parseFloat(outreach_pct);
 
@@ -343,8 +343,8 @@ const RoutesPanel = (props) => {
         )
       });
 
-      var solicitAvg = solicitSum / streets.length;
-      var outreachAvg = outreachSum / streets.length;
+      let solicitAvg = solicitSum / streets.length;
+      let outreachAvg = outreachSum / streets.length;
 
       // console.log(streetItems);
 
@@ -398,16 +398,16 @@ const RoutesPanel = (props) => {
 
   // returns like [ {Rose Ln_R17 : streetData }, {Campbell Lane_R21: streetData} ]
   const fetchStreets = async (allStreets) => {
-    var promises = allStreets.map(async (street) => {
-      var streetDoc = await db.collection('Streets').doc(street).get();
+    let promises = allStreets.map(async (street) => {
+      let streetDoc = await db.collection('Streets').doc(street).get();
       return streetDoc
     })
-    var results = await Promise.all(promises.map(async (street) => {
+    let results = await Promise.all(promises.map(async (street) => {
       return street
     }))
-    var buildStreets = [];
+    let buildStreets = [];
     results.forEach((streetPromise, i) => {
-      var street = allStreets[i]
+      let street = allStreets[i]
       buildStreets.push({ [street]: streetPromise.data() })
     });
     return buildStreets;
@@ -423,11 +423,11 @@ const RoutesPanel = (props) => {
         })
       });
 
-      var allStreets = [];
+      let allStreets = [];
       allRoutes.forEach((route) => {
         allStreets.push(route.streets);
       });
-      var streetData = await fetchStreets([].concat.apply([], allStreets));
+      let streetData = await fetchStreets([].concat.apply([], allStreets));
 
       setRoutes(tableTransform(allRoutes, streetData));
     });
@@ -446,7 +446,7 @@ const RoutesPanel = (props) => {
       <br />
       <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
         {/* <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} /> */}
-        <Fab component={Link} to={ROUTES.ADMIN_ROUTES_NEW} color="primary" variant="extended">
+        <Fab component={Link} to={ROUTES.ADMIN_ROUTES_NEW} color="primary" letiant="extended">
           Create New Route
         </Fab>
       </div>
