@@ -1,5 +1,5 @@
 import React, { useEffect, useState }  from 'react';
-import {Button, Dialog, Checkbox, AppBar, Toolbar, IconButton, Typography, Slide, TextField, Paper, MenuItem,Menu} from '@material-ui/core';
+import {Button, Dialog, Checkbox, AppBar, Toolbar, IconButton, Typography, Slide, TextField, Paper, MenuItem,Menu, ButtonGroup} from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {Card, CardActions, CardContent} from '@material-ui/core';
 //import { AddIcon, CloseIcon, EditIcon, DeleteIcon, KeyboardArrowDownIcon, KeyboardArrowUpIcon,MessageIcon,MailOutlineIcon}  from '@material-ui/icons';
@@ -7,6 +7,8 @@ import {DialogActions, DialogContent, DialogTitle, Switch, FormGroup, FormContro
 import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Collapse,TableFooter} from '@material-ui/core';
 // import PropTypes from 'prop-types';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Box from '@material-ui/core/Box';
 
 import EmailIcon from '@material-ui/icons/Email';
 import CloseIcon from '@material-ui/icons/Close';
@@ -28,7 +30,11 @@ import Searchbar from 'material-ui-search-bar';
 import db from '../../FirebaseComponents/Firebase/firebase.js';
 import { database } from 'firebase';
 import AlertSnackbar from '../../ReusableComponents/AlertSnackbar';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import {FullScreenDialog} from '../VolunteersPanel/newgroup';
 
+import "./index.css";
+import { FormatColorResetRounded, GroupSharp } from '@material-ui/icons';
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -38,29 +44,30 @@ export function CardHolders() {
   const [data, setData] = useState([]);
   const classes = useStyles();
   const [users, setUsers] = React.useState([]);
+  const [usersInGroup, setUsersInGroup] = React.useState([]);
   const [usersNotInGroup, setUsersNotInGroup] = React.useState([]);
+  const [groupAssigned,setGroupAssigned] = React.useState([]);
+
+
+  
 
   useEffect(() => {
-    db.collection('User').get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        //console.log(doc.id, " => ", doc.data());
-        const user=doc.data();
-        user.id=doc.id;
-        setUsers(prevState=> [...prevState,user]);
-        //setIdList(prevState=> [...prevState,doc.id]);
-      })
-      
-    })
-    .catch(function (error) {
-        console.log("error: ", error);
-    })
-
     db.collection('Groups').get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         //console.log(doc.id, " => ", doc.data());
         const group=doc.data();
         group.id=doc.id;
-        setData(prevState=> [...prevState,group]);
+        if (group.users.length>0){
+          setData(prevState=> [...prevState,group]);
+          setUsersInGroup(prevState=> [...prevState,group.users]);
+          if (group.assignment==null){
+            setGroupAssigned(prevState=>[...prevState,group]);
+
+          }
+        }
+        
+       
+        
         //const result = group.users.every(val => users.includes(val));
         //setUsersNotInGroup(pre)
         //setIdList(prevState=> [...prevState,doc.id]);
@@ -71,14 +78,39 @@ export function CardHolders() {
         console.log("error: ", error);
     })
 
+    db.collection('User').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const user=doc.data();
+        user.id=doc.id;
+        setUsers(prevState=> [...prevState,user]);
+        if (usersInGroup.includes(user.id)){
+          setUsersNotInGroup(prevState=>[...prevState,user]);
+        }
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
+    
+
     
 
   }, []);
 
   return (
-    <Grid container spacing={1} alignItems="flex-end">
+    <Grid container spacing={1} alignItems="flex-end" style={{display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between'}}>
       <Grid item xs={3} mx='auto' my='auto'>
-        <Card style={{backgroundColor:'#7CC9AA'}}>
+        <Card style={{backgroundColor:'#7CC9AA', 'width': '257px',
+    'height': '136px',
+    'borderRadius': '25px',
+    'boxShadow' : '5px 15px 25px #b0b0b0'}}>
           <CardContent>
             <Typography variant="h2"> {data.length} </Typography>
             <Typography variant="subtitle1"> Total Groups </Typography>
@@ -87,15 +119,37 @@ export function CardHolders() {
         </Card>
       </Grid>
       <Grid item xs={3} mx='auto' my='auto'>
-        <Card style={{backgroundColor:'#F78A72'}}>
+        <Card style={{backgroundColor:'#F78A72', 'width': '257px',
+    'height': '136px',
+    'borderRadius': '25px',
+    'boxShadow' : '5px 15px 25px #b0b0b0'}}>
           <CardContent>
-            <Typography variant="h2"> {data.length} </Typography>
+          <Box position="relative" display="inline-flex">
+            <CircularProgress variant="determinate" value={100*((data.length-groupAssigned.length)/(data.length))} size={70}/>
+            <Box
+              top={0}
+              left={0}
+              bottom={0}
+              right={0}
+              position="absolute"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Typography variant="h2"> {data.length} </Typography>
+            </Box>
+          </Box>
+            
+            
             <Typography variant="subtitle1"> Groups Without Assignment</Typography>
           </CardContent>
         </Card>
       </Grid>
       <Grid item xs={3} mx='auto' my='auto'>
-        <Card style={{backgroundColor:'#BFBAFF'}}>
+        <Card style={{backgroundColor:'#BFBAFF','width': '257px',
+    'height': '136px',
+    'borderRadius': '25px',
+    'boxShadow' : '5px 15px 25px #b0b0b0'}}>
           <CardContent>
             <Typography variant="h2"> {users.length} </Typography>
             <Typography variant="subtitle1"> Total Volunteers </Typography>
@@ -103,9 +157,12 @@ export function CardHolders() {
         </Card>
       </Grid>
       <Grid item xs={3} mx='auto' my='auto'>
-        <Card style={{backgroundColor:'#89D9E0'}}>
+        <Card style={{backgroundColor:'#89D9E0','width': '257px',
+    'height': '136px',
+    'borderRadius': '25px',
+    'boxShadow' : '5px 15px 25px #b0b0b0'}}>
           <CardContent>
-            <Typography variant="h2"> {users.length} </Typography>
+            <Typography variant="h2"> {usersNotInGroup.length} </Typography>
             <Typography variant="subtitle1"> Ungrouped Volunteers </Typography>
           </CardContent>
         </Card>
@@ -160,6 +217,10 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '650',
     width: '100%'
   },
+  tableheader:{
+    flexDirection:'row',
+    justifyItems:'left'
+  }
 
 
 }));
@@ -182,10 +243,11 @@ function Row(props) {
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
   const [foundUsers, setUsers] = React.useState([]);
-
+  const [data, setData] = React.useState([]);
+  const [usersInGroup, setUsersInGroup] = React.useState([]);
 
   useEffect(() => {
-    async function getUsers() {db.collection('User').get().then((querySnapshot) => {
+    db.collection('User').get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         //console.log(doc.id, " => ", doc.data());
         const user=doc.data();
@@ -201,8 +263,31 @@ function Row(props) {
     })
     .catch(function (error) {
         console.log("error: ", error);
-    })}
-    getUsers();
+    })
+
+    db.collection('Groups').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.log(doc.id, " => ", doc.data());
+        const group=doc.data();
+        group.id=doc.id;
+        if (group.users.length>0){
+          setData(prevState=> [...prevState,group]);
+          setUsersInGroup(prevState=> [...prevState,group.users]);
+          
+        }
+        
+       
+        
+        //const result = group.users.every(val => users.includes(val));
+        //setUsersNotInGroup(pre)
+        //setIdList(prevState=> [...prevState,doc.id]);
+      })
+      
+    })
+    .catch(function (error) {
+        console.log("error: ", error);
+    })
+
 
   }, []);
 
@@ -237,8 +322,12 @@ function Row(props) {
   };
   const toggleCheckboxValue = (index) => {
     setIsChecked(isChecked.map((v, i) => (i === index ? !v : v)));
-}
+  }
 
+  const [rowSelected, setRowSelected] = React.useState(foundUsers.slice().fill(false));
+  const toggleSelectedRowValue=(index)=>{
+    setRowSelected(rowSelected.map((v, i) => (i === index ? !v : v)));
+  }
   //const [openMore,setOpenMore]=React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -252,15 +341,53 @@ function Row(props) {
     setAnchorEl(null);
   };
 
-
+  const [editChecked, setEditChecked] = React.useState(false);
   const handleEditClick =() => {
     handleMoreClose();
+    setEditChecked(true);
+  }
+  const handleClickAway=() => {
+    setEditChecked(false);
   }
 
   const [deleteDialog,setDeleteDialog] = React.useState(false);
   const handleDeleteClick = () => {
     handleMoreClose();
     setDeleteDialog(true);
+  }
+
+  const handleDeleteUser = async function (userid) {
+    const id=row.id
+    var filtered;
+    const usersInGroup=[];
+    db.collection('Groups').doc(id).get().then((doc) => {
+      const group=doc.data()
+      
+      filtered = group.users.filter(function(value, index, arr){ 
+        return value != userid;
+      });
+      
+      db.collection('Groups').doc(id).update({
+        users:filtered
+      })
+      
+      
+      
+    }).catch((error) => {
+      return {
+        state:validationStates.ERROR,
+        message:`Error occurred when trying to delete ${userid}.`
+      }
+     
+    })
+
+    
+    
+    return {
+      state:validationStates.SUCCESS,
+      message:`${userid} has been deleted successfully.`
+    }
+
   }
 
   /// user icon ///
@@ -276,9 +403,34 @@ function Row(props) {
     setuserAnchorEl(null);
   };
 
-
-  const handleEditClickUser =() => {
+  
+  const [openMoveDialog,setOpenMoveDialog] =useState(false);
+  const handleCloseMoveUsers = () => {
+    setOpenMoveDialog(false);
+    //e.preventDefault();
+    
+  }
+  const handleMoveClickUser =() => {
     handleMoreCloseUser();
+    setOpenMoveDialog(true);
+  }
+  const [newGroup, setnewgroup] = React.useState("");
+  const handleMoveMember=(user) => {
+    handleCloseMoveUsers();
+    db.collection('Groups').doc(newGroup).get().then((doc) => {
+      const group=doc.data();
+      group.id=doc.id;
+      if (!group.users.includes(user)){
+        var newgroup=group.users;
+        newgroup.push(user);
+        db.collection('Groups').doc(newGroup).update({
+          users: newgroup
+        })
+        handleDeleteUser(user);
+      }
+    }
+    )
+    
   }
 
   const [deleteDialogUser,setDeleteDialogUser] = React.useState(false);
@@ -293,32 +445,29 @@ function Row(props) {
     const id=row.id
     setDeleteDialog(false);
     db.collection('Groups').doc(id).delete().then(() => {
-      return {
+      setSnackBarState({
         state:validationStates.SUCCESS,
         message:`${id} has been deleted successfully.`
-      }
+      })
+      
       
     }
     ).catch((error) => {
-      return {
+      setSnackBarState({
         state:validationStates.ERROR,
         message:`Error occurred when trying to delete ${id}.`
-      }
+      })
      
     })
-    return {
-      state:validationStates.SUCCESS,
-      message:`${id} has been deleted successfully.`
-    }
+   
 
     
   }
 ////
 
-  const handleDeleteUser = (userid) => {
-    
-  }
+  
   return (
+    
     <React.Fragment>
       <TableRow className={classes.root}>
         <TableCell padding="checkbox"> 
@@ -346,8 +495,8 @@ function Row(props) {
             keepMounted
             open={openMore}
             onClose={handleMoreClose}>
-            <MenuItem onClick={handleEditClick}>Edit
-              <Dialog open = {deleteDialog} onClose = {() => setDeleteDialog(false)} >
+            <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+              <Dialog open = {editChecked} onClose = {() => setEditChecked(false)} >
                   <DialogTitle id="form-dialog-title">Edit Group</DialogTitle>
                   <DialogContent>
                     <DialogContentText>
@@ -355,7 +504,7 @@ function Row(props) {
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                  <Button onClick={() => setDeleteDialog(false)} color="secondary">
+                  <Button onClick={() => setEditChecked(false)} color="secondary">
                     Cancel
                   </Button>
                   <Button onClick={() => {handleDeleteGroup().then(msg=>{
@@ -369,7 +518,7 @@ function Row(props) {
                   </Button>
                   </DialogActions>
               </Dialog>
-            </MenuItem>
+            
             <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
               <Dialog open = {deleteDialog} onClose = {() => setDeleteDialog(false)} >
                 <DialogTitle id="form-dialog-title">Delete Group</DialogTitle>
@@ -387,13 +536,14 @@ function Row(props) {
                 </Button>
                 </DialogActions>
               </Dialog>
+            { isChecked.filter(Boolean).length>=2 && (<MenuItem onClick={handleDeleteClick}> Delete Members</MenuItem>)}
           </Menu>
         </TableCell>
         
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, paddingLeft: "checkbox"}} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
+          <Collapse in={open} timeout="auto"  style={{ display: "block" }}>
            
               <Table >
                 <TableHead>
@@ -412,16 +562,21 @@ function Row(props) {
                   {foundUsers.map((user,index) => (
                     
                     
-                    <TableRow key={user.id}>
+                    <TableRow key={user.id} selected={rowSelected[index]}>
                       <TableCell padding="checkbox"> 
-                          
+                          {editChecked ? 
+                          <IconButton onClick={() => toggleSelectedRowValue(index)} >
+                            <RemoveCircleOutlineIcon />
+                          </IconButton> 
+                            :
                           <Checkbox
                             key={index}
                             checked={isChecked[index]}
-                            onClick={() => toggleCheckboxValue(index)}
+                            onClick={() => {toggleCheckboxValue(index); toggleSelectedRowValue(index)}}
                             
                             inputProps={{ 'aria-label': 'primary checkbox' }}
-                          />
+                          />}
+                          
                       </TableCell>
                       
                       <TableCell align="right"  size = "medium" >{user.firstName} {user.lastName}</TableCell>
@@ -429,7 +584,7 @@ function Row(props) {
                       <TableCell align="right"  size = "medium"></TableCell>
                       <TableCell align="right"  size = "medium" >{user.phone}</TableCell>
                       <TableCell align="right" size = "medium">{user.email}</TableCell>
-                      <TableCell align="right" size = "small">{user.emailNotifications ? <EmailIcon color="primary"/> : <MailOutlineIcon color="#e0e0e0"/>} {user.sms ? <MessageIcon color="primary"/> : <SpeakerNotesOffOutlinedIcon color="#e0e0e0"/>} </TableCell>
+                      <TableCell align="right" size = "small">{user.emailNotifications ? <EmailIcon color="primary"/> : <MailOutlineIcon color="inherit"/>} {user.sms ? <MessageIcon color="primary"/> : <SpeakerNotesOffOutlinedIcon color="inherit"/>} </TableCell>
                       <TableCell align="right">
                           <IconButton onClick={handleMoreClickUser}>
                             <MoreVertIcon />
@@ -439,12 +594,40 @@ function Row(props) {
                             keepMounted
                             open={openMoreUser}
                             onClose={handleMoreCloseUser}>
-                            <MenuItem onClick={handleEditClickUser}>Edit
+                            <MenuItem onClick={handleMoveClickUser}>Move</MenuItem>
+                              <Dialog open = {openMoveDialog} onClose = {()=> setOpenMoveDialog(false)} >
+                                  <DialogTitle id="form-dialog-title">Move Member</DialogTitle>
+                                  <DialogContent>
+                                    <DialogContentText component={'span'}>
+                                      Move {user.firstName} {user.lastName} to another group:
+                                      
+                                      <Autocomplete
+                                        id="name-search"
+                                        options={data}
+                                        component={Paper}
+                                        getOptionSelected={(option, value) => option.id === value.id}
+                                        getOptionLabel={(option) => (option.id)}
+                                        style={{ width: 300 }}
+                                        filterSelectedOptions
+                                        onInputChange={(event, newValue) => { setnewgroup (newValue)}}
+                                        renderInput={(params) => <TextField {...params} required label="Name" />}
+                                      />
+                                      
+                                    </DialogContentText>
+                                  </DialogContent>
+                                  <DialogActions>
+                                    <Button onClick={()=> {setOpenMoveDialog(false)}} color="secondary" value = "Cancel">
+                                      Cancel
+                                    </Button>
+                                    <Button onClick={()=>{handleMoveMember(user.id);setOpenMoveDialog(false);}} color="primary">
+                                      Save
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
                             
-                            </MenuItem>
-                            <MenuItem onClick={handleDeleteClickUser}>Delete</MenuItem>
+                            <MenuItem onClick={()=>{handleDeleteClickUser();setDeleteDialog(false);}}>Delete</MenuItem>
                               <Dialog open = {deleteDialogUser} onClose = {() => setDeleteDialogUser(false)} >
-                                <DialogTitle id="form-dialog-title">Delete Group</DialogTitle>
+                                <DialogTitle id="form-dialog-title">Delete Member</DialogTitle>
                                 <DialogContent>
                                   <DialogContentText>
                                     Do you want to delete member: {user.firstName} {user.lastName}?
@@ -454,7 +637,7 @@ function Row(props) {
                                 <Button onClick={() => setDeleteDialogUser(false)} color="secondary">
                                   Cancel
                                 </Button>
-                                <Button onClick={handleDeleteUser(user.id)} color="primary">
+                                <Button onClick={()=>{handleDeleteUser(user.id);setDeleteDialogUser(false)}} color="primary">
                                   Delete
                                 </Button>
                                 </DialogActions>
@@ -479,6 +662,7 @@ function Row(props) {
     {snackBarState.message}
     </AlertSnackbar>
     </React.Fragment>
+    
   );
 }
 
@@ -581,8 +765,11 @@ export const GroupTable = (props) => {
             return e.id === group.id
           })
         } else {
-          setData(prevState=> [...prevState,group]);
-          setRows(prevState=>[...prevState,group]);
+          if (group.users.length>0){
+            setData(prevState=> [...prevState,group]);
+            setRows(prevState=>[...prevState,group]);
+          }
+          
         }
         
       
@@ -597,7 +784,7 @@ export const GroupTable = (props) => {
 
   }, []);
 
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
@@ -642,17 +829,50 @@ export const GroupTable = (props) => {
     requestSearch(searched);
     setData(rows);
   };
+
+  /// aleart snack bar ///
+  const [snackBarState, setSnackBarState] = useState({
+    open: false,
+    severity: "",
+    message: ""
+  })
+  
+  function handleSnackBarClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackBarState(prevState => ({
+      ...prevState,
+      open: false
+    }));
+  }
+  const validationStates = {
+    SUCCESS: 'SUCCESS',
+    ERROR: 'ERROR'
+  }
   return (
     <div>
-    <Searchbar
-      value={searched}
-      onChange={(searchVal) => requestSearch(searchVal)}
-      onCancelSearch={() => cancelSearch()}
-      cancelOnEscape={true}
-      style={{
-        margin: '0 auto',
-        width: '100%'
-      }}/>
+       <Grid container spacing={2}>
+         <Grid item xs={6}>
+          <Searchbar
+          value={searched}
+          onChange={(searchVal) => requestSearch(searchVal)}
+          onCancelSearch={() => cancelSearch()}
+          cancelOnEscape={true}
+          style={{
+            margin: '0 auto',
+            width: '100%',
+            align: 'left',
+            border: '1px solid black',
+            
+          }}
+          />
+         </Grid>
+         <Grid item xs> <FullScreenDialog/></Grid>
+         <Grid item xs> <Button color="secondary" variant = "outlined"> Import CSV </Button></Grid>
+      </Grid>
+    
+      
     <TableContainer component = {Paper}>
       <Table aria-label="collapsible table">
         {}
@@ -670,7 +890,12 @@ export const GroupTable = (props) => {
             <TableCell align="right"> Name </TableCell>
             <TableCell align="right"> Number of Volunteers </TableCell>
             <TableCell align="right"> Route Assigned </TableCell>
-            <TableCell size="small"/>
+            <TableCell size="small">
+              <IconButton>
+                  <MoreVertIcon />
+              </IconButton>
+              
+            </TableCell>
 
           </TableRow>
         </TableHead>
@@ -711,7 +936,13 @@ export const GroupTable = (props) => {
       </Table>
 
     </TableContainer>
-
+    <AlertSnackbar
+    open={snackBarState.open}
+    severity={snackBarState.severity}
+    autoHideDuration={6000}
+    onClose={handleSnackBarClose}>
+    {snackBarState.message}
+    </AlertSnackbar>
 
     
     </div>
