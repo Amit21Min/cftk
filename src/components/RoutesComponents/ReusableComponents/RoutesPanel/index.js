@@ -429,7 +429,7 @@ const RoutesPanel = (props) => {
       <br />
       <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
         {/* <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} /> */}
-        <Fab component={Link} to={ROUTES.ADMIN_ROUTES_NEW} color="primary" letiant="extended">
+        <Fab component={Link} to={ROUTES.ADMIN_ROUTES_NEW} color="primary" variant="extended">
           Create New Route
         </Fab>
       </div>

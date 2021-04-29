@@ -137,7 +137,7 @@ function ExampleMap() {
                         {/* This bottom most div is revealed in the second stage */}
                         <div>
                             {/* {slide.main.top === '100vh' ? null : <VolunteerHouseData addr={`${addressData.key ?? ''}_${addressData.street}`} />} */}
-                            <VolunteerHouseData routeName={assignedRoute} addr={`${addressData.key ?? ''}_${addressData.street}`} />
+                            <VolunteerHouseData routeName={assignedRoute} addr={`${addressData.key ?? ''}_${addressData.street}`} onClose={handleClickAway} />
                         </div>
                     </Paper>
                 </ClickAwayListener>
