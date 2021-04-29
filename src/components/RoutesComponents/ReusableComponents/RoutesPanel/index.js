@@ -119,7 +119,6 @@ const RoutesPanel = (props) => {
         }
 
       });
-      console.log(yearDonationAmount)
       let newRouteMetrics = Object.assign(routeMetrics,
         {
           donations_last_event: `$${eventDonationAmount}`,
@@ -336,8 +335,6 @@ const RoutesPanel = (props) => {
         solicitSum += parseFloat(soliciting_pct);
         outreachSum += parseFloat(outreach_pct);
 
-        console.log(queryState);
-
         streetItems.push(
           { route: name, name: streetName, amount_collected, assignment_status: "", months_since_assigned: "", outreach_pct, soliciting_pct }
         )
@@ -345,8 +342,7 @@ const RoutesPanel = (props) => {
 
       var solicitAvg = solicitSum / streets.length;
       var outreachAvg = outreachSum / streets.length;
-
-      // console.log(streetItems);
+      outreachAvg = Math.round(outreachAvg)
 
       // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
       const street_contents =
