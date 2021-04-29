@@ -66,7 +66,7 @@ const App = (props) => {
     // user inputs
     const [sol, setSol] = React.useState(-1); // Solicitation allowed? -1: unselected, 0: no, 1: yes
     const [interest, setInterest] = React.useState(-1);
-    const [amount, setAmount] = React.useState(-1); // Amount donated
+    const [amount, setAmount] = React.useState(0); // Amount donated
     // const [amountstr, setAmountstr] = React.useState("");
     const [method, setMethod] = React.useState(-1); // -1: unselected, 0: cash/check, 1: mobile
     const [comment, setComment] = React.useState("");
@@ -97,18 +97,18 @@ const App = (props) => {
     };
 
     const handleAmountChange = (e) => {
-        let a = document.getElementById('amount').value.trim();
+        // let a = document.getElementById('amount').value.trim();
         // a = a.replace(/\D/g, ''); // delelte non-digits
-        a = parseFloat(a);
-        if (a > 0) { setAmount(a); }
-        document.getElementById('amount').value = a;
+        // let a = 0
+        // if (e.target.value) a = parseFloat(a);
+        setAmount(e.target.value.replace(/[^0-9.]/g, ''));
     }
 
     React.useEffect(() => {
         // This will reset everything back to it's default state
         setSol(-1);
         setInterest(-1);
-        setAmount(-1);
+        setAmount(0);
         setMethod(-1);
         setComment(-1);
         setActiveStep(0);
@@ -138,7 +138,7 @@ const App = (props) => {
                 if (Object.keys(street[i])[0] === addr.split("_")[0]) {
                     // if the donationAmt that we are about to set is not null, then this is an update -> which means we need to undo the calculations for the
                     // house that we are about to update information for.
-                    if (street[i][Object.keys(street[i])[0]].donationAmt !== null) {
+                    if (street[i][Object.keys(street[i])[0]].donationAmt != null) {
                         update = true;
                         if (routesActiveDoc.data().housesCompleted - 1 === 0) {
                             db.collection('RoutesActive').doc(routeName).update({
@@ -161,8 +161,10 @@ const App = (props) => {
                                 newPctSoliciting = (routesActiveDoc.data().pctSoliciting * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
                                 newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
                             }
+                            let donation = routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt
+                            console.log(donation)
                             db.collection('RoutesActive').doc(routeName).update({
-                                donationTotal: routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt < 0 ? 0 : routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt,
+                                donationTotal: donation < 0 ? 0 : donation,
                                 housesCompleted: routesActiveDoc.data().housesCompleted - 1,
                                 pctSoliciting: newPctSoliciting,
                                 pctInterest: newPctInterest
@@ -172,7 +174,7 @@ const App = (props) => {
                     // stores the new information submitted in the street object. The street object is then inserted back into the entire doc.data() so that it can be set to firebase.
                     street[i] = {
                         [Object.keys(street[i])[0]]: {
-                            donationAmt: amount,
+                            donationAmt: amount === "" ? 0 : parseFloat(amount) || 0,
                             learnMore: interest === 1 ? true : false,
                             solicitation: sol === 1 ? true : false,
                             volunteerComments: comment.length > 0 ? comment : null,
@@ -203,7 +205,7 @@ const App = (props) => {
         } else {
             newDocData.pctSoliciting = (newDocData.pctSoliciting * newDocData.housesCompleted) / (newDocData.housesCompleted + 1);
         }
-        newDocData.donationTotal += amount;
+        newDocData.donationTotal += (amount === "" ? 0 : parseFloat(amount) || 0);
         newDocData.housesCompleted += 1;
         db.collection('RoutesActive').doc(routeName).set(newDocData);
         setAmount(0);
@@ -254,9 +256,9 @@ const App = (props) => {
                             <InputLabel htmlFor="amount">Amount</InputLabel>
                             <FilledInput
                                 id="amount"
-                                // value={values.amount}
-                                // onChange={handleAmountChange}
-                                onBlur={handleAmountChange}
+                                value={amount}
+                                onChange={handleAmountChange}
+                                // onBlur={handleAmountChange}
                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                             />
                         </FormControl>
@@ -267,9 +269,9 @@ const App = (props) => {
 
                         <Grid container justify="space-between">
                             <Button variant="outlined" className={classes.bigButton} color={method === 0 ? "primary" : "default"}
-                                onClick={function (event) { setMethod(0); }} disabled={amount <= -10}>CASH/CHECK</Button>
+                                onClick={function (event) { setMethod(0); }} disabled={amount === "" || parseFloat(amount) <= 0}>CASH/CHECK</Button>
                             <Button variant="outlined" className={classes.bigButton} color={method === 1 ? "primary" : "default"}
-                                onClick={function (event) { setMethod(1); }} disabled={amount <= -10}>MOBILE PAYMENT</Button>
+                                onClick={function (event) { setMethod(1); }} disabled={amount === "" || parseFloat(amount) <= 0}>MOBILE PAYMENT</Button>
                         </Grid>
 
                     </div>
