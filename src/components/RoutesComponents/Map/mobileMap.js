@@ -8,6 +8,9 @@ import houseComplete from "../../../assets/images/MapIcons/houseComplete.svg";
 import houseCompleteSelected from "../../../assets/images/MapIcons/houseCompleteSelected.svg";
 import AlertSnackbar from '../../../components/ReusableComponents/AlertSnackbar'
 import db from '../../FirebaseComponents/Firebase/firebase';
+import { Fab, Tooltip } from '@material-ui/core';
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
+import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
 
 
 // based on https://developers.google.com/maps/documentation/javascript/adding-a-google-map
@@ -43,7 +46,7 @@ function useFirebaseStreetInfo(assignedRoute) {
             coords: house[houseNum]['coordinates'],
             complete: house[houseNum]['donationAmt'] != null,
             donation: house[houseNum]['donationAmt'] ?? 'Not Yet Donated',
-            solicitation: house[houseNum]['solicitation'] ? 'Solicitation Allowed' :  house[houseNum]['solicitation'] == null ? 'No Solicitation Data' : 'Solicitation Not Allowed',
+            solicitation: house[houseNum]['solicitation'] ? 'Solicitation Allowed' : house[houseNum]['solicitation'] == null ? 'No Solicitation Data' : 'Solicitation Not Allowed',
             comments: house[houseNum]['volunteerComments']?.slice(0, 2) ?? []
           };
         }
@@ -71,7 +74,8 @@ function Map(props) {
     process.env.REACT_APP_MAPS_API_KEY,
     {
       zoom: 18,
-      center: defaultLoc
+      center: defaultLoc,
+      disableDefaultUI: true
     },
   );
   const { routeName, streetData, error } = useFirebaseStreetInfo(props.assignedRoute);
@@ -81,6 +85,7 @@ function Map(props) {
     message: ""
   });
   // const roads = useSnappedRoads(props.addresses);
+  const [autoPan, setAutoPan] = useState(true)
 
   useEffect(() => {
 
@@ -165,10 +170,8 @@ function Map(props) {
       }
     }
 
-    const defaultLoc = { lat: 35.9132, lng: -79.0558 }
     const marker = new google.maps.Marker({
       map: map,
-      position: defaultLoc,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: 10,
@@ -182,7 +185,9 @@ function Map(props) {
     const tracker = trackLocation({
       onSuccess: ({ coords: { latitude: lat, longitude: lng } }) => {
         marker.setPosition({ lat, lng });
-        map.panTo({ lat, lng });
+        if (autoPan) {
+          map.panTo({ lat, lng });
+        }
       },
       onError: err =>
         setSnackBarState({
@@ -192,11 +197,27 @@ function Map(props) {
       // alert(`Error: ${getPositionErrorMessage(err.code) || err.message}`)
     });
 
+
     return function cleanup() {
       if (navigator.geolocation) navigator.geolocation.clearWatch(tracker)
+      if (marker) marker.setMap(null);
     }
 
-  }, [google, map]);
+  }, [google, map, autoPan]);
+
+  useEffect(() => {
+    if (!map || !google) return;
+    const dragListener = map.addListener('drag', () => {
+      setAutoPan(false)
+    });
+    const zoomListener = map.addListener('zoom_changed', () => {
+      setAutoPan(false)
+    })
+    return function cleanup() {
+      if (dragListener) google.maps.event.removeListener(dragListener);
+      if (zoomListener) google.maps.event.removeListener(zoomListener);
+    }
+  }, [google, map])
 
   useEffect(() => {
     handleSnackBarClose(null, null)
@@ -229,6 +250,11 @@ function Map(props) {
     });
   }
 
+  function resumeTracking() {
+    map.setZoom(18);
+    setAutoPan(true);
+  }
+
   const innerStyle = props.innerStyle ? props.innerStyle : { bottom: '0px' };
 
   return (
@@ -240,6 +266,11 @@ function Map(props) {
             </a>
           </span> */}
       <div ref={ref} style={{ width: props.width, height: props.height }} />
+      <Tooltip title={autoPan ? "Your Location" : "Show Your Location"}>
+        <Fab color="primary" style={{ position: 'absolute', right: '1rem', bottom: '1rem' }} onClick={resumeTracking}>
+          {autoPan ? <GpsFixedIcon /> : <GpsNotFixedIcon />}
+        </Fab>
+      </Tooltip>
       {props.children ? <div style={{ position: 'absolute', overflow: 'hidden', ...innerStyle }}>
         {props.children}
       </div> : null}
