@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
@@ -22,12 +22,12 @@ function AlertSnackbar(props) {
     </Snackbar>
 }
 
-AlertSnackbar.propTypes = {
-    open: PropTypes.bool,
-    severity: PropTypes.oneOf(['error', 'warning', 'info', 'success', '']),
-    children: PropTypes.string, // The message to shown in the alert
-    onClose: PropTypes.func, // Called to close the snackbar
-    autoHideDuration: PropTypes.number, // Number of milliseconds before the snackbar auto closes
-}
+// AlertSnackbar.propTypes = {
+//     open: PropTypes.bool,
+//     severity: PropTypes.oneOf(['error', 'warning', 'info', 'success', '']),
+//     children: PropTypes.string, // The message to shown in the alert
+//     onClose: PropTypes.func, // Called to close the snackbar
+//     autoHideDuration: PropTypes.number, // Number of milliseconds before the snackbar auto closes
+// }
 
 export default AlertSnackbar;

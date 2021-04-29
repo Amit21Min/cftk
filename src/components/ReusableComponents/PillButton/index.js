@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import { Button } from '@material-ui/core';
 
 
@@ -20,12 +20,12 @@ const PillButton = (props) => {
     );
 };
 
-PillButton.propTypes = {
-    style: PropTypes.object,
-    className: PropTypes.string,
-    color: PropTypes.oneOf(['primary', 'secondary', 'default']),
-    onClick: PropTypes.func,
-    disabled: PropTypes.bool,
-}
+// PillButton.propTypes = {
+//     style: PropTypes.object,
+//     className: PropTypes.string,
+//     color: PropTypes.oneOf(['primary', 'secondary', 'default']),
+//     onClick: PropTypes.func,
+//     disabled: PropTypes.bool,
+// }
 
 export default PillButton;

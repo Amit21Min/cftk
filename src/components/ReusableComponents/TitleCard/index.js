@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "32px",
   },
   appBar: {
-    boxShadow: "16px 16px 32px rgba(0, 0, 0, 0.08)",
+    boxShadow: "0px 16px 32px rgba(0, 0, 0, 0.08)",
   },
   tabs: {
     marginLeft: "61px",

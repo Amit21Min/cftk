@@ -3,14 +3,14 @@ import React, { useState, useEffect } from 'react';
 import RouteMetrics from '../RouteMetrics';
 import ZeroResource from '../../../ReusableComponents/ZeroResource';
 import SearchBar from '../../SearchBar';
-import AddButton from '../../../ReusableComponents/AddButton';
 import ResourceIndexTable from '../ResourceIndexTable';
 
 import PanelBanner from '../PanelBanner';
 
 import AssignRoute from '../../AssignRoute';
 import Dialog from '@material-ui/core/Dialog';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab'
 
 import { db } from '../../../FirebaseComponents/Firebase/firebase';
 
@@ -22,10 +22,11 @@ import * as overflow_actions from './overflow_actions.js';
 import * as helpers from './helpers.js';
 
 // These contexts allow for updating/re-rendering dynamically nested components, namely, the street tables nested within the route tables
-import {RouteColumnContext, RouteItemsContext,
-        StreetColumnContext, StreetItemsContext,
-        init_route_columns, init_street_columns
-       } from './contexts.js';
+import {
+  RouteColumnContext, RouteItemsContext,
+  StreetColumnContext, StreetItemsContext,
+  init_route_columns, init_street_columns
+} from './contexts.js';
 import TitleCard from '../../../ReusableComponents/TitleCard';
 
 const RoutesPanel = (props) => {
@@ -85,13 +86,11 @@ const RoutesPanel = (props) => {
         let diff = (eventDateFormat - currentDateFormat) / (1000 * 60 * 60 * 24);
         if (diff <= 365) {
           for (const [key, value] of Object.entries(doc.data().streets)) { //gets each street (key) and array of houses objects (value)
-            // console.log(value[0]['104'].donationAmt);
             for (let i = 0; i < value.length; i++) { //loops through array of house objects
               let houseObjects = Object.keys(value[i]); // gets the key (1) of each house object
               for (let j = 0; j < houseObjects.length; j++) {
                 if (value[i][houseObjects[j]].donationAmt != null) {
                   yearDonationAmount += value[i][houseObjects[j]].donationAmt; //add donation amount
-                  // console.log(eventDonationAmount);
                 }
 
               }
@@ -293,7 +292,7 @@ const RoutesPanel = (props) => {
     for (let i = 0; i < raw_routes.length; i++) {
       let data = raw_routes[i];
 
-      let name, assignment_status, months_since_assigned, amount_collected, soliciting_pct, interest_pct, lastVisitDate;
+      let name, assignment_status, months_since_assigned
       name = data.routeName;
       if (data.assignmentStatus) {
         assignment_status = "Assigned";
@@ -301,51 +300,40 @@ const RoutesPanel = (props) => {
         assignment_status = "Unassigned";
       }
 
-
-      amount_collected = data.total; // TODO: CREATE A SUM OF TOTAL DONATIONS
-
-      interest_pct = data.perInterest;
-      soliciting_pct = data.perSoliciting;
-
-
-      if (typeof months_since_assigned == 'undefined') {
+      months_since_assigned = data.lastAssigned;
+      if (!months_since_assigned) {
         months_since_assigned = "No History";
-      }
-      if (typeof amount_collected == 'undefined') {
-        amount_collected = "No History";
+      } else {
+        let timeDifference = Date.parse(new Date()) - Date.parse(months_since_assigned);
+        timeDifference = timeDifference / (2.628*Math.pow(10,9)); // divide by the number of ms in a month
+        months_since_assigned = Math.round(timeDifference);
+        
       }
 
-      var streets = [];
-      for (var x in streetData) {
+      let streets = [];
+      for (let x in streetData) {
         if (data.streets.includes(Object.keys(streetData[x])[0])) {
           streets.push(streetData[x]);
         }
       }
 
-      var solicitSum = 0;
-      var outreachSum = 0;
+      let solicitSum = 0;
+      let outreachSum = 0;
 
-      var streetItems = [];
+      let streetItems = [];
       streets.forEach((street) => {
-        var streetName = Object.keys(street)[0].split("_")[0];
-        var amount_collected = street[Object.keys(street)[0]].total.toString();
-        var soliciting_pct = street[Object.keys(street)[0]].perSoliciting.toString();
-        var outreach_pct = street[Object.keys(street)[0]].perInterest.toString();
-        solicitSum += parseFloat(soliciting_pct);
-        outreachSum += parseFloat(outreach_pct);
+        let streetName = Object.keys(street)[0].split("_")[0];
+        let amount_collected = "$" + Math.round(street[Object.keys(street)[0]].total).toString();
+        let soliciting_pct = Math.round(street[Object.keys(street)[0]].perSoliciting).toString() + "%";
+        let outreach_pct = Math.round(street[Object.keys(street)[0]].perInterest).toString() + "%";
 
         streetItems.push(
           { route: name, name: streetName, amount_collected, assignment_status: "", months_since_assigned: "", outreach_pct, soliciting_pct }
         )
       });
 
-      var solicitAvg = solicitSum / streets.length;
-      var outreachAvg = outreachSum / streets.length;
-
-      // console.log(streetItems);
-
       // Defines the ResourceIndexTable for streets that will be nested within the "drop_down" key within the ResourceIndexItem for each route
-      const street_contents =
+      let street_contents =
         <StreetColumnContext.Consumer>
           {columns => (
             <StreetItemsContext.Consumer>
@@ -368,18 +356,17 @@ const RoutesPanel = (props) => {
         name: data.routeName,
         assignment_status: data.assignmentStatus ? data.assignmentStatus.toString() : assignment_status,
         months_since_assigned: months_since_assigned.toString(),
-        amount_collected: amount_collected.toString(),
+        amount_collected: "$" + Math.round(data.total).toString(),
         household_avg: null,
-        outreach_pct: outreachAvg.toString(),
-        soliciting_pct: solicitAvg.toString(),
+        outreach_pct: Math.round(data.perInterest).toString() + "%",
+        soliciting_pct: Math.round(data.perSoliciting).toString() + "%",
         // This is where the object for OverflowMenu's is defined. This object is parsed by a ResourceIndexItem to generate the OverflowMenu. This is where the actions for the menu options should be attached.
         overflow: {
           overflow_items: [{ text: "Edit", action: () => history.push(`${ROUTES.ADMIN_ROUTES_EDIT}?route=${data.routeName}`) }, // notice how we have to bind arguments to the actions here, where the fully compiled function will be passed to the generated OverflowMenu component
           { text: "Assign", action: () => assignRouteAction(data.routeName) },
           { text: "House Properties", action: () => onViewHouseProperties(data.routeName) },
           { text: "Unassign", action: () => overflow_actions.unassignRouteAction(data.routeName) },
-          { text: "Revision History", action: overflow_actions.revisionHistoryAction },
-          { text: "Delete", action: () => overflow_actions.deleteRouteAction(raw_routes[i].name) }
+          { text: "Delete", action: () => overflow_actions.deleteRouteAction(data) }
           ],
           hidden: true
         }
@@ -394,16 +381,16 @@ const RoutesPanel = (props) => {
 
   // returns like [ {Rose Ln_R17 : streetData }, {Campbell Lane_R21: streetData} ]
   const fetchStreets = async (allStreets) => {
-    var promises = allStreets.map(async (street) => {
-      var streetDoc = await db.collection('Streets').doc(street).get();
+    let promises = allStreets.map(async (street) => {
+      let streetDoc = await db.collection('Streets').doc(street).get();
       return streetDoc
     })
-    var results = await Promise.all(promises.map(async (street) => {
+    let results = await Promise.all(promises.map(async (street) => {
       return street
     }))
-    var buildStreets = [];
+    let buildStreets = [];
     results.forEach((streetPromise, i) => {
-      var street = allStreets[i]
+      let street = allStreets[i]
       buildStreets.push({ [street]: streetPromise.data() })
     });
     return buildStreets;
@@ -419,11 +406,11 @@ const RoutesPanel = (props) => {
         })
       });
 
-      var allStreets = [];
+      let allStreets = [];
       allRoutes.forEach((route) => {
         allStreets.push(route.streets);
       });
-      var streetData = await fetchStreets([].concat.apply([], allStreets));
+      let streetData = await fetchStreets([].concat.apply([], allStreets));
 
       setRoutes(tableTransform(allRoutes, streetData));
     });
@@ -440,9 +427,11 @@ const RoutesPanel = (props) => {
     screen = <div className="panel-screen">
       <RouteMetrics metrics={routeMetrics} />
       <br />
-      <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-        <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} />
-        <AddButton clickCallback={newRoute} route={ROUTES.ADMIN_ROUTES_NEW} />
+      <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+        {/* <SearchBar passedValue={queryState.queryString} queryCallback={searchRoutes} /> */}
+        <Fab component={Link} to={ROUTES.ADMIN_ROUTES_NEW} color="primary" letiant="extended">
+          Create New Route
+        </Fab>
       </div>
       <StreetColumnContext.Provider value={streetColumnNames}>
         <StreetItemsContext.Provider value={streetItems}>
@@ -504,38 +493,42 @@ const RoutesPanel = (props) => {
 
 
   return (
-    <div className="container">
-      {/* <PanelBanner title="Routes"/> */}
+    <>
       <TitleCard title="Routes"></TitleCard>
-      <RouteColumnContext.Provider value={routeColumnNames}>
-        <RouteItemsContext.Provider value={routes}>
-          {screen}
-        </RouteItemsContext.Provider>
-      </RouteColumnContext.Provider>
-      <ul>
-        {/* <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li> */}
-      </ul>
-      <ul>
-        <li><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></li>
-      </ul>
 
-      {/* assign route dialog */}
-      <div>
-        <Button color="primary" onClick={handleClickOpen}>
-          Assign Route
-        </Button>
-        <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
-          open={open} onClose={handleClose}>
-          <AssignRoute routes={route} close={handleClose} />
-        </Dialog>
-        {/* TODO: Show a success snackbar after assigning successfully */}
+      <div className="container">
+        {/* <PanelBanner title="Routes"/> */}
+        <div style={{height: '50px'}}></div>
+        <RouteColumnContext.Provider value={routeColumnNames}>
+          <RouteItemsContext.Provider value={routes}>
+            {screen}
+          </RouteItemsContext.Provider>
+        </RouteColumnContext.Provider>
+        <ul>
+          {/* <li><Link to={ROUTES.ASSIGN_ROUTE}>Assign Route</Link></li> */}
+        </ul>
+        <ul>
+          {/* <li><Link to={ROUTES.ADMIN_ROUTES_EDIT}>Edit Route</Link></li> */}
+        </ul>
+
+        {/* assign route dialog */}
+        <div>
+          {/* <Button color="primary" onClick={handleClickOpen}>
+            Assign Route
+        </Button> */}
+          <Dialog aria-labelledby="form-dialog-title" maxWidth="sm" fullWidth={true}
+            open={open} onClose={handleClose}>
+            <AssignRoute routes={route} close={handleClose} />
+          </Dialog>
+          {/* TODO: Show a success snackbar after assigning successfully */}
+        </div>
+
+
+        <div>
+
+        </div>
       </div>
-
-
-      <div>
-
-      </div>
-    </div>
+    </>
   );
 
 
