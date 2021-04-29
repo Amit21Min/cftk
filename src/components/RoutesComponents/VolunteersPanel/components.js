@@ -34,7 +34,7 @@ import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {FullScreenDialog} from '../VolunteersPanel/newgroup';
 
 import "./index.css";
-import { GroupSharp } from '@material-ui/icons';
+import { FormatColorResetRounded, GroupSharp } from '@material-ui/icons';
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -362,11 +362,11 @@ function Row(props) {
     const usersInGroup=[];
     db.collection('Groups').doc(id).get().then((doc) => {
       const group=doc.data()
-      console.log(userid)
+      
       filtered = group.users.filter(function(value, index, arr){ 
         return value != userid;
       });
-      console.log(filtered)
+      
       db.collection('Groups').doc(id).update({
         users:filtered
       })
@@ -404,15 +404,15 @@ function Row(props) {
   };
 
   
-  const [moveDialogUser,setMoveDialogUserOopen] =useState(false);
+  const [openMoveDialog,setOpenMoveDialog] =useState(false);
   const handleCloseMoveUsers = () => {
-    setMoveDialogUserOopen(false);
+    setOpenMoveDialog(false);
     //e.preventDefault();
     
   }
   const handleMoveClickUser =() => {
     handleMoreCloseUser();
-    setMoveDialogUserOopen(true);
+    setOpenMoveDialog(true);
   }
   const [newGroup, setnewgroup] = React.useState("");
   const handleMoveMember=(user) => {
@@ -426,10 +426,11 @@ function Row(props) {
         db.collection('Groups').doc(newGroup).update({
           users: newgroup
         })
+        handleDeleteUser(user);
       }
     }
     )
-    handleDeleteUser(user);
+    
   }
 
   const [deleteDialogUser,setDeleteDialogUser] = React.useState(false);
@@ -494,7 +495,7 @@ function Row(props) {
             keepMounted
             open={openMore}
             onClose={handleMoreClose}>
-            <MenuItem onClick={handleEditClick} onClickAway={handleClickAway}>Edit</MenuItem>
+            <MenuItem onClick={handleEditClick}>Edit</MenuItem>
               <Dialog open = {editChecked} onClose = {() => setEditChecked(false)} >
                   <DialogTitle id="form-dialog-title">Edit Group</DialogTitle>
                   <DialogContent>
@@ -564,7 +565,7 @@ function Row(props) {
                     <TableRow key={user.id} selected={rowSelected[index]}>
                       <TableCell padding="checkbox"> 
                           {editChecked ? 
-                          <IconButton onClick={() => toggleSelectedRowValue(index)} onClickAway={!editChecked}>
+                          <IconButton onClick={() => toggleSelectedRowValue(index)} >
                             <RemoveCircleOutlineIcon />
                           </IconButton> 
                             :
@@ -583,7 +584,7 @@ function Row(props) {
                       <TableCell align="right"  size = "medium"></TableCell>
                       <TableCell align="right"  size = "medium" >{user.phone}</TableCell>
                       <TableCell align="right" size = "medium">{user.email}</TableCell>
-                      <TableCell align="right" size = "small">{user.emailNotifications ? <EmailIcon color="primary"/> : <MailOutlineIcon color="#e0e0e0"/>} {user.sms ? <MessageIcon color="primary"/> : <SpeakerNotesOffOutlinedIcon color="#e0e0e0"/>} </TableCell>
+                      <TableCell align="right" size = "small">{user.emailNotifications ? <EmailIcon color="primary"/> : <MailOutlineIcon color="inherit"/>} {user.sms ? <MessageIcon color="primary"/> : <SpeakerNotesOffOutlinedIcon color="inherit"/>} </TableCell>
                       <TableCell align="right">
                           <IconButton onClick={handleMoreClickUser}>
                             <MoreVertIcon />
@@ -593,8 +594,8 @@ function Row(props) {
                             keepMounted
                             open={openMoreUser}
                             onClose={handleMoreCloseUser}>
-                            <MenuItem onClick={handleMoveClickUser}>Move
-                              <Dialog open = {moveDialogUser} onClose = {()=> setMoveDialogUserOopen(false)} >
+                            <MenuItem onClick={handleMoveClickUser}>Move</MenuItem>
+                              <Dialog open = {openMoveDialog} onClose = {()=> setOpenMoveDialog(false)} >
                                   <DialogTitle id="form-dialog-title">Move Member</DialogTitle>
                                   <DialogContent>
                                     <DialogContentText component={'span'}>
@@ -615,15 +616,15 @@ function Row(props) {
                                     </DialogContentText>
                                   </DialogContent>
                                   <DialogActions>
-                                    <Button onClick={()=> {setMoveDialogUserOopen(false)}} color="secondary" value = "Cancel">
+                                    <Button onClick={()=> {setOpenMoveDialog(false)}} color="secondary" value = "Cancel">
                                       Cancel
                                     </Button>
-                                    <Button onClick={()=>{handleMoveMember(user.id);setMoveDialogUserOopen(false);}} color="primary">
+                                    <Button onClick={()=>{handleMoveMember(user.id);setOpenMoveDialog(false);}} color="primary">
                                       Save
                                     </Button>
                                   </DialogActions>
                                 </Dialog>
-                            </MenuItem>
+                            
                             <MenuItem onClick={()=>{handleDeleteClickUser();setDeleteDialog(false);}}>Delete</MenuItem>
                               <Dialog open = {deleteDialogUser} onClose = {() => setDeleteDialogUser(false)} >
                                 <DialogTitle id="form-dialog-title">Delete Member</DialogTitle>
