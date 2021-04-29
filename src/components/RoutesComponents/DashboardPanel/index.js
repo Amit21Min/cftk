@@ -9,9 +9,9 @@ import {
   BarSeries,
   Title,
   ArgumentAxis,
-  ValueAxis
+  ValueAxis,
 } from "@devexpress/dx-react-chart-material-ui";
-import { Animation } from '@devexpress/dx-react-chart';
+import { Animation } from "@devexpress/dx-react-chart";
 
 import "./index.css";
 import AbstractOne from "../../../assets/images/stat-abstract-1.png";
@@ -23,6 +23,8 @@ import SilverBadge from "../../../assets/images/Silver Badge.png";
 import BronzeBadge from "../../../assets/images/Bronze Badge.png";
 import DashboardNoResource from "../../../assets/images/dashboard-no-resource.png";
 import db from "../../FirebaseComponents/Firebase/firebase";
+import { auth } from "firebase";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   dashboardPaper: {
@@ -35,13 +37,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-evenly",
   },
   chartPaper: {
-    marginBottom: '70px',
-    borderRadius: "24px"
-  }
+    marginBottom: "70px",
+    borderRadius: "24px",
+  },
 }));
 
 const DashboardPanel = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   let data = true;
 
@@ -56,12 +59,12 @@ const DashboardPanel = () => {
   const [chartData, setChartData] = useState([]);
   const styles = {
     titleText: {
-      textAlign: 'left',
+      textAlign: "left",
       fontWeight: 600,
-      fontSize: '20px',
-      lineHeight: '23px'
+      fontSize: "20px",
+      lineHeight: "23px",
     },
-  }
+  };
   const TextComponent = withStyles(styles)(({ classes, ...restProps }) => (
     <Title.Text {...restProps} className={classes.titleText} />
   ));
@@ -127,14 +130,14 @@ const DashboardPanel = () => {
           statsMap.set(id, stats);
         }
       });
-      
+
       // setting chart data
-      let arr = []
-      for(let [key, value] of statsMap.entries()) {
+      let arr = [];
+      for (let [key, value] of statsMap.entries()) {
         let data_ = {
           route: key,
-          total_amount: value.total_donations
-        }
+          total_amount: value.total_donations,
+        };
         arr.push(data_);
       }
       arr.sort((a, b) => b.total_amount - a.total_amount);
@@ -197,15 +200,18 @@ const DashboardPanel = () => {
             <div className="graph-container">
               <Paper className={classes.chartPaper} variant="outlined">
                 <Chart data={chartData}>
-                  <ArgumentAxis/>
+                  <ArgumentAxis />
                   <ValueAxis max={7} />
-                  <BarSeries 
-                    valueField="total_amount" 
+                  <BarSeries
+                    valueField="total_amount"
                     argumentField="route"
                     color="#0075A3"
-                    barWidth={.5}
+                    barWidth={0.5}
                   />
-                  <Title text="Routes By Donation Total" textComponent={TextComponent}/>
+                  <Title
+                    text="Routes By Donation Total"
+                    textComponent={TextComponent}
+                  />
                   <Animation />
                 </Chart>
               </Paper>
