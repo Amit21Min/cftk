@@ -4,7 +4,6 @@ import MobileMap from '../../RoutesComponents/Map/mobileMap';
 import { Paper, ClickAwayListener, Typography, Divider } from '@material-ui/core';
 import { auth } from '../../FirebaseComponents/Firebase/firebase';
 import { getAssignedRoute } from '../../RoutesComponents/ReusableComponents/RouteModels/routes';
-import firebase from 'firebase';
 import VolunteerHouseData from '../VolunteerHouseData';
 
 function ExampleMap() {
@@ -28,7 +27,7 @@ function ExampleMap() {
     })
 
     useEffect(() => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(async function (user) {
+        const unsubscribe = auth.onAuthStateChanged(async function (user) {
             if (user) {
                 // The code is in routes.js in RouteModels
                 getAssignedRoute(auth.currentUser.uid).then(route => {
@@ -55,7 +54,6 @@ function ExampleMap() {
         // solicitation holds true/false for
 
         // This example function makes it so that when you click a house Icon, you trigger something
-        console.log(addressData);
         setAddressData(addressData);
         // Hack to push to back of execution cycle
         setTimeout(() => {
@@ -139,7 +137,7 @@ function ExampleMap() {
                         {/* This bottom most div is revealed in the second stage */}
                         <div>
                             {/* {slide.main.top === '100vh' ? null : <VolunteerHouseData addr={`${addressData.key ?? ''}_${addressData.street}`} />} */}
-                            <VolunteerHouseData routeName={assignedRoute} addr={`${addressData.key ?? ''}_${addressData.street}`} />
+                            <VolunteerHouseData routeName={assignedRoute} addr={`${addressData.key ?? ''}_${addressData.street}`} onClose={handleClickAway} />
                         </div>
                     </Paper>
                 </ClickAwayListener>

@@ -43,7 +43,7 @@ const SignInButton = withStyles({
 })(Button);
 
 
-const App = () => {
+const App = (props) => {
   const [values, setValues] = React.useState({
     username: "",
     password: "",
@@ -91,7 +91,7 @@ const App = () => {
           if(userData.role === 'admin') {
             history.push('/admin/dashboard')
           } else if(userData.role === 'volunteer') {
-            history.push('/volunteer')
+            history.push('/volunteer/progress')
           }
         }
       })

@@ -6,24 +6,39 @@
 }
 
 .route-metric-assign {
-  background-color: #F78A72; 
+  background-color: #F78A72;
+  box-shadow: 0px 10px 20px rgba(247, 138, 114, 0.5);
 }
 
 .route-metric-ready {
   background-color: #89D9E0;
+  box-shadow: 0px 10px 20px rgba(137, 217, 224, 0.5);
 }
 
 .route-metric-donations {
   background-color: #7CC9AA;
+  box-shadow: 0px 10px 20px rgba(124, 201, 170, 0.5);
 }
 
 .route-metric-gain {
   background-color: #BFBAFF;
+  box-shadow: 0px 10px 20px rgba(191, 186, 255, 0.5);
+
+}
+
+.route-metric-abstract {
+  position: absolute;
+  top: 0px;
+  right: 0px;
 }
 
 .route-metric-general {
-  width: 257px;
+  width: 280px;
   height: 136px;
   border-radius: 25px;
-  box-shadow: 5px 15px 25px #b0b0b0;
+  padding: 8px;
+  margin: 8px;
+  overflow: hidden;
+  position: relative;
+  color: #051820;
 }

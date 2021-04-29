@@ -98,6 +98,7 @@ const App = () => {
     const userDoc = await userRef.get();
     const assignment = userDoc.data().assignment.split("_")[0];
     overflow_actions.unassignRouteAction(assignment);
+    console.log('done');
     setOpen(false);
     setIsAssigned(false);
   };
@@ -166,7 +167,7 @@ const App = () => {
               let streetHousesCompleted = 0;
               let streetName = Object.keys(street)[0];
               let streetTotalHouses = street[streetName].length;
-              for (let houses in street[streetName]) {
+              for (let houses = 0; houses < street[streetName].length; houses++) {
                 let houseData = street[streetName][houses][Object.keys(street[streetName][houses])[0]];
                 if (houseData.donationAmt !== null) streetHousesCompleted += 1;
               }
