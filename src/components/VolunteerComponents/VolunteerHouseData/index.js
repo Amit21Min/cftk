@@ -162,7 +162,7 @@ const App = (props) => {
                                 newPctInterest = (routesActiveDoc.data().pctInterest * routesActiveDoc.data().housesCompleted) / (routesActiveDoc.data().housesCompleted - 1)
                             }
                             db.collection('RoutesActive').doc(routeName).update({
-                                donationTotal: routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt,
+                                donationTotal: routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt < 0 ? 0 : routesActiveDoc.data().donationTotal - street[i][Object.keys(street[i])[0]].donationAmt,
                                 housesCompleted: routesActiveDoc.data().housesCompleted - 1,
                                 pctSoliciting: newPctSoliciting,
                                 pctInterest: newPctInterest
