@@ -4,7 +4,7 @@ import * as overflow_actions from './overflow_actions.js';
 
 export const init_street_columns = [
   // {field: "selectbox",             type: "selectbox",        html_text: "", selected_items: []},
-  {field: "name",                  type: "text",             html_text: "Name"},
+  {field: "name",                  type: "text",             html_text: "Street Name"},
   {field: "assignment_status",     type: "text",             html_text: "Assignment Status"},
   {field: "months_since_assigned", type: "text",             html_text: "Months Since Last Assigned"},
   {field: "amount_collected",      type: "text",             html_text: "Previous Canning Donations"},

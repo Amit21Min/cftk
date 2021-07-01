@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextField, Switch, withStyles } from "@material-ui/core";
 import PhoneIcon from '@material-ui/icons/Phone';
 import MailIcon from '@material-ui/icons/Mail';
 import "../VolunteerSettings/index.css";
 import NavBar from "../VolunteerNavBar/index.js";
 import { auth, db } from "../../FirebaseComponents/Firebase/firebase"; // use auth using userID
+import firebase from 'firebase';
+
 
 const App = () => {
 
@@ -15,8 +17,16 @@ const App = () => {
     const [userEmail, setUserEmail] = React.useState("");
     const [phone, setPhone] = React.useState("");
 
-    const user = auth.currentUser; // use this to get the user's userID when we add login functionality
-    console.log(user);
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged(async function (user) {
+          if (user) {
+            fetchEmail(auth.currentUser.uid);
+            fetchFName(auth.currentUser.uid);
+            fetchLName(auth.currentUser.uid);
+            fetchPhone(auth.currentUser.uid);
+          }
+        });
+    });
 
     const handleTextChange = () => {
         setTextState(!textState);
@@ -24,48 +34,31 @@ const App = () => {
 
     const handleEmailChange = () => {
         setEmailState(!emailState);
-    }
+    }   
 
-    const fetchEmail = async function() {   
-        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+    const fetchEmail = async function(uid) {   
+        let userRef = db.collection('User').doc(uid); // need to update with volunteer ID rather than hardcode
         let userDoc = await userRef.get();
         setUserEmail(userDoc.data().email);
     }
 
-    const fetchFName = async function() {
-        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+    const fetchFName = async function(uid) {
+        let userRef = db.collection('User').doc(uid); // need to update with volunteer ID rather than hardcode
         let userDoc = await userRef.get();
         setFirstName(userDoc.data().firstName);
     }
 
-    const fetchLName = async function() {
-        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+    const fetchLName = async function(uid) {
+        let userRef = db.collection('User').doc(uid); // need to update with volunteer ID rather than hardcode
         let userDoc = await userRef.get();
         setLastName(userDoc.data().lastName);
     }
 
-    const fetchPhone = async function() {
-        let userRef = db.collection('User').doc("3ytt1skUvlhMWmuGS8hsqGgpRbI2"); // need to update with volunteer ID rather than hardcode
+    const fetchPhone = async function(uid) {
+        let userRef = db.collection('User').doc(uid); // need to update with volunteer ID rather than hardcode
         let userDoc = await userRef.get();
         setPhone(userDoc.data().phone);
     }
-
-    React.useEffect(function () {
-        fetchEmail();
-    }, []);
-
-    React.useEffect(function () {
-        fetchFName();
-    }, []);
-
-    React.useEffect(function () {
-        fetchLName();
-    }, []);
-
-    React.useEffect(function () {
-        fetchPhone();
-    }, []);
-    
 
     const SignOutButton = withStyles({
         root: {

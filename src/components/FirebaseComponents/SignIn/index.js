@@ -150,11 +150,12 @@ const App = (props) => {
         <br></br>
         <SignInButton onClick={() => signIn()}>Sign-In</SignInButton>
         <p className="signup-text"><a href="/signup">I'm New. Sign Me Up!</a></p>
-        <div className="LoginBoxContainer">
+        {/* Below is the google (gmail) sign in option - uncomment and enable gmail signin in firebase console to enable google signin */}
+        {/* <div className="LoginBoxContainer">
           <div className="LoginBox">
             <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
           </div>
-        </div>
+        </div> */}
         <Snackbar open={snackBar.open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
               {snackBar.message}
